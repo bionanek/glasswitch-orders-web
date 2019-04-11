@@ -1,0 +1,39 @@
+.list-wrapper {
+  ul {
+    border: 1px solid #ccc;
+    padding: 0;
+    margin: 0 10px;
+
+    li.list-element {
+      position: relative;
+      background-color: #ccc;
+      border-bottom: 1px solid #ccc;
+      padding: 10px;
+      margin: 5px;
+      list-style: none;
+      text-align: left;
+      height: 20px;
+
+      &:hover {
+        background-color: #ffc7ff;
+      }
+
+      span {
+        margin-top: 2px;
+      }
+
+      .title {
+        position: absolute;
+        left: 10px;
+      }
+
+      .sub-title {
+        // padding-left: 50px;
+        position: absolute;
+        right: 10px;
+        font-size: 13px;
+        font-style: italic;
+      }
+    }
+  }
+}

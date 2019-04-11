@@ -1,13 +1,21 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
-
+// import logo from './logo.svg';
+import './App.scss';
+import CustomersList from './features/Customers/CustomersList.js'
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
+      <CustomersList />
+        {/* <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
+
+          <ol className="App-menu">
+            <li><div>Dupa1</div></li>
+            <li><div>Dupa2</div></li>
+            <li><div>Dupa3</div></li>
+            <li><div>Dupa4</div></li>
+          </ol>
           <p>
             Hello <strong>Glass Witch</strong>! <br /> 
             Let's start <strong>CODING</strong>
@@ -20,7 +28,7 @@ class App extends Component {
           >
             Learn React
           </a>
-        </header>
+        </header> */}
       </div>
     );
   }
