@@ -25,6 +25,9 @@
 
           span {
             padding-left: 15px;
+            &:hover {
+              cursor: pointer;
+            }
 
             svg:hover {
               &.fa-edit {

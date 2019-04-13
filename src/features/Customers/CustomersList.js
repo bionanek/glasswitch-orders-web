@@ -3,16 +3,12 @@ import "./CustomersList.scss";
 import dummyCustomers from "./CustomersData";
 import SimpleList from "../../components/SimpleList/SimpleList";
 class CustomersList extends Component {
-  customersListObjects = dummyCustomers.map(customer => {
-    const onClick = () => {
-      console.log("Clicked " + customer.name);
-      customer.name = "dupa";
-    };
-
+  customersListObjects = dummyCustomers.map((customer, index) => {
     return {
       title: customer.name,
       subTitle: customer.email,
-      onClickEvent: onClick
+      deletable: customer.deletable,
+      deleteHandler: null
     };
   });
 
@@ -22,7 +18,11 @@ class CustomersList extends Component {
         <div className="header">
           <h1>List Of Customers</h1>
         </div>
-        <SimpleList elements={this.customersListObjects} />
+        <SimpleList
+          elements={this.customersListObjects}
+          deletable={true}
+          editable={false}
+        />
       </div>
     );
   }

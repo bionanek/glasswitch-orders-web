@@ -13,7 +13,8 @@ const dummyCustomers = [
     billing_country: "Billing Country",
     billing_postCode: null,
     updatedAt: "2019-03-14T00:14:51.766Z",
-    createdAt: "2019-03-14T00:14:51.766Z"
+    createdAt: "2019-03-14T00:14:51.766Z",
+    deletable: true
   },
   {
     name: "Customer2",
@@ -29,7 +30,8 @@ const dummyCustomers = [
     billing_country: "Billing Country",
     billing_postCode: null,
     updatedAt: "2019-03-14T00:14:51.766Z",
-    createdAt: "2019-03-14T00:14:51.766Z"
+    createdAt: "2019-03-14T00:14:51.766Z",
+    deletable: true
   },
   {
     name: "Customer3",
@@ -45,7 +47,8 @@ const dummyCustomers = [
     billing_country: "Billing Country",
     billing_postCode: null,
     updatedAt: "2019-03-14T00:14:51.766Z",
-    createdAt: "2019-03-14T00:14:51.766Z"
+    createdAt: "2019-03-14T00:14:51.766Z",
+    deletable: false
   }
 ];
 
