@@ -15,10 +15,29 @@
       height: 20px;
 
       &:hover {
-        background-color: #ffc7ff;
+        background-color: #e7e7e7;
       }
 
       span {
+        &.buttons-wrapper {
+          position: absolute;
+          right: 10px;
+
+          span {
+            padding-left: 15px;
+
+            svg:hover {
+              &.fa-edit {
+                color: lightgreen;
+              }
+
+              &.fa-trash-alt {
+                color: red;
+              }
+            }
+          }
+        }
+
         margin-top: 2px;
       }
 
@@ -28,9 +47,8 @@
       }
 
       .sub-title {
-        // padding-left: 50px;
         position: absolute;
-        right: 10px;
+        left: 100px;
         font-size: 13px;
         font-style: italic;
       }
