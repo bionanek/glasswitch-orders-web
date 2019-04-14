@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import './App.css';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
-import Home from "./components/Home";
-import Customers from "./components/Customers";
-import About from "./components/About";
-import RouteError from "./components/RouteError";
-import Navigation from "./components/Navigation";
+import Home from "./components/home/Home";
+import Customers from "./components/customers/Customers";
+import About from "./components/about/About";
+import RouteError from "./components/common/RouteError";
+import Navigation from "./components/common/Navigation";
 
 class App extends Component {
   render() {

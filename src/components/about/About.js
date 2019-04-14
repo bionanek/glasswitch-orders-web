@@ -1,17 +1,17 @@
 import React from "react";
-import logo from '../logo.svg';
+import logo from '../../logo.svg';
 
-const Customers = () => {
+const About = () => {
   return (
     <div>
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          <strong>Customers</strong>
+          <strong>About</strong>
         </p>
       </header>
     </div>
   );
 };
 
-export default Customers;
+export default About;
