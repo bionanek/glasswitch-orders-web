@@ -1,10 +1,7 @@
 import React, { Component } from "react";
-// import logo from './logo.svg';
 import "./App.scss";
-import CustomersList from "./features/Customers/CustomersList.js";
-import { library } from "@fortawesome/fontawesome-svg-core";
+import CustomersList from "./components/Customers/CustomersList.js";
 
-// library.add(faTrashAlt);
 class App extends Component {
   render() {
     return (
