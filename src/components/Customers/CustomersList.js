@@ -8,7 +8,8 @@ class CustomersList extends Component {
       title: customer.name,
       subTitle: customer.email,
       deletable: customer.deletable,
-      deleteHandler: null
+      deleteHandler: null,
+      clickHandler: () => console.log("clicked")
     };
   });
 
@@ -22,6 +23,7 @@ class CustomersList extends Component {
           elements={this.customersListObjects}
           deletable={true}
           editable={false}
+          clickable={true}
         />
       </div>
     );

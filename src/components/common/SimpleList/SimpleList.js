@@ -9,7 +9,8 @@ class SimpleList extends React.Component {
     this.elements = this.getListElementsHTML(
       this.props.elements,
       this.props.deletable,
-      this.props.editable
+      this.props.editable,
+      this.props.clickable
     );
 
     this.state = {};
@@ -22,14 +23,26 @@ class SimpleList extends React.Component {
   onDeleteClick = (el, index) => {
     console.log(this.elements);
     console.log(index);
-    this.elements = this.elements.filter(element => element.key != index);
+    this.elements = this.elements.filter(element => +element.key !== index);
     this.setState({ elements: this.elements });
   };
 
-  getListElementsHTML(elements, isListDeletable, isListEditable) {
+  getListElementsHTML(
+    elements,
+    isListDeletable,
+    isListEditable,
+    isListClickable
+  ) {
     return elements.map((el, index) => {
       return (
-        <li key={index} className="list-element">
+        <li
+          key={index}
+          className={
+            "list-element " +
+            (isListClickable && el.clickHandler ? "clickable" : "")
+          }
+          onClick={el.clickHandler}
+        >
           <span className="title">{el.title.toString()}</span>
           <span className="sub-title">{el.subTitle.toString()}</span>
           <span className="buttons-wrapper">
