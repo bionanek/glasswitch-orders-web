@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import "./CustomersList.scss";
-import dummyCustomers from "./CustomersData";
-import SimpleList from "../common/SimpleList/SimpleList";
+import dummyCustomers from "../CustomersData";
+import SimpleList from "../../common/SimpleList/SimpleList";
+
 class CustomersList extends Component {
   customersListObjects = dummyCustomers.map(customer => {
     return {
@@ -16,9 +16,6 @@ class CustomersList extends Component {
   render() {
     return (
       <div className="customers-list-wrapper">
-        <div className="header">
-          <h1>List Of Customers</h1>
-        </div>
         <SimpleList
           elements={this.customersListObjects}
           deletable={true}

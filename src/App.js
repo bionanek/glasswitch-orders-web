@@ -1,12 +1,31 @@
-import React, { Component } from "react";
 import "./App.scss";
-import CustomersList from "./components/Customers/CustomersList.js";
+
+import React, { Component } from "react";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
+
+import Home from "./components/home/Home";
+import Customers from "./components/Customers/Customers";
+import About from "./components/about/About";
+import RouteError from "./components/common/RouteError";
+import Navigation from "./components/common/Navigation/Navigation";
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <CustomersList />
+        <BrowserRouter>
+          <div>
+            <Navigation />
+            <div className="content">
+              <Switch>
+                <Route path="/" component={Home} exact />
+                <Route path="/customers" component={Customers} />
+                <Route path="/about" component={About} />
+                <Route component={RouteError} />
+              </Switch>
+            </div>
+          </div>
+        </BrowserRouter>
       </div>
     );
   }
