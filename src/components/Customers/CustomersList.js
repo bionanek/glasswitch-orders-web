@@ -22,7 +22,7 @@ class CustomersList extends Component {
         <SimpleList
           elements={this.customersListObjects}
           deletable={true}
-          editable={false}
+          editable={true}
           clickable={true}
         />
       </div>
