@@ -3,7 +3,7 @@ import "./CustomersList.scss";
 import dummyCustomers from "./CustomersData";
 import SimpleList from "../common/SimpleList/SimpleList";
 class CustomersList extends Component {
-  customersListObjects = dummyCustomers.map((customer, index) => {
+  customersListObjects = dummyCustomers.map(customer => {
     return {
       title: customer.name,
       subTitle: customer.email,

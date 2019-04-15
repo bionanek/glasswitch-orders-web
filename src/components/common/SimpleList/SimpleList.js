@@ -1,7 +1,6 @@
 import React from "react";
 import "./SimpleList.scss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashAlt, faEdit } from "@fortawesome/free-solid-svg-icons";
+import SimpleListElement from "./SimpleListElement";
 
 class SimpleList extends React.Component {
   constructor(props) {
@@ -20,9 +19,7 @@ class SimpleList extends React.Component {
     this.setState({ elements: this.elements });
   }
 
-  onDeleteClick = (el, index) => {
-    console.log(this.elements);
-    console.log(index);
+  defaultOnDeleteClick = (el, index) => {
     this.elements = this.elements.filter(element => +element.key !== index);
     this.setState({ elements: this.elements });
   };
@@ -35,38 +32,17 @@ class SimpleList extends React.Component {
   ) {
     return elements.map((el, index) => {
       return (
-        <li
+        <SimpleListElement
           key={index}
-          className={
-            "list-element " +
-            (isListClickable && el.clickHandler ? "clickable" : "")
+          index={index}
+          isClickable={isListClickable}
+          isEditable={isListEditable}
+          isDeletable={isListDeletable}
+          element={el}
+          defaultOnDeleteClick={(element, id) =>
+            this.defaultOnDeleteClick(element, id)
           }
-          onClick={el.clickHandler}
-        >
-          <span className="title">{el.title.toString()}</span>
-          <span className="sub-title">{el.subTitle.toString()}</span>
-          <span className="buttons-wrapper">
-            {isListEditable && (
-              <span className="edit-icon">
-                <FontAwesomeIcon icon={faEdit} />
-              </span>
-            )}
-            {isListDeletable && el.deletable && (
-              <span
-                className="delete-icon"
-                onClick={() => {
-                  if (el.deleteHandler) {
-                    el.deleteHandler(el, index);
-                  } else {
-                    this.onDeleteClick(el, index);
-                  }
-                }}
-              >
-                <FontAwesomeIcon icon={faTrashAlt} />
-              </span>
-            )}
-          </span>
-        </li>
+        />
       );
     });
   }
