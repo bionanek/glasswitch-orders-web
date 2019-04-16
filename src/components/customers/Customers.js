@@ -1,6 +1,6 @@
 import React from "react";
 import logo from "../../logo.svg";
-import CustomersList from "./List/CustomersList";
+import CustomersList from "./list/CustomersList";
 import "./Customers.scss";
 
 const Customers = () => {

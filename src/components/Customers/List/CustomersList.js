@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import dummyCustomers from "../CustomersData";
-import SimpleList from "../../common/SimpleList/SimpleList";
+import SimpleList from "../../common/simpleList/SimpleList";
 
 class CustomersList extends Component {
   customersListObjects = dummyCustomers.map(customer => {

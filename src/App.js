@@ -4,10 +4,10 @@ import React, { Component } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 import Home from "./components/home/Home";
-import Customers from "./components/Customers/Customers";
+import Customers from "./components/customers/Customers";
 import About from "./components/about/About";
 import RouteError from "./components/common/RouteError";
-import Navigation from "./components/common/Navigation/Navigation";
+import Navigation from "./components/common/navigation/Navigation";
 
 class App extends Component {
   render() {
