@@ -1,15 +1,16 @@
 import React from "react";
-import logo from '../../logo.svg';
+import logo from "../../logo.svg";
+import CustomersList from "./list/CustomersList";
+import "./Customers.scss";
 
 const Customers = () => {
   return (
-    <div>
-      <header className="App-header">
+    <div className="customers">
+      <header className="customers-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          <strong>Customers</strong>
-        </p>
+        <h1>List Of Customers</h1>
       </header>
+      <CustomersList className="customers-list" />
     </div>
   );
 };

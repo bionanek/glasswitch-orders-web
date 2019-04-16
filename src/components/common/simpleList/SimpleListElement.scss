@@ -1,0 +1,57 @@
+li {
+  &.clickable:hover {
+    cursor: pointer;
+  }
+
+  &.list-element {
+    position: relative;
+    background-color: #ccc;
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+    margin: 5px;
+    list-style: none;
+    text-align: left;
+    height: 20px;
+
+    &:hover {
+      background-color: #e7e7e7;
+    }
+    span {
+      &.buttons-wrapper {
+        position: absolute;
+        right: 10px;
+
+        span {
+          padding-left: 15px;
+          &:hover {
+            cursor: pointer;
+          }
+
+          svg:hover {
+            &.fa-edit {
+              color: lightgreen;
+            }
+
+            &.fa-trash-alt {
+              color: red;
+            }
+          }
+        }
+      }
+
+      margin-top: 2px;
+    }
+
+    .title {
+      position: absolute;
+      left: 10px;
+    }
+
+    .sub-title {
+      position: absolute;
+      left: 100px;
+      font-size: 13px;
+      font-style: italic;
+    }
+  }
+}
