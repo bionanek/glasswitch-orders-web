@@ -14,7 +14,8 @@ const dummyCustomers = [
     billing_postCode: null,
     updatedAt: "2019-03-14T00:14:51.766Z",
     createdAt: "2019-03-14T00:14:51.766Z",
-    deletable: true
+    deletable: true,
+    id: 1
   },
   {
     name: "Customer2",
@@ -31,7 +32,8 @@ const dummyCustomers = [
     billing_postCode: null,
     updatedAt: "2019-03-14T00:14:51.766Z",
     createdAt: "2019-03-14T00:14:51.766Z",
-    deletable: true
+    deletable: true,
+    id: 2
   },
   {
     name: "Customer3",
@@ -48,7 +50,8 @@ const dummyCustomers = [
     billing_postCode: null,
     updatedAt: "2019-03-14T00:14:51.766Z",
     createdAt: "2019-03-14T00:14:51.766Z",
-    deletable: true
+    deletable: true,
+    id: 3
   },
   {
     name: "Customer4",
@@ -65,7 +68,8 @@ const dummyCustomers = [
     billing_postCode: null,
     updatedAt: "2019-03-14T00:14:51.766Z",
     createdAt: "2019-03-14T00:14:51.766Z",
-    deletable: true
+    deletable: true,
+    id: 4
   },
   {
     name: "Customer5",
@@ -82,7 +86,8 @@ const dummyCustomers = [
     billing_postCode: null,
     updatedAt: "2019-03-14T00:14:51.766Z",
     createdAt: "2019-03-14T00:14:51.766Z",
-    deletable: true
+    deletable: true,
+    id: 5
   },
   {
     name: "Customer6",
@@ -99,7 +104,8 @@ const dummyCustomers = [
     billing_postCode: null,
     updatedAt: "2019-03-14T00:14:51.766Z",
     createdAt: "2019-03-14T00:14:51.766Z",
-    deletable: true
+    deletable: true,
+    id: 6
   },
   {
     name: "Customer7",
@@ -116,7 +122,8 @@ const dummyCustomers = [
     billing_postCode: null,
     updatedAt: "2019-03-14T00:14:51.766Z",
     createdAt: "2019-03-14T00:14:51.766Z",
-    deletable: true
+    deletable: true,
+    id: 7
   },
   {
     name: "Customer8",
@@ -133,7 +140,8 @@ const dummyCustomers = [
     billing_postCode: null,
     updatedAt: "2019-03-14T00:14:51.766Z",
     createdAt: "2019-03-14T00:14:51.766Z",
-    deletable: true
+    deletable: true,
+    id: 8
   },
   {
     name: "Customer9",
@@ -150,7 +158,8 @@ const dummyCustomers = [
     billing_postCode: null,
     updatedAt: "2019-03-14T00:14:51.766Z",
     createdAt: "2019-03-14T00:14:51.766Z",
-    deletable: true
+    deletable: true,
+    id: 9
   },
   {
     name: "Customer10",
@@ -167,7 +176,8 @@ const dummyCustomers = [
     billing_postCode: null,
     updatedAt: "2019-03-14T00:14:51.766Z",
     createdAt: "2019-03-14T00:14:51.766Z",
-    deletable: true
+    deletable: true,
+    id: 10
   },
   {
     name: "Customer11",
@@ -184,7 +194,8 @@ const dummyCustomers = [
     billing_postCode: null,
     updatedAt: "2019-03-14T00:14:51.766Z",
     createdAt: "2019-03-14T00:14:51.766Z",
-    deletable: true
+    deletable: true,
+    id: 11
   },
   {
     name: "Customer12",
@@ -201,7 +212,8 @@ const dummyCustomers = [
     billing_postCode: null,
     updatedAt: "2019-03-14T00:14:51.766Z",
     createdAt: "2019-03-14T00:14:51.766Z",
-    deletable: true
+    deletable: true,
+    id: 12
   },
   {
     name: "Customer13",
@@ -218,7 +230,8 @@ const dummyCustomers = [
     billing_postCode: null,
     updatedAt: "2019-03-14T00:14:51.766Z",
     createdAt: "2019-03-14T00:14:51.766Z",
-    deletable: true
+    deletable: true,
+    id: 13
   }
 ];
 
