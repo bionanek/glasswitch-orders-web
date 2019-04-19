@@ -9,10 +9,15 @@ class CustomersList extends Component {
       title: customer.name,
       subTitle: customer.email,
       deletable: customer.deletable,
-      deleteHandler: null,
+      editHandler: (e) => {
+        e.stopPropagation();
+        const editUrl = `customers/${customer.id}/edit`;
+        this.props.history.push(editUrl);
+      },
       clickHandler: () => {
-        this.props.history.push('customers/' + customer.id);
-      }
+        this.props.history.push(`customers/${customer.id}`);
+      },
+      deleteHandler: null,
     };
   }, this);
 

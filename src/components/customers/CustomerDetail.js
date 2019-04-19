@@ -30,8 +30,8 @@ class CustomerDetail extends Component {
             <Container>
               <h1>{customer.name}</h1>
               <Row>
-                <DetailElement header="Email:" value={customer.email} />
-                <DetailElement header="Phone:" value={customer.phone} />
+                <DetailElement header="Email address:" value={customer.email} />
+                <DetailElement header="Phone number:" value={customer.phone} />
                 <DetailElement header="VAT identification number:" value={customer.vatNumber} />
               </Row>
               <h2>Delivery address</h2>
