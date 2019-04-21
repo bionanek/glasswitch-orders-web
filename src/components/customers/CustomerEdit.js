@@ -24,7 +24,10 @@ class CustomerEdit extends Component {
 
   handleSubmit(event) {
     //TODO: Call API and update the item
+    const form = event.currentTarget;
     console.log("Form submitted");
+    event.preventDefault();
+    event.stopPropagation();
   }
 
   render() {
