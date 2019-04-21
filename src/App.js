@@ -1,15 +1,15 @@
-import "./App.scss";
+import './App.scss';
 
-import React, { Component } from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import React, { Component } from 'react';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
-import Home from "./components/home/Home";
-import Customers from "./components/customers/Customers";
-import CustomerDetail from "./components/customers/CustomerDetail";
-import CustomerEdit from "./components/customers/CustomerEdit";
-import About from "./components/about/About";
-import RouteError from "./components/common/RouteError";
-import Navigation from "./components/common/navigation/Navigation";
+import Home from './components/home/Home';
+import Customers from './components/customers/Customers';
+import CustomerDetail from './components/customers/crud/CustomerDetail';
+import CustomerEdit from './components/customers/crud/CustomerEdit';
+import About from './components/about/About';
+import RouteError from './components/common/RouteError';
+import Navigation from './components/common/navigation/Navigation';
 
 class App extends Component {
   render() {

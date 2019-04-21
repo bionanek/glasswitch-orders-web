@@ -1,7 +1,7 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import dummyCustomers from "./CustomersData";
+import dummyCustomers from '../CustomersData';
 import './CustomerEdit.scss';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -10,16 +10,23 @@ import Container from 'react-bootstrap/Container';
 class CustomerEdit extends Component {
   constructor(props) {
     super(props);
-    const customerId = parseInt(this.props.match.params.id);
-
-    const customer = dummyCustomers.find(cust => {
-      return cust.id === customerId;
-    })
 
     this.state = {
-      customer: customer,
-      customerId: customerId,
+      customer: null
     }
+  }
+
+  componentDidMount() {
+    const customerId = parseInt(this.props.match.params.id);
+
+    this.setState({ customer: this.getCustomer(customerId) });
+  }
+
+  getCustomer(id) {
+    const customer = dummyCustomers.find(cust => {
+      return cust.id === id;
+    })
+    return customer;
   }
 
   handleSubmit(event) {
@@ -69,7 +76,7 @@ class CustomerEdit extends Component {
                     </Form.Group>
                   </Col>
                 </Row>
-                <h3>Delivery Address</h3>
+                <Row><Col><h3>Delivery Address</h3></Col></Row>
                 <Row>
                   <Col sm>
                     <Form.Group controlId="formDeliveryStreet">
@@ -98,7 +105,7 @@ class CustomerEdit extends Component {
                     </Form.Group>
                   </Col>
                 </Row>
-                <h3>Billing Address</h3>
+                <Row><Col><h3>Billing Address</h3></Col></Row>
                 <Row>
                   <Col sm>
                     <Form.Group controlId="formBillingStreet">
@@ -131,7 +138,7 @@ class CustomerEdit extends Component {
               </Form>
             </Container>
           ) :
-          (<span>Customer with ID: {this.state.customerId} does not exist!</span>)
+          (<span>Customer with ID: {this.props.match.params.id} does not exist!</span>)
         }
       </div>
     )

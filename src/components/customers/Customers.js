@@ -1,7 +1,6 @@
-import React from "react";
-import logo from "../../logo.svg";
-import CustomersList from "./list/CustomersList";
-import "./Customers.scss";
+import React from 'react';
+import CustomersList from './list/CustomersList';
+import './Customers.scss';
 
 const Customers = () => {
   return (

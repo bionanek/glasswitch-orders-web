@@ -1,23 +1,31 @@
-import React, { Component } from "react";
-import dummyCustomers from "./CustomersData";
-import DetailElement from "../common/DetailElement";
+import React, { Component } from 'react';
+import dummyCustomers from '../CustomersData';
+import DetailElement from '../../common/DetailElement';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import './CustomerDetail.scss';
 
 class CustomerDetail extends Component {
   constructor(props) {
     super(props);
-    const customerId = parseInt(this.props.match.params.id);
-
-    const customer = dummyCustomers.find(cust => {
-      return cust.id === customerId;
-    })
 
     this.state = {
-      customer: customer,
-      customerId: customerId,
+      customer: null
     }
+  }
+
+  componentDidMount() {
+    const customerId = parseInt(this.props.match.params.id);
+
+    this.setState({ customer: this.getCustomer(customerId) });
+  }
+
+  getCustomer(id) {
+    const customer = dummyCustomers.find(cust => {
+      return cust.id === id;
+    })
+    return customer;
   }
 
   render() {
@@ -28,20 +36,20 @@ class CustomerDetail extends Component {
         {customer ?
           (
             <Container>
-              <h1>{customer.name}</h1>
+              <Row><Col><h1>{customer.name}</h1></Col></Row>
               <Row>
                 <DetailElement header="Email address:" value={customer.email} />
                 <DetailElement header="Phone number:" value={customer.phone} />
                 <DetailElement header="VAT identification number:" value={customer.vatNumber} />
               </Row>
-              <h2>Delivery address</h2>
+              <Row><Col><h2>Delivery address</h2></Col></Row>
               <Row>
                 <DetailElement header="Street:" value={customer.delivery_street} />
                 <DetailElement header="City:" value={customer.delivery_city} />
                 <DetailElement header="Country:" value={customer.delivery_country} />
                 <DetailElement header="Postcode:" value={customer.delivery_postCode} />
               </Row>
-              <h2>Billing address</h2>
+              <Row><Col><h2>Billing address</h2></Col></Row>
               <Row>
                 <DetailElement header="Street:" value={customer.billing_street} />
                 <DetailElement header="City:" value={customer.billing_city} />
@@ -50,7 +58,7 @@ class CustomerDetail extends Component {
               </Row>
             </Container>
           ) :
-          (<span>Customer with ID: {this.state.customerId} does not exist!</span>)
+          (<span>Customer with ID: {this.props.match.params.id} does not exist!</span>)
         }
       </div>
     );
