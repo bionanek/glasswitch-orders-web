@@ -10,7 +10,7 @@ const SimpleListElement = props => {
   const onDeleteButtonClick = e => {
     e.stopPropagation();
     if (props.element.deleteHandler) {
-      props.element.deleteHandler(props.element, props.index);
+      props.element.deleteHandler(props.element.id);
     } else {
       props.defaultOnDeleteClick(props.element, props.index);
     }

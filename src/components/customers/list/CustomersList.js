@@ -49,10 +49,22 @@ class CustomersList extends Component {
         this.props.history.push(`customers/${customer.id}`);
       };
 
-      customerRO.deleteHandler = null;
+      customerRO.deleteHandler = async customerId => {
+        const deleteResult = await this.apiService.deleteCustomer(customerId);
+
+        if (deleteResult !== undefined && deleteResult.status === 200) {
+          this.refreshList();
+        }
+      };
 
       return customerRO;
     }, this);
+  }
+
+  async refreshList() {
+    const customers = await this.getAllCustomers();
+
+    this.setState({ customers: customers });
   }
 }
 
