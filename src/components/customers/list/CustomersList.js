@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import SimpleList from "../../common/simpleList/SimpleList";
 import { withRouter } from "react-router-dom";
-import { getAllCustomers } from "../../../utils/api/customersApiService";
+import CustomersApiService from "../../../utils/api/customersApiService";
 
 class CustomersList extends Component {
   constructor(props) {
     super(props);
+    this.apiService = new CustomersApiService();
+
     this.state = {
       customers: []
     };
@@ -25,10 +27,12 @@ class CustomersList extends Component {
   }
 
   async componentDidMount() {
-    const response = await getAllCustomers();
-    const customersList = this.getCustomersReactiveObjectsList(response.data);
+    this.setState({ customers: await this.getAllCustomers() });
+  }
 
-    this.setState({ customers: customersList });
+  async getAllCustomers() {
+    const response = await this.apiService.getAllCustomers();
+    return this.getCustomersReactiveObjectsList(response.data);
   }
 
   getCustomersReactiveObjectsList(customersList) {
