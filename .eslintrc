@@ -11,7 +11,7 @@
 		"jest": true
 	},
 	"rules": {
-		"max-len": ["error", { "code": 100 }],
+		"max-len": ["error", { "code": 200 }],
 		"react/jsx-indent": ["on", "tab"],
 		"prefer-promise-reject-errors": ["off"],
 		"react/jsx-filename-extension": ["off"],
