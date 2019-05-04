@@ -4,6 +4,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt, faEdit } from "@fortawesome/free-solid-svg-icons";
 
 const SimpleListElement = props => {
+  const isDeletable =
+    props.isDeletable === undefined ? true : props.isDeletable;
+
   const onDeleteButtonClick = e => {
     e.stopPropagation();
     if (props.element.deleteHandler) {
@@ -31,7 +34,7 @@ const SimpleListElement = props => {
             <FontAwesomeIcon icon={faEdit} />
           </span>
         )}
-        {props.isDeletable && props.element.deletable && (
+        {isDeletable && (
           <span className="delete-icon" onClick={onDeleteButtonClick}>
             <FontAwesomeIcon icon={faTrashAlt} />
           </span>

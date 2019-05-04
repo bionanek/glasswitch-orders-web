@@ -11,6 +11,19 @@ class CustomersList extends Component {
     };
   }
 
+  render() {
+    return (
+      <div className="customers-list-wrapper">
+        <SimpleList
+          elements={this.state.customers}
+          deletable={true}
+          editable={true}
+          clickable={true}
+        />
+      </div>
+    );
+  }
+
   async componentDidMount() {
     const response = await getAllCustomers();
     const customersList = this.getCustomersReactiveObjectsList(response.data);
@@ -36,19 +49,6 @@ class CustomersList extends Component {
 
       return customerRO;
     }, this);
-  }
-
-  render() {
-    return (
-      <div className="customers-list-wrapper">
-        <SimpleList
-          elements={this.state.customers}
-          deletable={true}
-          editable={true}
-          clickable={true}
-        />
-      </div>
-    );
   }
 }
 
