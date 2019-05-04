@@ -5,18 +5,17 @@ import SimpleListElement from "./SimpleListElement";
 class SimpleList extends React.Component {
   constructor(props) {
     super(props);
-    this.elements = this.getListElementsHTML(
-      this.props.elements,
-      this.props.deletable,
-      this.props.editable,
-      this.props.clickable
-    );
-
-    this.state = {};
+    this.state = { elements: [] };
   }
 
-  componentDidMount() {
-    this.setState({ elements: this.elements });
+  componentWillReceiveProps(nextProps) {
+    const elements = this.getListElementsHTML(
+      nextProps.elements,
+      nextProps.deletable,
+      nextProps.editable,
+      nextProps.clickable
+    );
+    this.setState({ elements: elements });
   }
 
   defaultOnDeleteClick = (el, index) => {
@@ -48,9 +47,10 @@ class SimpleList extends React.Component {
   }
 
   render() {
+    const elements = this.state.elements;
     return (
       <div className="list-wrapper">
-        <ul className="list">{this.state.elements}</ul>
+        <ul className="list">{elements}</ul>
       </div>
     );
   }

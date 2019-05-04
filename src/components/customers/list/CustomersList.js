@@ -1,40 +1,48 @@
 import React, { Component } from "react";
-import dummyCustomers from "../CustomersData";
 import SimpleList from "../../common/simpleList/SimpleList";
 import { withRouter } from "react-router-dom";
 import { getAllCustomers } from "../../../utils/api/customersApiService";
 
 class CustomersList extends Component {
-  customersListObjects = dummyCustomers.map(customer => {
-    return {
-      title: customer.name,
-      subTitle: customer.email,
-      deletable: customer.deletable,
-      editHandler: e => {
+  constructor(props) {
+    super(props);
+    this.state = {
+      customers: []
+    };
+  }
+
+  async componentDidMount() {
+    const response = await getAllCustomers();
+    const customersList = this.getCustomersReactiveObjectsList(response.data);
+
+    this.setState({ customers: customersList });
+  }
+
+  getCustomersReactiveObjectsList(customersList) {
+    return customersList.map(customer => {
+      let customerRO = { ...customer };
+
+      customerRO.editHandler = e => {
         e.stopPropagation();
         const editUrl = `customers/${customer.id}/edit`;
         this.props.history.push(editUrl);
-      },
-      clickHandler: () => {
-        this.props.history.push(`customers/${customer.id}`);
-      },
-      deleteHandler: null
-    };
-  }, this);
+      };
 
-  async foo() {
-    return await getAllCustomers();
+      customerRO.clickHandler = () => {
+        this.props.history.push(`customers/${customer.id}`);
+      };
+
+      customerRO.deleteHandler = null;
+
+      return customerRO;
+    }, this);
   }
 
   render() {
-    this.foo().then(result => {
-      console.log(result);
-    });
-
     return (
       <div className="customers-list-wrapper">
         <SimpleList
-          elements={this.customersListObjects}
+          elements={this.state.customers}
           deletable={true}
           editable={true}
           clickable={true}

@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt, faEdit } from "@fortawesome/free-solid-svg-icons";
 
 const SimpleListElement = props => {
-  const onDeleteButtonClick = (e) => {
+  const onDeleteButtonClick = e => {
     e.stopPropagation();
     if (props.element.deleteHandler) {
       props.element.deleteHandler(props.element, props.index);
@@ -21,8 +21,10 @@ const SimpleListElement = props => {
       }
       onClick={props.element.clickHandler}
     >
-      <span className="title">{props.element.title.toString()}</span>
-      <span className="sub-title">{props.element.subTitle.toString()}</span>
+      <span className="title">{props.element.name.toString()}</span>
+      <span className="sub-title">
+        {props.element.delivery_country.toString()}
+      </span>
       <span className="buttons-wrapper">
         {props.isEditable && (
           <span className="edit-icon" onClick={props.element.editHandler}>
