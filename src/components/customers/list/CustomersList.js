@@ -6,10 +6,9 @@ import CustomersApiService from '../../../utils/api/customersApiService'
 class CustomersList extends Component {
 	constructor(props) {
 		super(props)
-		this.apiService = new CustomersApiService()
 
 		this.state = {
-			customers: []
+			customers: [],
 		}
 	}
 
@@ -18,7 +17,7 @@ class CustomersList extends Component {
 	}
 
 	async getAllCustomers() {
-		const response = await this.apiService.getAllCustomers()
+		const response = await CustomersApiService.getAllCustomers()
 		return this.getCustomersReactiveObjectsList(response.data)
 	}
 
@@ -37,7 +36,7 @@ class CustomersList extends Component {
 			}
 
 			customerRO.deleteHandler = async customerId => {
-				const deleteResult = await this.apiService.deleteCustomer(customerId)
+				const deleteResult = await CustomersApiService.deleteCustomer(customerId)
 
 				if (deleteResult !== undefined && deleteResult.status === 200) {
 					this.refreshList()
@@ -56,9 +55,9 @@ class CustomersList extends Component {
 
 	render() {
 		return (
-  <div className="customers-list-wrapper">
-    <SimpleList elements={this.state.customers} deletable editable clickable />
-  </div>
+			<div className="customers-list-wrapper">
+				<SimpleList elements={this.state.customers} deletable editable clickable />
+			</div>
 		)
 	}
 }
