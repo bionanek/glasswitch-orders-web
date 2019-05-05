@@ -16,27 +16,27 @@ const SimpleListElement = props => {
 	}
 
 	return (
-  <li
-	className={`list-element ${
+		<li
+			className={`list-element ${
 				props.isClickable && props.element.clickHandler ? 'clickable' : ''
 			}`}
-	onClick={props.element.clickHandler}
+			onClick={props.element.clickHandler}
 		>
-    <span className="title">{props.element.name.toString()}</span>
-    <span className="sub-title">{props.element.delivery_country.toString()}</span>
-    <span className="buttons-wrapper">
-      {props.isEditable && (
-      <span className="edit-icon" onClick={props.element.editHandler} role="button">
-        <FontAwesomeIcon icon={faEdit} />
-      </span>
+			<span className="title">{props.element.name.toString()}</span>
+			<span className="sub-title">{props.element.delivery_country.toString()}</span>
+			<span className="buttons-wrapper">
+				{props.isEditable && (
+					<span className="edit-icon" onClick={props.element.editHandler} role="button">
+						<FontAwesomeIcon icon={faEdit} />
+					</span>
 				)}
-      {isDeletable && (
-      <span className="delete-icon" onClick={onDeleteButtonClick} role="button">
-        <FontAwesomeIcon icon={faTrashAlt} />
-      </span>
+				{isDeletable && (
+					<span className="delete-icon" onClick={onDeleteButtonClick} role="button">
+						<FontAwesomeIcon icon={faTrashAlt} />
+					</span>
 				)}
-    </span>
-  </li>
+			</span>
+		</li>
 	)
 }
 
