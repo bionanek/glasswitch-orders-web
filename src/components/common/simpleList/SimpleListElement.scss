@@ -1,55 +1,55 @@
 li {
-  &.clickable:hover {
-    cursor: pointer;
-  }
+	&.clickable:hover {
+		cursor: pointer;
+	}
 
-  &.list-element {
-    position: relative;
-    background-color: #ccc;
-    border-bottom: 1px solid #ccc;
-    padding: 10px;
-    margin: 5px;
-    text-align: left;
+	&.list-element {
+		position: relative;
+		background-color: #ccc;
+		border-bottom: 1px solid #ccc;
+		padding: 10px;
+		margin: 5px;
+		text-align: left;
 
-    &:hover {
-      background-color: #e7e7e7;
-    }
-    span {
-      &.buttons-wrapper {
-        position: absolute;
-        right: 10px;
+		&:hover {
+			background-color: #e7e7e7;
+		}
+		span {
+			&.buttons-wrapper {
+				position: absolute;
+				right: 10px;
 
-        span {
-          padding-left: 15px;
-          &:hover {
-            cursor: pointer;
-          }
+				span {
+					padding-left: 15px;
+					&:hover {
+						cursor: pointer;
+					}
 
-          svg:hover {
-            &.fa-edit {
-              color: lightgreen;
-            }
+					svg:hover {
+						&.fa-edit {
+							color: lightgreen;
+						}
 
-            &.fa-trash-alt {
-              color: red;
-            }
-          }
-        }
-      }
+						&.fa-trash-alt {
+							color: red;
+						}
+					}
+				}
+			}
 
-      margin-top: 2px;
-    }
+			margin-top: 2px;
+		}
 
-    .title {
-      position: absolute;
-      left: 10px;
-    }
+		.title {
+			position: absolute;
+			left: 10px;
+		}
 
-    .sub-title {
-      position: absolute;
-      left: 200px;
-      font-size: 13px;
-      font-style: italic;
-    }
-  }
+		.sub-title {
+			position: absolute;
+			left: 200px;
+			font-size: 13px;
+			font-style: italic;
+		}
+	}
 }

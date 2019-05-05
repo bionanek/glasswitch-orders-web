@@ -13,7 +13,7 @@ class SimpleList extends React.Component {
 			nextProps.elements,
 			nextProps.deletable,
 			nextProps.editable,
-			nextProps.clickable
+			nextProps.clickable,
 		)
 		this.setState({ elements })
 	}
@@ -21,15 +21,15 @@ class SimpleList extends React.Component {
 	getListElementsHTML(elements, isListDeletable, isListEditable, isListClickable) {
 		return elements.map((el, index) => {
 			return (
-  <SimpleListElement
-	key={el.id ? el.id : index}
-	index={index}
-	isClickable={isListClickable}
-	isEditable={isListEditable}
-	isDeletable={isListDeletable}
-	element={el}
-	defaultOnDeleteClick={(element, id) => this.defaultOnDeleteClick(element, id)}
-  />
+				<SimpleListElement
+					key={el.id ? el.id : index}
+					index={index}
+					isClickable={isListClickable}
+					isEditable={isListEditable}
+					isDeletable={isListDeletable}
+					element={el}
+					defaultOnDeleteClick={(element, id) => this.defaultOnDeleteClick(element, id)}
+				/>
 			)
 		})
 	}
@@ -42,9 +42,9 @@ class SimpleList extends React.Component {
 	render() {
 		const { elements } = this.state
 		return (
-  <div className="list-wrapper">
-    <ul className="list">{elements}</ul>
-  </div>
+			<div className="list-wrapper">
+				<ul className="list">{elements}</ul>
+			</div>
 		)
 	}
 }

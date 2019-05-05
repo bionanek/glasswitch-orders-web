@@ -4,17 +4,17 @@ import './Navigation.scss'
 
 const Navigation = () => {
 	return (
-  <ul className="menuHeader">
-    <li>
-      <NavLink to="/">Home</NavLink>
-    </li>
-    <li>
-      <NavLink to="/customers">Customers</NavLink>
-    </li>
-    <li>
-      <NavLink to="/about">About</NavLink>
-    </li>
-  </ul>
+		<ul className="menuHeader">
+			<li>
+				<NavLink to="/">Home</NavLink>
+			</li>
+			<li>
+				<NavLink to="/customers">Customers</NavLink>
+			</li>
+			<li>
+				<NavLink to="/about">About</NavLink>
+			</li>
+		</ul>
 	)
 }
 
