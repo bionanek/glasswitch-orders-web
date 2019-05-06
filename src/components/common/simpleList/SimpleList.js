@@ -1,59 +1,52 @@
-import React from "react";
-import "./SimpleList.scss";
-import SimpleListElement from "./SimpleListElement";
+import React from 'react'
+import './SimpleList.scss'
+import SimpleListElement from './SimpleListElement'
 
 class SimpleList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.elements = this.getListElementsHTML(
-      this.props.elements,
-      this.props.deletable,
-      this.props.editable,
-      this.props.clickable
-    );
+	constructor(props) {
+		super(props)
+		this.state = { elements: [] }
+	}
 
-    this.state = {};
-  }
+	componentWillReceiveProps(nextProps) {
+		const elements = this.getListElementsHTML(
+			nextProps.elements,
+			nextProps.deletable,
+			nextProps.editable,
+			nextProps.clickable,
+		)
+		this.setState({ elements })
+	}
 
-  componentDidMount() {
-    this.setState({ elements: this.elements });
-  }
+	getListElementsHTML(elements, isListDeletable, isListEditable, isListClickable) {
+		return elements.map((el, index) => {
+			return (
+				<SimpleListElement
+					key={el.id ? el.id : index}
+					index={index}
+					isClickable={isListClickable}
+					isEditable={isListEditable}
+					isDeletable={isListDeletable}
+					element={el}
+					defaultOnDeleteClick={(element, id) => this.defaultOnDeleteClick(element, id)}
+				/>
+			)
+		})
+	}
 
-  defaultOnDeleteClick = (el, index) => {
-    this.elements = this.elements.filter(element => +element.key !== index);
-    this.setState({ elements: this.elements });
-  };
+	defaultOnDeleteClick = (_el, index) => {
+		this.elements = this.elements.filter(element => +element.key !== index)
+		this.setState({ elements: this.elements })
+	}
 
-  getListElementsHTML(
-    elements,
-    isListDeletable,
-    isListEditable,
-    isListClickable
-  ) {
-    return elements.map((el, index) => {
-      return (
-        <SimpleListElement
-          key={index}
-          index={index}
-          isClickable={isListClickable}
-          isEditable={isListEditable}
-          isDeletable={isListDeletable}
-          element={el}
-          defaultOnDeleteClick={(element, id) =>
-            this.defaultOnDeleteClick(element, id)
-          }
-        />
-      );
-    });
-  }
-
-  render() {
-    return (
-      <div className="list-wrapper">
-        <ul className="list">{this.state.elements}</ul>
-      </div>
-    );
-  }
+	render() {
+		const { elements } = this.state
+		return (
+			<div className="list-wrapper">
+				<ul className="list">{elements}</ul>
+			</div>
+		)
+	}
 }
 
-export default SimpleList;
+export default SimpleList
