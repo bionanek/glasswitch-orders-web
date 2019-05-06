@@ -1,35 +1,62 @@
 import React, { Component } from 'react'
-import testProducts from '../ProductsData'
-import SimpleList from '../../common/simpleList/SimpleList'
 import { withRouter } from 'react-router-dom'
+import SimpleList from '../../common/simpleList/SimpleList'
+import ProductsApiService from '../../../utils/api/productsApiService'
 
 class ProductsList extends Component {
-    productsListObjects = testProducts.map(product => {
-        return {
-            title: product.name,
-            subTitle: product.category,
-            deletable: product.deletable,
-            editHandler: (e) => {
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            products: []
+        }
+    }
+
+    async componentDidMount() {
+        this.setState({ products: await this.getAllProducts() })
+    }
+
+    async getAllProducts() {
+        const response = await ProductsApiService.getAllProducts()
+        return this.getProductsReactiveObjectsList(response.data)
+    }
+
+    getProductsReactiveObjectsList(productsList) {
+        return productsList.map(product => {
+            const productRO = { ...product }
+
+            productRO.editHandler = e => {
                 e.stopPropagation()
                 const editUrl = `products/${product.id}/edit`
                 this.props.history.push(editUrl)
-            },
-            clickHandler: () => {
+            }
+
+            productRO.clickHandler = () => {
                 this.props.history.push(`products/${product.id}`)
-            },
-            deleteHandler: null
-        }
-    }, this)
+            }
+
+            productRO.deleteHandler = async productId => {
+                const deleteResult = await ProductsApiService.deleteProduct(productId)
+
+                if (deleteResult !== undefined && deleteResult.status === 200) {
+                    this.refreshList()
+                }
+            }
+
+            return productRO
+        }, this)
+    }
+
+    async refreshList() {
+        const products = await this.getAllProducts()
+
+        this.setState({ products })
+    }
 
     render() {
         return (
-            <div className='products-list-wrapper'>
-                <SimpleList
-                    elements={this.productsListObjects}
-                    deletable={true}
-                    editable={true}
-                    clickable={true}
-                />
+            <div className="products-list-wrapper">
+                <SimpleList elements={this.state.products} deletable editable clickable />
             </div>
         )
     }
