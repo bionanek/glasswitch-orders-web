@@ -45,7 +45,7 @@ export default class ProductDetail extends Component {
 
 						<Row>
 							<Col>
-								<h2>Parameters</h2>
+								<h2>Parameters (cm)</h2>
 							</Col>
 						</Row>
 
