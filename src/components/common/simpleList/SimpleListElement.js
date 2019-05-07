@@ -1,13 +1,27 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './SimpleListElement.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrashAlt, faEdit } from '@fortawesome/free-solid-svg-icons'
+import ConfirmationModal from '../modals/confirmationModal/ConfirmationModal'
 
 const SimpleListElement = props => {
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 	const isDeletable = props.isDeletable === undefined ? true : props.isDeletable
+
+	const openDeleteModal = () => {
+		setIsDeleteModalOpen(true)
+	}
+
+	const closeDeleteModal = () => {
+		setIsDeleteModalOpen(false)
+	}
 
 	const onDeleteButtonClick = e => {
 		e.stopPropagation()
+		openDeleteModal()
+	}
+
+	const onDeleteConfirm = () => {
 		if (props.element.deleteHandler) {
 			props.element.deleteHandler(props.element.id)
 		} else {
@@ -16,6 +30,7 @@ const SimpleListElement = props => {
 	}
 
 	return (
+		<>
 		<li
 			className={`list-element ${
 				props.isClickable && props.element.clickHandler ? 'clickable' : ''
