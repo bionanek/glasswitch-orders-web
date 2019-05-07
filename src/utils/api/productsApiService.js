@@ -16,6 +16,15 @@ export default class ProductsApiService {
 		}
 	}
 
+	static async getProductById(id) {
+		try {
+			const response = await Axios.get(apiUrl + id, apiHeader)
+			return response
+		} catch (ex) {
+			throw Error(ex.message)
+		}
+	}
+
 	static async deleteProduct(id) {
 		try {
 			const response = await Axios.delete(apiUrl + id.toString(), apiHeader)
