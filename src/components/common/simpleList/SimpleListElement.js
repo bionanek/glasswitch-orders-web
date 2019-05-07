@@ -31,33 +31,27 @@ const SimpleListElement = props => {
 
 	return (
 		<>
-			<li
-				className={`list-element ${
-					props.isClickable && props.element.clickHandler ? 'clickable' : ''
-				}`}
-				onClick={props.element.clickHandler}
-			>
-				<span className="title">{props.element.name.toString()}</span>
-				<span className="sub-title">{props.element.id.toString()}</span>
-				<span className="buttons-wrapper">
-					{props.isEditable && (
-						<span className="edit-icon" onClick={props.element.editHandler} role="button">
-							<FontAwesomeIcon icon={faEdit} />
-						</span>
-					)}
-					{isDeletable && (
-						<span className="delete-icon" onClick={onDeleteButtonClick} role="button">
-							<FontAwesomeIcon icon={faTrashAlt} />
-						</span>
-					)}
-				</span>
-			</li>
-			<ConfirmationModal
-				isOpen={isDeleteModalOpen}
-				onModalClose={closeDeleteModal}
-				onConfirm={onDeleteConfirm}
-			/>
-		</>
+		<li
+			className={`list-element ${
+				props.isClickable && props.element.clickHandler ? 'clickable' : ''
+			}`}
+			onClick={props.element.clickHandler}
+		>
+			<span className="title">{props.title}</span>
+			<span className="sub-title">{props.subtitle}</span>
+			<span className="buttons-wrapper">
+				{props.isEditable && (
+					<span className="edit-icon" onClick={props.element.editHandler} role="button">
+						<FontAwesomeIcon icon={faEdit} />
+					</span>
+				)}
+				{isDeletable && (
+					<span className="delete-icon" onClick={onDeleteButtonClick} role="button">
+						<FontAwesomeIcon icon={faTrashAlt} />
+					</span>
+				)}
+			</span>
+		</li>
 	)
 }
 

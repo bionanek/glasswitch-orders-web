@@ -56,7 +56,14 @@ class CustomersList extends Component {
 	render() {
 		return (
 			<div className="customers-list-wrapper">
-				<SimpleList elements={this.state.customers} deletable editable clickable />
+				<SimpleList
+					elements={this.state.customers}
+					titleFieldName="name"
+					subtitleFieldName="delivery_country"
+					deletable
+					editable
+					clickable
+				/>
 			</div>
 		)
 	}

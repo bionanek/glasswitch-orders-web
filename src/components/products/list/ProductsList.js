@@ -56,7 +56,14 @@ class ProductsList extends Component {
 	render() {
 		return (
 			<div className="products-list-wrapper">
-				<SimpleList elements={this.state.products} deletable editable clickable />
+				<SimpleList
+					elements={this.state.products}
+					titleFieldName="name"
+					subtitleFieldName="description"
+					deletable
+					editable
+					clickable
+				/>
 			</div>
 		)
 	}
