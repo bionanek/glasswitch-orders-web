@@ -12,6 +12,10 @@ export default function ConfirmationModal(props) {
 		props.onModalClose()
 	}
 
+	const handleConfirm = () => {
+		props.onConfirm()
+	}
+
 	return (
 		<div>
 			<Modal show={props.isOpen} onHide={() => handleModalClose()}>
@@ -23,8 +27,8 @@ export default function ConfirmationModal(props) {
 					<Button variant="secondary" onClick={() => handleModalClose()}>
 						Close
 					</Button>
-					<Button variant="primary" onClick={() => handleModalClose()}>
-						Save Changes
+					<Button variant="danger" onClick={() => handleConfirm()}>
+						Confirm
 					</Button>
 				</Modal.Footer>
 			</Modal>

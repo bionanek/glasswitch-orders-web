@@ -8,19 +8,25 @@ const SimpleListElement = props => {
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 	const isDeletable = props.isDeletable === undefined ? true : props.isDeletable
 
-	const onDeleteButtonClick = e => {
-		e.stopPropagation()
-		setIsDeleteModalOpen(!isDeleteModalOpen)
-		// return
-		// if (props.element.deleteHandler) {
-		// 	props.element.deleteHandler(props.element.id)
-		// } else {
-		// 	props.defaultOnDeleteClick(props.element, props.index)
-		// }
+	const openDeleteModal = () => {
+		setIsDeleteModalOpen(true)
 	}
 
 	const closeDeleteModal = () => {
 		setIsDeleteModalOpen(false)
+	}
+
+	const onDeleteButtonClick = e => {
+		e.stopPropagation()
+		openDeleteModal()
+	}
+
+	const onDeleteConfirm = () => {
+		if (props.element.deleteHandler) {
+			props.element.deleteHandler(props.element.id)
+		} else {
+			props.defaultOnDeleteClick(props.element, props.index)
+		}
 	}
 
 	return (
@@ -46,7 +52,11 @@ const SimpleListElement = props => {
 					)}
 				</span>
 			</li>
-			<ConfirmationModal isOpen={isDeleteModalOpen} onModalClose={closeDeleteModal} />
+			<ConfirmationModal
+				isOpen={isDeleteModalOpen}
+				onModalClose={closeDeleteModal}
+				onConfirm={onDeleteConfirm}
+			/>
 		</>
 	)
 }
