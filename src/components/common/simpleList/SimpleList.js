@@ -29,6 +29,8 @@ class SimpleList extends React.Component {
 					isDeletable={isListDeletable}
 					element={el}
 					defaultOnDeleteClick={(element, id) => this.defaultOnDeleteClick(element, id)}
+					title={el[this.props.titleFieldName]}
+					subtitle={el[this.props.subtitleFieldName]}
 				/>
 			)
 		})

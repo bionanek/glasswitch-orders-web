@@ -22,8 +22,8 @@ const SimpleListElement = props => {
 			}`}
 			onClick={props.element.clickHandler}
 		>
-			<span className="title">{props.element.name.toString()}</span>
-			<span className="sub-title">{props.element.id.toString()}</span>
+			<span className="title">{props.title}</span>
+			<span className="sub-title">{props.subtitle}</span>
 			<span className="buttons-wrapper">
 				{props.isEditable && (
 					<span className="edit-icon" onClick={props.element.editHandler} role="button">
