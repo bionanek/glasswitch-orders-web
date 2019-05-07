@@ -29,7 +29,11 @@ export default function ProductDetail(props) {
 					</Row>
 
 					<Row>
+						{/* TODO: put image component */}
 						<DetailElement header="Description:" value={product.description} />
+					</Row>
+
+					<Row>
 						<DetailElement header="Type:" value={product.type} />
 						<DetailElement header="Category:" value={product.category} />
 					</Row>
