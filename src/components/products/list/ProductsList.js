@@ -4,62 +4,62 @@ import SimpleList from '../../common/simpleList/SimpleList'
 import ProductsApiService from '../../../utils/api/productsApiService'
 
 class ProductsList extends Component {
-    constructor(props) {
-        super(props)
+	constructor(props) {
+		super(props)
 
-        this.state = {
-            products: []
-        }
-    }
+		this.state = {
+			products: [],
+		}
+	}
 
-    async componentDidMount() {
-        this.setState({ products: await this.getAllProducts() })
-    }
+	async componentDidMount() {
+		this.setState({ products: await this.getAllProducts() })
+	}
 
-    async getAllProducts() {
-        const response = await ProductsApiService.getAllProducts()
-        return this.getProductsReactiveObjectsList(response.data)
-    }
+	async getAllProducts() {
+		const response = await ProductsApiService.getAllProducts()
+		return this.getProductsReactiveObjectsList(response.data)
+	}
 
-    getProductsReactiveObjectsList(productsList) {
-        return productsList.map(product => {
-            const productRO = { ...product }
+	getProductsReactiveObjectsList(productsList) {
+		return productsList.map(product => {
+			const productRO = { ...product }
 
-            productRO.editHandler = e => {
-                e.stopPropagation()
-                const editUrl = `products/${product.id}/edit`
-                this.props.history.push(editUrl)
-            }
+			productRO.editHandler = e => {
+				e.stopPropagation()
+				const editUrl = `products/${product.id}/edit`
+				this.props.history.push(editUrl)
+			}
 
-            productRO.clickHandler = () => {
-                this.props.history.push(`products/${product.id}`)
-            }
+			productRO.clickHandler = () => {
+				this.props.history.push(`products/${product.id}`)
+			}
 
-            productRO.deleteHandler = async productId => {
-                const deleteResult = await ProductsApiService.deleteProduct(productId)
+			productRO.deleteHandler = async productId => {
+				const deleteResult = await ProductsApiService.deleteProduct(productId)
 
-                if (deleteResult !== undefined && deleteResult.status === 200) {
-                    this.refreshList()
-                }
-            }
+				if (deleteResult !== undefined && deleteResult.status === 200) {
+					this.refreshList()
+				}
+			}
 
-            return productRO
-        }, this)
-    }
+			return productRO
+		}, this)
+	}
 
-    async refreshList() {
-        const products = await this.getAllProducts()
+	async refreshList() {
+		const products = await this.getAllProducts()
 
-        this.setState({ products })
-    }
+		this.setState({ products })
+	}
 
-    render() {
-        return (
-            <div className="products-list-wrapper">
-                <SimpleList elements={this.state.products} deletable editable clickable />
-            </div>
-        )
-    }
+	render() {
+		return (
+			<div className="products-list-wrapper">
+				<SimpleList elements={this.state.products} deletable editable clickable />
+			</div>
+		)
+	}
 }
 
 export default withRouter(ProductsList)
