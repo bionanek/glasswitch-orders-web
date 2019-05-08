@@ -3,7 +3,8 @@ import { withRouter } from 'react-router-dom'
 import Button from 'react-bootstrap/Button'
 import SimpleList from '../../common/simpleList/SimpleList'
 import ProductsApiService from '../../../utils/api/productsApiService'
-import ProductCreateModal from '../components/modalCreate/ModalCreate'
+import ProductCreateModal from '../components/modalCreate/ModalCreateProduct'
+import '../components/modalCreate/ButtonCreateProduct.scss'
 
 class ProductsList extends Component {
 	constructor(props) {
@@ -72,7 +73,11 @@ class ProductsList extends Component {
 		return (
 			<>
 				<div>
-					<Button variant="danger" onClick={this.openProductModal}>
+					<Button
+						className="button-create-product"
+						variant="danger"
+						onClick={this.openProductModal}
+					>
 						Create a Product
 					</Button>
 					<ProductCreateModal
