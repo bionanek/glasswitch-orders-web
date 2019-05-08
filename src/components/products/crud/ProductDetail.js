@@ -30,10 +30,7 @@ export default function ProductDetail(props) {
 					</Row>
 
 					<Row>
-						{/* eslint-disable-next-line react/button-has-type */}
-						<button>
-							<ImageElement source={product.image} errorTxt="imageError" />
-						</button>
+						<ImageElement source={product.image} errorTxt="imageError" />
 						<Col />
 						<DetailElement header="Description:" value={product.description} />
 					</Row>
