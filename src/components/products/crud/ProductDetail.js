@@ -4,6 +4,7 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import DetailElement from '../../common/DetailElement'
 import ProductsApiService from '../../../utils/api/productsApiService'
+import ImageElement from '../../common/ImageElement'
 import './ProductDetail.scss'
 
 export default function ProductDetail(props) {
@@ -29,12 +30,14 @@ export default function ProductDetail(props) {
 					</Row>
 
 					<Row>
-						{/* TODO: put image component */}
+						<ImageElement source={product.image} errorTxt="imageError" />
+						<Col />
 						<DetailElement header="Description:" value={product.description} />
 					</Row>
 
 					<Row>
 						<DetailElement header="Type:" value={product.type} />
+						<Col />
 						<DetailElement header="Category:" value={product.category} />
 					</Row>
 
