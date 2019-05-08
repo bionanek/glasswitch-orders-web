@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 import SimpleList from '../../common/simpleList/SimpleList'
 import ProductsApiService from '../../../utils/api/productsApiService'
+import ProductCreateButton from '../../common/buttons/ProductCreateButton'
 
 class ProductsList extends Component {
 	constructor(props) {
@@ -55,16 +56,21 @@ class ProductsList extends Component {
 
 	render() {
 		return (
-			<div className="products-list-wrapper">
-				<SimpleList
-					elements={this.state.products}
-					titleFieldName="name"
-					subtitleFieldName="description"
-					deletable
-					editable
-					clickable
-				/>
-			</div>
+			<>
+				<div>
+					<ProductCreateButton />
+				</div>
+				<div className="products-list-wrapper">
+					<SimpleList
+						elements={this.state.products}
+						titleFieldName="name"
+						subtitleFieldName="description"
+						deletable
+						editable
+						clickable
+					/>
+				</div>
+			</>
 		)
 	}
 }
