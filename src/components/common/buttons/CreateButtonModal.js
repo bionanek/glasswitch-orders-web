@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import Button from 'react-bootstrap/Button'
-import ProductCreateModal from '../modals/productCreate/ProductCreateModal'
+import ProductCreateModal from '../modals/createModal/CreateModal'
 
-export default function ProductCreateButton() {
+export default function ProductCreateButton(props) {
 	const [isProductCreateModalOpen, setIsProductCreateModalOpen] = useState(false)
 
 	const openImageModal = () => {
@@ -18,7 +18,11 @@ export default function ProductCreateButton() {
 			<Button variant="danger" onClick={openImageModal}>
 				Create a Product
 			</Button>
-			<ProductCreateModal isOpen={isProductCreateModalOpen} onModalClose={closeImageModal} />
+			<ProductCreateModal
+				isOpen={isProductCreateModalOpen}
+				onModalClose={closeImageModal}
+				onRefreshList={props.onRefresh}
+			/>
 		</>
 	)
 }

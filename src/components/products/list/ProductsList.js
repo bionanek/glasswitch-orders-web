@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 import SimpleList from '../../common/simpleList/SimpleList'
 import ProductsApiService from '../../../utils/api/productsApiService'
-import ProductCreateButton from '../../common/buttons/ProductCreateButton'
+import ProductCreateButton from '../../common/buttons/CreateButtonModal'
 
 class ProductsList extends Component {
 	constructor(props) {
@@ -11,6 +11,8 @@ class ProductsList extends Component {
 		this.state = {
 			products: [],
 		}
+
+		this.refreshList = this.refreshList.bind(this)
 	}
 
 	async componentDidMount() {
@@ -58,7 +60,7 @@ class ProductsList extends Component {
 		return (
 			<>
 				<div>
-					<ProductCreateButton />
+					<ProductCreateButton onRefresh={this.refreshList} />
 				</div>
 				<div className="products-list-wrapper">
 					<SimpleList

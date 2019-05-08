@@ -39,13 +39,11 @@ export default function ProductCreateModal(props) {
 		}
 	}
 
-	const handleConfirm = () => {
-		const postData = async () => {
-			await ProductsApiService.postProduct(product)
-		}
+	const handleConfirm = async () => {
+		await ProductsApiService.postProduct(product)
 
-		postData()
 		props.onModalClose()
+		props.onRefreshList()
 	}
 
 	return (
