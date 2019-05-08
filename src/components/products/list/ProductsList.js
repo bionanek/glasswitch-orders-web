@@ -1,10 +1,13 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 import Button from 'react-bootstrap/Button'
+import Col from 'react-bootstrap/Col'
+import Row from 'react-bootstrap/Row'
+
 import SimpleList from '../../common/simpleList/SimpleList'
 import ProductsApiService from '../../../utils/api/productsApiService'
 import ProductCreateModal from '../components/modalCreate/ModalCreateProduct'
-import '../components/modalCreate/ButtonCreateProduct.scss'
+import './ProductsList.scss'
 
 class ProductsList extends Component {
 	constructor(props) {
@@ -72,30 +75,36 @@ class ProductsList extends Component {
 	render() {
 		return (
 			<>
-				<div>
-					<Button
-						className="button-create-product"
-						variant="danger"
-						onClick={this.openProductModal}
-					>
-						Create a Product
-					</Button>
-					<ProductCreateModal
-						isOpen={this.state.isProductCreateModalOpen}
-						onModalClose={this.closeProductModal}
-						onRefreshList={this.refreshList}
-					/>
-				</div>
-				<div className="products-list-wrapper">
-					<SimpleList
-						elements={this.state.products}
-						titleFieldName="name"
-						subtitleFieldName="description"
-						deletable
-						editable
-						clickable
-					/>
-				</div>
+				<Row>
+					<Col>
+						<Button
+							className="button-create-product float-right"
+							variant="primary"
+							onClick={this.openProductModal}
+						>
+							Create a Product
+						</Button>
+					</Col>
+				</Row>
+				<Row>
+					<Col>
+						<div className="products-list-wrapper">
+							<SimpleList
+								elements={this.state.products}
+								titleFieldName="name"
+								subtitleFieldName="description"
+								deletable
+								editable
+								clickable
+							/>
+						</div>
+					</Col>
+				</Row>
+				<ProductCreateModal
+					isOpen={this.state.isProductCreateModalOpen}
+					onModalClose={this.closeProductModal}
+					onRefreshList={this.refreshList}
+				/>
 			</>
 		)
 	}
