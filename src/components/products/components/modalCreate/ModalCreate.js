@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
+import Button from 'react-bootstrap/Button'
 import ProductsApiService from '../../../../utils/api/productsApiService'
 
 export default function ProductCreateModal(props) {
@@ -14,16 +14,18 @@ export default function ProductCreateModal(props) {
 		props.onModalClose()
 	}
 
-	const handleAddCurrency = (product, price, event) => {
-		if (event.target.name === 'pln' || event.target.name === 'eur' || event.target.name === 'usd') {
+	const handleAddCurrency = (currentProduct, price, event) => {
+		const editableProduct = currentProduct
+
+		if (event.target.id === 'formPrice') {
 			if (product[price] === undefined) {
-				product[price] = {
+				editableProduct[price] = {
 					[event.target.name]: event.target.value,
 				}
 			} else {
-				product[price][event.target.name] = event.target.value
+				editableProduct[price][event.target.name] = event.target.value
 			}
-			setProduct(product)
+			return editableProduct
 		}
 	}
 
@@ -31,12 +33,12 @@ export default function ProductCreateModal(props) {
 		const currentProduct = { ...product }
 		const price = 'price'
 
-		if (event.target.name === 'pln' || event.target.name === 'eur' || event.target.name === 'usd') {
+		if (event.target.id === 'formPrice') {
 			handleAddCurrency(currentProduct, price, event)
 		} else {
 			currentProduct[event.target.name] = event.target.value
-			setProduct(currentProduct)
 		}
+		setProduct(currentProduct)
 	}
 
 	const handleConfirm = async () => {
@@ -53,7 +55,7 @@ export default function ProductCreateModal(props) {
 					<Modal.Title>{title}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Form.Group controlId="fromName">
+					<Form.Group controlId="formName">
 						<Form.Control type="text" placeholder="Name" name="name" onChange={handleChange} />
 					</Form.Group>
 

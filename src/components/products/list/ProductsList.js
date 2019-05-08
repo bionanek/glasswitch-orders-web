@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
+import Button from 'react-bootstrap/Button'
 import SimpleList from '../../common/simpleList/SimpleList'
 import ProductsApiService from '../../../utils/api/productsApiService'
-import ProductCreateButton from '../../common/buttons/CreateButtonModal'
+import ProductCreateModal from '../components/modalCreate/ModalCreate'
 
 class ProductsList extends Component {
 	constructor(props) {
@@ -10,9 +11,12 @@ class ProductsList extends Component {
 
 		this.state = {
 			products: [],
+			isProductCreateModalOpen: false,
 		}
 
 		this.refreshList = this.refreshList.bind(this)
+		this.openProductModal = this.openProductModal.bind(this)
+		this.closeProductModal = this.closeProductModal.bind(this)
 	}
 
 	async componentDidMount() {
@@ -56,11 +60,26 @@ class ProductsList extends Component {
 		this.setState({ products })
 	}
 
+	openProductModal() {
+		this.setState({ isProductCreateModalOpen: true })
+	}
+
+	closeProductModal() {
+		this.setState({ isProductCreateModalOpen: false })
+	}
+
 	render() {
 		return (
 			<>
 				<div>
-					<ProductCreateButton onRefresh={this.refreshList} />
+					<Button variant="danger" onClick={this.openProductModal}>
+						Create a Product
+					</Button>
+					<ProductCreateModal
+						isOpen={this.state.isProductCreateModalOpen}
+						onModalClose={this.closeProductModal}
+						onRefreshList={this.refreshList}
+					/>
 				</div>
 				<div className="products-list-wrapper">
 					<SimpleList
