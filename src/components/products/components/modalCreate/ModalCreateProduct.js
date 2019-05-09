@@ -109,9 +109,10 @@ export default function ProductCreateModal(props) {
 						<Form.Label>Width</Form.Label>
 						<Form.Control
 							onChange={handleChange}
-							type="number"
+							type="double"
 							name="width"
 							placeholder="Width"
+							pattern="[0-9]+([,\.][0-9]+)?"
 							required
 						/>
 					</Form.Group>
@@ -120,9 +121,10 @@ export default function ProductCreateModal(props) {
 						<Form.Label>Height</Form.Label>
 						<Form.Control
 							onChange={handleChange}
-							type="number"
+							type="double"
 							name="height"
 							placeholder="Height"
+							pattern="[0-9]+([,\.][0-9]+)?"
 							required
 						/>
 					</Form.Group>
@@ -131,9 +133,10 @@ export default function ProductCreateModal(props) {
 						<Form.Label>Depth</Form.Label>
 						<Form.Control
 							onChange={handleChange}
-							type="number"
+							type="double"
 							name="depth"
 							placeholder="Depth"
+							pattern="[0-9]+([,\.][0-9]+)?"
 							required
 						/>
 					</Form.Group>
@@ -155,9 +158,10 @@ export default function ProductCreateModal(props) {
 						<Form.Label>PLN</Form.Label>
 						<Form.Control
 							onChange={handleChange}
-							type="number"
+							type="double"
 							name="pln"
 							placeholder="Price PLN"
+							pattern="[0-9]+([,\.][0-9]+)?"
 							required
 						/>
 					</Form.Group>
@@ -166,9 +170,10 @@ export default function ProductCreateModal(props) {
 						<Form.Label>EUR</Form.Label>
 						<Form.Control
 							onChange={handleChange}
-							type="number"
+							type="double"
 							name="eur"
 							placeholder="Price EUR"
+							pattern="[0-9]+([,\.][0-9]+)?"
 							required
 						/>
 					</Form.Group>
@@ -177,9 +182,10 @@ export default function ProductCreateModal(props) {
 						<Form.Label>USD</Form.Label>
 						<Form.Control
 							onChange={handleChange}
-							type="number"
+							type="double"
 							name="usd"
 							placeholder="Price USD"
+							pattern="[0-9]+([,\.][0-9]+)?"
 							required
 						/>
 					</Form.Group>
