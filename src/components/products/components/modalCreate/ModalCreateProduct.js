@@ -192,10 +192,7 @@ export default function ProductCreateModal(props) {
 				</Form.Row>
 
 				<Form.Row>
-					<Button variant="secondary" onClick={() => handleModalClose()}>
-						Close
-					</Button>
-					<Button variant="primary" type="submit">
+					<Button className="button-create" variant="primary" type="submit">
 						Confirm
 					</Button>
 				</Form.Row>
