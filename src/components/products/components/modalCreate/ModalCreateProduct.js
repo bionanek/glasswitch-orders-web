@@ -8,6 +8,8 @@ import './ModalCreateProduct.scss'
 
 export default function ProductCreateModal(props) {
 	const [product, setProduct] = useState({})
+	const [isValidated, setIsValidated] = useState(false)
+
 	const title = props.title ? props.title : 'Create a Product Modal'
 
 	const handleModalClose = () => {
@@ -28,117 +30,168 @@ export default function ProductCreateModal(props) {
 	}
 
 	const handleChange = event => {
-		let currentProduct = { ...product }
+		let currentProduct = product
+		const { id, name, value } = event.target
 
-		if (event.target.id === 'productPrice') {
-			currentProduct = handleAddCurrency(currentProduct, event.target.name, event.target.value)
+		if (id === 'productPrice') {
+			currentProduct = handleAddCurrency(currentProduct, name, value)
 		} else {
-			currentProduct[event.target.name] = event.target.value
+			currentProduct[name] = value
 		}
 		setProduct(currentProduct)
 	}
 
-	const handleConfirm = async () => {
-		await ProductsApiService.postProduct(product)
+	const handleSubmit = async event => {
+		const form = event.currentTarget
+		event.preventDefault()
 
-		props.onModalClose()
-		props.onRefreshList()
+		if (form.checkValidity() === false) {
+			event.stopPropagation()
+		} else {
+			setIsValidated(true)
+			await ProductsApiService.postProduct(product)
+
+			props.onModalClose()
+			props.onRefreshList()
+			setIsValidated(false)
+		}
 	}
 
 	const productCreateForm = () => {
 		return (
-			<Form>
+			<Form onSubmit={handleSubmit} validated={isValidated}>
 				<Form.Group controlId="productName">
 					<Form.Label>Name</Form.Label>
-					<Form.Control type="text" placeholder="Name" name="name" onChange={handleChange} />
+					<Form.Control
+						onChange={handleChange}
+						type="text"
+						name="name"
+						placeholder="Name"
+						required
+					/>
 				</Form.Group>
 
 				<Form.Group controlId="productDescription">
 					<Form.Label>Description</Form.Label>
 					<Form.Control
-						type="text"
-						placeholder="Description"
-						name="description"
 						onChange={handleChange}
+						type="text"
+						name="description"
+						placeholder="Description"
+						required
 					/>
 				</Form.Group>
 
 				<Form.Group controlId="productType">
 					<Form.Label>Type</Form.Label>
-					<Form.Control type="text" placeholder="Type" name="type" onChange={handleChange} />
+					<Form.Control
+						onChange={handleChange}
+						type="text"
+						name="type"
+						placeholder="Type"
+						required
+					/>
 				</Form.Group>
 
 				<Form.Group controlId="productCategory">
 					<Form.Label>Category</Form.Label>
 					<Form.Control
-						type="text"
-						placeholder="Category"
-						name="category"
 						onChange={handleChange}
+						type="text"
+						name="category"
+						placeholder="Category"
+						required
 					/>
 				</Form.Group>
 
 				<Form.Row>
-					<Form.Group as={Col} controlId="formWidth">
+					<Form.Group as={Col} controlId="productWidth">
 						<Form.Label>Width</Form.Label>
-						<Form.Control type="number" placeholder="Width" name="width" onChange={handleChange} />
-					</Form.Group>
-
-					<Form.Group as={Col} controlId="formHeight">
-						<Form.Label>Height</Form.Label>
-
 						<Form.Control
-							type="number"
-							placeholder="Height"
-							name="height"
 							onChange={handleChange}
+							type="number"
+							name="width"
+							placeholder="Width"
+							required
 						/>
 					</Form.Group>
 
-					<Form.Group as={Col} controlId="formDepth">
-						<Form.Label>Depth</Form.Label>
+					<Form.Group as={Col} controlId="productHeight">
+						<Form.Label>Height</Form.Label>
+						<Form.Control
+							onChange={handleChange}
+							type="number"
+							name="height"
+							placeholder="Height"
+							required
+						/>
+					</Form.Group>
 
-						<Form.Control type="number" placeholder="Depth" name="depth" onChange={handleChange} />
+					<Form.Group as={Col} controlId="productDepth">
+						<Form.Label>Depth</Form.Label>
+						<Form.Control
+							onChange={handleChange}
+							type="number"
+							name="depth"
+							placeholder="Depth"
+							required
+						/>
 					</Form.Group>
 				</Form.Row>
 
 				<Form.Group controlId="productImage">
 					<Form.Label>Image</Form.Label>
-					<Form.Control type="text" placeholder="Image" name="image" onChange={handleChange} />
+					<Form.Control
+						onChange={handleChange}
+						type="text"
+						name="image"
+						placeholder="Image"
+						required
+					/>
 				</Form.Group>
 
 				<Form.Row>
 					<Form.Group as={Col} controlId="productPrice">
 						<Form.Label>PLN</Form.Label>
 						<Form.Control
-							type="number"
-							placeholder="Price PLN"
-							name="pln"
 							onChange={handleChange}
+							type="number"
+							name="pln"
+							placeholder="Price PLN"
+							required
 						/>
 					</Form.Group>
 
 					<Form.Group as={Col} controlId="productPrice">
 						<Form.Label>EUR</Form.Label>
-
 						<Form.Control
-							type="number"
-							placeholder="Price EUR"
-							name="eur"
 							onChange={handleChange}
+							type="number"
+							name="eur"
+							placeholder="Price EUR"
+							required
 						/>
 					</Form.Group>
 
 					<Form.Group as={Col} controlId="productPrice">
 						<Form.Label>USD</Form.Label>
-
 						<Form.Control
-							type="number"
-							placeholder="Price USD"
-							name="usd"
 							onChange={handleChange}
+							type="number"
+							name="usd"
+							placeholder="Price USD"
+							required
 						/>
 					</Form.Group>
+				</Form.Row>
+
+				<Form.Row>
+					<Button variant="secondary" onClick={() => handleModalClose()}>
+						Close
+					</Button>
+					<Button variant="primary" type="submit">
+						Confirm
+					</Button>
 				</Form.Row>
 			</Form>
 		)
@@ -151,14 +204,6 @@ export default function ProductCreateModal(props) {
 					<Modal.Title>{title}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>{productCreateForm()}</Modal.Body>
-				<Modal.Footer>
-					<Button variant="secondary" onClick={() => handleModalClose()}>
-						Close
-					</Button>
-					<Button variant="primary" onClick={() => handleConfirm()}>
-						Confirm
-					</Button>
-				</Modal.Footer>
 			</Modal>
 		</div>
 	)
