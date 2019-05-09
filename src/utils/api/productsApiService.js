@@ -18,7 +18,16 @@ export default class ProductsApiService {
 
 	static async getProductById(id) {
 		try {
-			const response = await Axios.get(apiUrl + id, apiHeader)
+			const response = await Axios.get(apiUrl + id.toString(), apiHeader)
+			return response
+		} catch (ex) {
+			throw Error(ex.message)
+		}
+	}
+
+	static async updateProduct(id, product) {
+		try {
+			const response = await Axios.patch(apiUrl + id.toString(), product, apiHeader)
 			return response
 		} catch (ex) {
 			throw Error(ex.message)
