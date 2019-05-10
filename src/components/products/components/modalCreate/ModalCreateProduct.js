@@ -10,13 +10,13 @@ export default function ProductCreateModal(props) {
 	const [product, setProduct] = useState({})
 	const [isValidated, setIsValidated] = useState(false)
 
-	const title = props.title ? props.title : 'Create a Product Modal'
+	const title = props.title ? props.title : 'Create Product'
 
 	const handleModalClose = () => {
 		props.onModalClose()
 	}
 
-	const handleAddCurrency = (currentProduct, currency, value) => {
+	const addProductPrice = (currentProduct, currency, value) => {
 		const editableProduct = { ...currentProduct }
 
 		if (product.price === undefined) {
@@ -29,12 +29,12 @@ export default function ProductCreateModal(props) {
 		return editableProduct
 	}
 
-	const handleChange = event => {
+	const handleFormControlChange = event => {
 		let currentProduct = product
 		const { id, name, value } = event.target
 
 		if (id === 'productPrice') {
-			currentProduct = handleAddCurrency(currentProduct, name, value)
+			currentProduct = addProductPrice(currentProduct, name, value)
 		} else {
 			currentProduct[name] = value
 		}
@@ -63,7 +63,7 @@ export default function ProductCreateModal(props) {
 				<Form.Group controlId="productName">
 					<Form.Label>Name</Form.Label>
 					<Form.Control
-						onChange={handleChange}
+						onChange={handleFormControlChange}
 						type="text"
 						name="name"
 						placeholder="Name"
@@ -74,7 +74,7 @@ export default function ProductCreateModal(props) {
 				<Form.Group controlId="productDescription">
 					<Form.Label>Description</Form.Label>
 					<Form.Control
-						onChange={handleChange}
+						onChange={handleFormControlChange}
 						type="text"
 						name="description"
 						placeholder="Description"
@@ -85,7 +85,7 @@ export default function ProductCreateModal(props) {
 				<Form.Group controlId="productType">
 					<Form.Label>Type</Form.Label>
 					<Form.Control
-						onChange={handleChange}
+						onChange={handleFormControlChange}
 						type="text"
 						name="type"
 						placeholder="Type"
@@ -96,7 +96,7 @@ export default function ProductCreateModal(props) {
 				<Form.Group controlId="productCategory">
 					<Form.Label>Category</Form.Label>
 					<Form.Control
-						onChange={handleChange}
+						onChange={handleFormControlChange}
 						type="text"
 						name="category"
 						placeholder="Category"
@@ -108,7 +108,7 @@ export default function ProductCreateModal(props) {
 					<Form.Group as={Col} controlId="productWidth">
 						<Form.Label>Width</Form.Label>
 						<Form.Control
-							onChange={handleChange}
+							onChange={handleFormControlChange}
 							type="double"
 							name="width"
 							placeholder="Width"
@@ -120,7 +120,7 @@ export default function ProductCreateModal(props) {
 					<Form.Group as={Col} controlId="productHeight">
 						<Form.Label>Height</Form.Label>
 						<Form.Control
-							onChange={handleChange}
+							onChange={handleFormControlChange}
 							type="double"
 							name="height"
 							placeholder="Height"
@@ -132,7 +132,7 @@ export default function ProductCreateModal(props) {
 					<Form.Group as={Col} controlId="productDepth">
 						<Form.Label>Depth</Form.Label>
 						<Form.Control
-							onChange={handleChange}
+							onChange={handleFormControlChange}
 							type="double"
 							name="depth"
 							placeholder="Depth"
@@ -145,7 +145,7 @@ export default function ProductCreateModal(props) {
 				<Form.Group controlId="productImage">
 					<Form.Label>Image</Form.Label>
 					<Form.Control
-						onChange={handleChange}
+						onChange={handleFormControlChange}
 						type="text"
 						name="image"
 						placeholder="Image"
@@ -157,7 +157,7 @@ export default function ProductCreateModal(props) {
 					<Form.Group as={Col} controlId="productPrice">
 						<Form.Label>PLN</Form.Label>
 						<Form.Control
-							onChange={handleChange}
+							onChange={handleFormControlChange}
 							type="double"
 							name="pln"
 							placeholder="Price PLN"
@@ -169,7 +169,7 @@ export default function ProductCreateModal(props) {
 					<Form.Group as={Col} controlId="productPrice">
 						<Form.Label>EUR</Form.Label>
 						<Form.Control
-							onChange={handleChange}
+							onChange={handleFormControlChange}
 							type="double"
 							name="eur"
 							placeholder="Price EUR"
@@ -181,7 +181,7 @@ export default function ProductCreateModal(props) {
 					<Form.Group as={Col} controlId="productPrice">
 						<Form.Label>USD</Form.Label>
 						<Form.Control
-							onChange={handleChange}
+							onChange={handleFormControlChange}
 							type="double"
 							name="usd"
 							placeholder="Price USD"

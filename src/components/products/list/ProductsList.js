@@ -61,7 +61,7 @@ class ProductsList extends Component {
 	async refreshList() {
 		const products = await this.getAllProducts()
 
-		this.setState({ products })
+		this.setState({ products: products })
 	}
 
 	openProductModal() {
@@ -82,7 +82,7 @@ class ProductsList extends Component {
 							variant="primary"
 							onClick={this.openProductModal}
 						>
-							Create a Product
+							Add Product
 						</Button>
 					</Col>
 				</Row>
