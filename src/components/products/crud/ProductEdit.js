@@ -45,7 +45,7 @@ function ProductEdit(props) {
 		} else {
 			setIsValidated(true)
 			await ProductsApiService.updateProduct(props.match.params.id, product)
-
+			props.history.push(`/products`)
 			setIsValidated(false)
 		}
 	}

@@ -12,8 +12,8 @@ export default function ProductDetail(props) {
 
 	useEffect(() => {
 		const fetchData = async () => {
-			const fetchedProducts = await ProductsApiService.getProductById(props.match.params.id)
-			setProduct(fetchedProducts.data)
+			const fetchedProduct = await ProductsApiService.getProductById(props.match.params.id)
+			setProduct(fetchedProduct.data)
 		}
 
 		fetchData()
