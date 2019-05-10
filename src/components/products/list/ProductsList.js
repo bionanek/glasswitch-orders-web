@@ -1,7 +1,13 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
+import Button from 'react-bootstrap/Button'
+import Col from 'react-bootstrap/Col'
+import Row from 'react-bootstrap/Row'
+
 import SimpleList from '../../common/simpleList/SimpleList'
 import ProductsApiService from '../../../utils/api/productsApiService'
+import ProductCreateModal from '../components/modalCreate/ModalCreateProduct'
+import './ProductsList.scss'
 
 class ProductsList extends Component {
 	constructor(props) {
@@ -9,7 +15,12 @@ class ProductsList extends Component {
 
 		this.state = {
 			products: [],
+			isProductCreateModalOpen: false,
 		}
+
+		this.refreshList = this.refreshList.bind(this)
+		this.openProductModal = this.openProductModal.bind(this)
+		this.closeProductModal = this.closeProductModal.bind(this)
 	}
 
 	async componentDidMount() {
@@ -50,21 +61,51 @@ class ProductsList extends Component {
 	async refreshList() {
 		const products = await this.getAllProducts()
 
-		this.setState({ products })
+		this.setState({ products: products })
+	}
+
+	openProductModal() {
+		this.setState({ isProductCreateModalOpen: true })
+	}
+
+	closeProductModal() {
+		this.setState({ isProductCreateModalOpen: false })
 	}
 
 	render() {
 		return (
-			<div className="products-list-wrapper">
-				<SimpleList
-					elements={this.state.products}
-					titleFieldName="name"
-					subtitleFieldName="description"
-					deletable
-					editable
-					clickable
+			<>
+				<Row>
+					<Col>
+						<Button
+							className="button-create-product float-right"
+							variant="primary"
+							onClick={this.openProductModal}
+						>
+							Add Product
+						</Button>
+					</Col>
+				</Row>
+				<Row>
+					<Col>
+						<div className="products-list-wrapper">
+							<SimpleList
+								elements={this.state.products}
+								titleFieldName="name"
+								subtitleFieldName="description"
+								deletable
+								editable
+								clickable
+							/>
+						</div>
+					</Col>
+				</Row>
+				<ProductCreateModal
+					isOpen={this.state.isProductCreateModalOpen}
+					onModalClose={this.closeProductModal}
+					onRefreshList={this.refreshList}
 				/>
-			</div>
+			</>
 		)
 	}
 }
