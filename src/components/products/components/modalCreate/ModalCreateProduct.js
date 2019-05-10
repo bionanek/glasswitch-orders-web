@@ -61,7 +61,7 @@ export default function ProductCreateModal(props) {
 		return (
 			<Form onSubmit={handleSubmit} validated={isValidated}>
 				<Form.Group controlId="productName">
-					<Form.Label>Name</Form.Label>
+					<Form.Label className="form-create">Name</Form.Label>
 					<Form.Control
 						onChange={handleFormControlChange}
 						type="text"
@@ -72,7 +72,7 @@ export default function ProductCreateModal(props) {
 				</Form.Group>
 
 				<Form.Group controlId="productDescription">
-					<Form.Label>Description</Form.Label>
+					<Form.Label className="form-create">Description</Form.Label>
 					<Form.Control
 						onChange={handleFormControlChange}
 						type="text"
@@ -83,7 +83,7 @@ export default function ProductCreateModal(props) {
 				</Form.Group>
 
 				<Form.Group controlId="productType">
-					<Form.Label>Type</Form.Label>
+					<Form.Label className="form-create">Type</Form.Label>
 					<Form.Control
 						onChange={handleFormControlChange}
 						type="text"
@@ -94,7 +94,7 @@ export default function ProductCreateModal(props) {
 				</Form.Group>
 
 				<Form.Group controlId="productCategory">
-					<Form.Label>Category</Form.Label>
+					<Form.Label className="form-create">Category</Form.Label>
 					<Form.Control
 						onChange={handleFormControlChange}
 						type="text"
@@ -106,7 +106,7 @@ export default function ProductCreateModal(props) {
 
 				<Form.Row>
 					<Form.Group as={Col} controlId="productWidth">
-						<Form.Label>Width</Form.Label>
+						<Form.Label className="form-create">Width</Form.Label>
 						<Form.Control
 							onChange={handleFormControlChange}
 							type="double"
@@ -118,7 +118,7 @@ export default function ProductCreateModal(props) {
 					</Form.Group>
 
 					<Form.Group as={Col} controlId="productHeight">
-						<Form.Label>Height</Form.Label>
+						<Form.Label className="form-create">Height</Form.Label>
 						<Form.Control
 							onChange={handleFormControlChange}
 							type="double"
@@ -130,7 +130,7 @@ export default function ProductCreateModal(props) {
 					</Form.Group>
 
 					<Form.Group as={Col} controlId="productDepth">
-						<Form.Label>Depth</Form.Label>
+						<Form.Label className="form-create">Depth</Form.Label>
 						<Form.Control
 							onChange={handleFormControlChange}
 							type="double"
@@ -143,7 +143,7 @@ export default function ProductCreateModal(props) {
 				</Form.Row>
 
 				<Form.Group controlId="productImage">
-					<Form.Label>Image</Form.Label>
+					<Form.Label className="form-create">Image</Form.Label>
 					<Form.Control
 						onChange={handleFormControlChange}
 						type="text"
@@ -155,7 +155,7 @@ export default function ProductCreateModal(props) {
 
 				<Form.Row>
 					<Form.Group as={Col} controlId="productPrice">
-						<Form.Label>PLN</Form.Label>
+						<Form.Label className="form-create">PLN</Form.Label>
 						<Form.Control
 							onChange={handleFormControlChange}
 							type="double"
@@ -167,7 +167,7 @@ export default function ProductCreateModal(props) {
 					</Form.Group>
 
 					<Form.Group as={Col} controlId="productPrice">
-						<Form.Label>EUR</Form.Label>
+						<Form.Label className="form-create">EUR</Form.Label>
 						<Form.Control
 							onChange={handleFormControlChange}
 							type="double"
@@ -179,7 +179,7 @@ export default function ProductCreateModal(props) {
 					</Form.Group>
 
 					<Form.Group as={Col} controlId="productPrice">
-						<Form.Label>USD</Form.Label>
+						<Form.Label className="form-create">USD</Form.Label>
 						<Form.Control
 							onChange={handleFormControlChange}
 							type="double"
