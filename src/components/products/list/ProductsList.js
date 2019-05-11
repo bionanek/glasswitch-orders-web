@@ -13,7 +13,8 @@ class ProductsList extends Component {
 	}
 
 	async componentDidMount() {
-		this.setState({ products: await this.getAllProducts() })
+		const prods = await this.getAllProducts()
+		this.setState({ products: prods })
 	}
 
 	async getAllProducts() {
@@ -54,10 +55,11 @@ class ProductsList extends Component {
 	}
 
 	render() {
+		const prods = this.state.products
 		return (
 			<div className="products-list-wrapper">
 				<SimpleList
-					elements={this.state.products}
+					elementsList={prods}
 					titleFieldName="name"
 					subtitleFieldName="description"
 					deletable
