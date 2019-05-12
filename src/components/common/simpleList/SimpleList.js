@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import './SimpleList.scss'
+import { Col, Row } from 'react-bootstrap'
 import SimpleListElement from './SimpleListElement'
 
 export default function SimpleList({
@@ -41,8 +42,10 @@ export default function SimpleList({
 	}, [elementsList, deletable, editable, clickable])
 
 	return (
-		<div className="list-wrapper">
-			<ul className="list">{elements}</ul>
-		</div>
+		<Row>
+			<Col lg="12" className="list-wrapper">
+				<ul className="list">{elements}</ul>
+			</Col>
+		</Row>
 	)
 }
