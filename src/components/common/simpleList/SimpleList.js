@@ -1,25 +1,25 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import './SimpleList.scss'
+import { Col, Row } from 'react-bootstrap'
 import SimpleListElement from './SimpleListElement'
 
-class SimpleList extends React.Component {
-	constructor(props) {
-		super(props)
-		this.state = { elements: [] }
+export default function SimpleList({
+	elementsList,
+	deletable,
+	editable,
+	clickable,
+	titleFieldName,
+	subtitleFieldName,
+}) {
+	const [elements, setElements] = useState([])
+
+	const defaultOnDeleteClick = (_el, index) => {
+		const filteredElements = elements.filter(element => +element.key !== index)
+		setElements(filteredElements)
 	}
 
-	componentWillReceiveProps(nextProps) {
-		const elements = this.getListElementsHTML(
-			nextProps.elements,
-			nextProps.deletable,
-			nextProps.editable,
-			nextProps.clickable,
-		)
-		this.setState({ elements })
-	}
-
-	getListElementsHTML(elements, isListDeletable, isListEditable, isListClickable) {
-		return elements.map((el, index) => {
+	function getListElementsHTML(itemsList, isListDeletable, isListEditable, isListClickable) {
+		return itemsList.map((el, index) => {
 			return (
 				<SimpleListElement
 					key={el.id ? el.id : index}
@@ -28,27 +28,24 @@ class SimpleList extends React.Component {
 					isEditable={isListEditable}
 					isDeletable={isListDeletable}
 					element={el}
-					defaultOnDeleteClick={(element, id) => this.defaultOnDeleteClick(element, id)}
-					title={el[this.props.titleFieldName]}
-					subtitle={el[this.props.subtitleFieldName]}
+					defaultOnDeleteClick={(element, id) => defaultOnDeleteClick(element, id)}
+					title={el[titleFieldName]}
+					subtitle={el[subtitleFieldName]}
 				/>
 			)
 		})
 	}
 
-	defaultOnDeleteClick = (_el, index) => {
-		this.elements = this.elements.filter(element => +element.key !== index)
-		this.setState({ elements: this.elements })
-	}
+	useEffect(() => {
+		const elementsHTML = getListElementsHTML(elementsList, deletable, editable, clickable)
+		setElements(elementsHTML)
+	}, [elementsList, deletable, editable, clickable])
 
-	render() {
-		const { elements } = this.state
-		return (
-			<div className="list-wrapper">
+	return (
+		<Row>
+			<Col lg="12" className="list-wrapper">
 				<ul className="list">{elements}</ul>
-			</div>
-		)
-	}
+			</Col>
+		</Row>
+	)
 }
-
-export default SimpleList

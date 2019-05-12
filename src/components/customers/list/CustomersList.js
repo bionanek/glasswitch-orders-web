@@ -57,7 +57,7 @@ class CustomersList extends Component {
 		return (
 			<div className="customers-list-wrapper">
 				<SimpleList
-					elements={this.state.customers}
+					elementsList={this.state.customers}
 					titleFieldName="name"
 					subtitleFieldName="delivery_country"
 					deletable
