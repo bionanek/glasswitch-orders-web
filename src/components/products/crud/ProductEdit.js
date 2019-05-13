@@ -3,10 +3,12 @@ import { withRouter } from 'react-router-dom'
 import { Row, Col, Form, Button, Container } from 'react-bootstrap/'
 import ImageElement from '../../common/ImageElement'
 import ProductsApiService from '../../../utils/api/productsApiService'
+import ConfirmationModal from '../../common/modals/confirmationModal/ConfirmationModal'
 
 function ProductEdit(props) {
 	const [product, setProduct] = useState(null)
 	const [isValidated, setIsValidated] = useState(false)
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -39,18 +41,31 @@ function ProductEdit(props) {
 		} else {
 			setIsValidated(true)
 			await ProductsApiService.updateProduct(props.match.params.id, product)
-			props.history.push(`/products`)
+			props.history.push('/products')
 			setIsValidated(false)
 		}
 	}
 
-	const handleDelete = async () => {
+	const openDeleteModal = () => {
+		setIsDeleteModalOpen(true)
+	}
+
+	const closeDeleteModal = () => {
+		setIsDeleteModalOpen(false)
+	}
+
+	const handleDelete = event => {
+		event.stopPropagation()
+		openDeleteModal()
+	}
+
+	const onDeleteConfirm = async () => {
 		await ProductsApiService.deleteProduct(props.match.params.id)
-		props.history.push(`/products`)
+		props.history.push('/products')
 	}
 
 	const handleGoBack = () => {
-		props.history.push(`/products`)
+		props.history.push('/products')
 	}
 
 	return (
@@ -245,6 +260,11 @@ function ProductEdit(props) {
 							</Col>
 						</Row>
 					</Form>
+					<ConfirmationModal
+						isOpen={isDeleteModalOpen}
+						onModalClose={closeDeleteModal}
+						onConfirm={onDeleteConfirm}
+					/>
 				</Container>
 			) : (
 				<span>
