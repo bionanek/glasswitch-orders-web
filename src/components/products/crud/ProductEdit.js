@@ -67,7 +67,7 @@ function ProductEdit(props) {
 						<Row>
 							<Col sm>
 								<Form.Group controlId="productName">
-									<Form.Label className="form-edit">Name</Form.Label>
+									<Form.Label>Name</Form.Label>
 									<Form.Control
 										onChange={handleChange}
 										type="text"
@@ -90,7 +90,7 @@ function ProductEdit(props) {
 								<Row>
 									<Col sm>
 										<Form.Group controlId="productImageUrl">
-											<Form.Label className="form-edit">Image URL</Form.Label>
+											<Form.Label>Image URL</Form.Label>
 											<Form.Control
 												onChange={handleChange}
 												type="text"
@@ -105,7 +105,7 @@ function ProductEdit(props) {
 								<Row>
 									<Col sm>
 										<Form.Group controlId="productDescription">
-											<Form.Label className="form-edit">Description</Form.Label>
+											<Form.Label>Description</Form.Label>
 											<Form.Control
 												onChange={handleChange}
 												type="text"
@@ -124,7 +124,7 @@ function ProductEdit(props) {
 						<Row>
 							<Col sm>
 								<Form.Group controlId="productType">
-									<Form.Label className="form-edit">Type</Form.Label>
+									<Form.Label>Type</Form.Label>
 									<Form.Control
 										onChange={handleChange}
 										type="text"
@@ -137,7 +137,7 @@ function ProductEdit(props) {
 
 							<Col sm>
 								<Form.Group controlId="productCategory">
-									<Form.Label className="form-edit">Category</Form.Label>
+									<Form.Label>Category</Form.Label>
 									<Form.Control
 										onChange={handleChange}
 										type="text"
@@ -152,7 +152,7 @@ function ProductEdit(props) {
 						<Row>
 							<Col sm>
 								<Form.Group controlId="productWidth">
-									<Form.Label className="form-edit">Width</Form.Label>
+									<Form.Label>Width</Form.Label>
 									<Form.Control
 										onChange={handleChange}
 										type="text"
@@ -165,7 +165,7 @@ function ProductEdit(props) {
 
 							<Col sm>
 								<Form.Group controlId="productHeight">
-									<Form.Label className="form-edit">Height</Form.Label>
+									<Form.Label>Height</Form.Label>
 									<Form.Control
 										onChange={handleChange}
 										type="text"
@@ -178,7 +178,7 @@ function ProductEdit(props) {
 
 							<Col sm>
 								<Form.Group controlId="productDepth">
-									<Form.Label className="form-edit">Depth</Form.Label>
+									<Form.Label>Depth</Form.Label>
 									<Form.Control
 										onChange={handleChange}
 										type="text"
@@ -193,7 +193,7 @@ function ProductEdit(props) {
 						<Row>
 							<Col sm>
 								<Form.Group controlId="productPrice">
-									<Form.Label className="form-edit">PLN</Form.Label>
+									<Form.Label>PLN</Form.Label>
 									<Form.Control
 										onChange={handleChange}
 										type="text"
@@ -206,7 +206,7 @@ function ProductEdit(props) {
 
 							<Col sm>
 								<Form.Group controlId="productPrice">
-									<Form.Label className="form-edit">EUR</Form.Label>
+									<Form.Label>EUR</Form.Label>
 									<Form.Control
 										onChange={handleChange}
 										type="text"
@@ -219,7 +219,7 @@ function ProductEdit(props) {
 
 							<Col sm>
 								<Form.Group controlId="productPrice">
-									<Form.Label className="form-edit">USD</Form.Label>
+									<Form.Label>USD</Form.Label>
 									<Form.Control
 										onChange={handleChange}
 										type="text"
