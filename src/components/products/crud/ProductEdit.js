@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { withRouter } from 'react-router-dom'
-
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
-import Container from 'react-bootstrap/Container'
-
+import { Row, Col, Form, Button, Container } from 'react-bootstrap/'
 import ImageElement from '../../common/ImageElement'
 import ProductsApiService from '../../../utils/api/productsApiService'
 
@@ -233,19 +227,19 @@ function ProductEdit(props) {
 
 						<Row>
 							<Col>
-								<Button variant="secondary" onClick={handleGoBack}>
+								<Button onClick={handleGoBack} variant="outline-secondary" size="lg" block>
 									Return To The List
 								</Button>
 							</Col>
 
 							<Col>
-								<Button variant="danger" onClick={handleDelete}>
+								<Button onClick={handleDelete} variant="outline-danger" size="lg" block>
 									Delete Product
 								</Button>
 							</Col>
 
 							<Col>
-								<Button variant="primary" type="submit">
+								<Button type="submit" variant="outline-primary" size="lg" block>
 									Submit Changes
 								</Button>
 							</Col>
