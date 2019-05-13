@@ -24,7 +24,8 @@ class ProductsList extends Component {
 	}
 
 	async componentDidMount() {
-		this.setState({ products: await this.getAllProducts() })
+		const prods = await this.getAllProducts()
+		this.setState({ products: prods })
 	}
 
 	async getAllProducts() {
@@ -59,9 +60,9 @@ class ProductsList extends Component {
 	}
 
 	async refreshList() {
-		const products = await this.getAllProducts()
+		const prods = await this.getAllProducts()
 
-		this.setState({ products: products })
+		this.setState({ products: prods })
 	}
 
 	openProductModal() {
@@ -73,6 +74,7 @@ class ProductsList extends Component {
 	}
 
 	render() {
+		const prods = this.state.products
 		return (
 			<>
 				<Row>
@@ -90,7 +92,7 @@ class ProductsList extends Component {
 					<Col>
 						<div className="products-list-wrapper">
 							<SimpleList
-								elements={this.state.products}
+								elementsList={prods}
 								titleFieldName="name"
 								subtitleFieldName="description"
 								deletable
