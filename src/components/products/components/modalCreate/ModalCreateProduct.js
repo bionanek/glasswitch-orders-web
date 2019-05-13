@@ -59,144 +59,146 @@ export default function ProductCreateModal(props) {
 
 	const productCreateForm = () => {
 		return (
-			<Form onSubmit={handleSubmit} validated={isValidated}>
-				<Form.Group controlId="productName">
-					<Form.Label>Name</Form.Label>
-					<Form.Control
-						onChange={handleFormControlChange}
-						type="text"
-						name="name"
-						placeholder="Name"
-						required
-					/>
-				</Form.Group>
-
-				<Form.Group controlId="productDescription">
-					<Form.Label>Description</Form.Label>
-					<Form.Control
-						onChange={handleFormControlChange}
-						type="text"
-						name="description"
-						placeholder="Description"
-						required
-					/>
-				</Form.Group>
-
-				<Form.Group controlId="productType">
-					<Form.Label>Type</Form.Label>
-					<Form.Control
-						onChange={handleFormControlChange}
-						type="text"
-						name="type"
-						placeholder="Type"
-						required
-					/>
-				</Form.Group>
-
-				<Form.Group controlId="productCategory">
-					<Form.Label>Category</Form.Label>
-					<Form.Control
-						onChange={handleFormControlChange}
-						type="text"
-						name="category"
-						placeholder="Category"
-						required
-					/>
-				</Form.Group>
-
-				<Form.Row>
-					<Form.Group as={Col} controlId="productWidth">
-						<Form.Label>Width</Form.Label>
+			<div className="product-create">
+				<Form onSubmit={handleSubmit} validated={isValidated}>
+					<Form.Group controlId="productName">
+						<Form.Label>Name</Form.Label>
 						<Form.Control
 							onChange={handleFormControlChange}
-							type="double"
-							name="width"
-							placeholder="Width"
-							pattern="[0-9]+([,\.][0-9]+)?"
+							type="text"
+							name="name"
+							placeholder="Name"
 							required
 						/>
 					</Form.Group>
 
-					<Form.Group as={Col} controlId="productHeight">
-						<Form.Label>Height</Form.Label>
+					<Form.Group controlId="productDescription">
+						<Form.Label>Description</Form.Label>
 						<Form.Control
 							onChange={handleFormControlChange}
-							type="double"
-							name="height"
-							placeholder="Height"
-							pattern="[0-9]+([,\.][0-9]+)?"
+							type="text"
+							name="description"
+							placeholder="Description"
 							required
 						/>
 					</Form.Group>
 
-					<Form.Group as={Col} controlId="productDepth">
-						<Form.Label>Depth</Form.Label>
+					<Form.Group controlId="productType">
+						<Form.Label>Type</Form.Label>
 						<Form.Control
 							onChange={handleFormControlChange}
-							type="double"
-							name="depth"
-							placeholder="Depth"
-							pattern="[0-9]+([,\.][0-9]+)?"
-							required
-						/>
-					</Form.Group>
-				</Form.Row>
-
-				<Form.Group controlId="productImage">
-					<Form.Label>Image</Form.Label>
-					<Form.Control
-						onChange={handleFormControlChange}
-						type="text"
-						name="image"
-						placeholder="Image"
-						required
-					/>
-				</Form.Group>
-
-				<Form.Row>
-					<Form.Group as={Col} controlId="productPrice">
-						<Form.Label>PLN</Form.Label>
-						<Form.Control
-							onChange={handleFormControlChange}
-							type="double"
-							name="pln"
-							placeholder="Price PLN"
-							pattern="[0-9]+([,\.][0-9]+)?"
+							type="text"
+							name="type"
+							placeholder="Type"
 							required
 						/>
 					</Form.Group>
 
-					<Form.Group as={Col} controlId="productPrice">
-						<Form.Label>EUR</Form.Label>
+					<Form.Group controlId="productCategory">
+						<Form.Label>Category</Form.Label>
 						<Form.Control
 							onChange={handleFormControlChange}
-							type="double"
-							name="eur"
-							placeholder="Price EUR"
-							pattern="[0-9]+([,\.][0-9]+)?"
+							type="text"
+							name="category"
+							placeholder="Category"
 							required
 						/>
 					</Form.Group>
 
-					<Form.Group as={Col} controlId="productPrice">
-						<Form.Label>USD</Form.Label>
+					<Form.Row>
+						<Form.Group as={Col} controlId="productWidth">
+							<Form.Label>Width</Form.Label>
+							<Form.Control
+								onChange={handleFormControlChange}
+								type="double"
+								name="width"
+								placeholder="Width"
+								pattern="[0-9]+([,\.][0-9]+)?"
+								required
+							/>
+						</Form.Group>
+
+						<Form.Group as={Col} controlId="productHeight">
+							<Form.Label>Height</Form.Label>
+							<Form.Control
+								onChange={handleFormControlChange}
+								type="double"
+								name="height"
+								placeholder="Height"
+								pattern="[0-9]+([,\.][0-9]+)?"
+								required
+							/>
+						</Form.Group>
+
+						<Form.Group as={Col} controlId="productDepth">
+							<Form.Label>Depth</Form.Label>
+							<Form.Control
+								onChange={handleFormControlChange}
+								type="double"
+								name="depth"
+								placeholder="Depth"
+								pattern="[0-9]+([,\.][0-9]+)?"
+								required
+							/>
+						</Form.Group>
+					</Form.Row>
+
+					<Form.Group controlId="productImage">
+						<Form.Label>Image</Form.Label>
 						<Form.Control
 							onChange={handleFormControlChange}
-							type="double"
-							name="usd"
-							placeholder="Price USD"
-							pattern="[0-9]+([,\.][0-9]+)?"
+							type="text"
+							name="image"
+							placeholder="Image"
 							required
 						/>
 					</Form.Group>
-				</Form.Row>
 
-				<Form.Row>
-					<Button className="button-create" variant="primary" type="submit">
-						Confirm
-					</Button>
-				</Form.Row>
-			</Form>
+					<Form.Row>
+						<Form.Group as={Col} controlId="productPrice">
+							<Form.Label>PLN</Form.Label>
+							<Form.Control
+								onChange={handleFormControlChange}
+								type="double"
+								name="pln"
+								placeholder="Price PLN"
+								pattern="[0-9]+([,\.][0-9]+)?"
+								required
+							/>
+						</Form.Group>
+
+						<Form.Group as={Col} controlId="productPrice">
+							<Form.Label>EUR</Form.Label>
+							<Form.Control
+								onChange={handleFormControlChange}
+								type="double"
+								name="eur"
+								placeholder="Price EUR"
+								pattern="[0-9]+([,\.][0-9]+)?"
+								required
+							/>
+						</Form.Group>
+
+						<Form.Group as={Col} controlId="productPrice">
+							<Form.Label>USD</Form.Label>
+							<Form.Control
+								onChange={handleFormControlChange}
+								type="double"
+								name="usd"
+								placeholder="Price USD"
+								pattern="[0-9]+([,\.][0-9]+)?"
+								required
+							/>
+						</Form.Group>
+					</Form.Row>
+
+					<Form.Row>
+						<Button className="button-create" variant="primary" type="submit">
+							Confirm
+						</Button>
+					</Form.Row>
+				</Form>
+			</div>
 		)
 	}
 
