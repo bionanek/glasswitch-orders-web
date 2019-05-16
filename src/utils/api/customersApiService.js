@@ -14,7 +14,16 @@ export default class CustomersApiService {
 		} catch (ex) {
 			throw Error(ex.message)
 		}
-	}
+  }
+  
+  static async getCustomer(id) {
+    try {
+      const response = await Axios.get(apiUrl + id.toString(), apiHeader)
+      return response.data
+    } catch (ex) {
+      throw Error(ex.message)
+    }
+  }
 
 	static async deleteCustomer(id) {
 		try {

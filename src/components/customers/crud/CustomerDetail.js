@@ -3,7 +3,7 @@ import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import DetailElement from '../../common/DetailElement'
-import CustomersService from '../customersService'
+import CustomersApiService from '../../../utils/api/customersApiService'
 import './CustomerDetail.scss'
 
 class CustomerDetail extends Component {
@@ -15,10 +15,10 @@ class CustomerDetail extends Component {
 		}
 	}
 
-	componentDidMount() {
+	async componentDidMount() {
 		const customerId = parseInt(this.props.match.params.id)
 
-		this.setState({ customer: CustomersService.getCustomer(customerId) })
+		this.setState({ customer: await CustomersApiService.getCustomer(customerId) })
 	}
 
 	render() {

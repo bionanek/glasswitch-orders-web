@@ -5,7 +5,7 @@ import './CustomerEdit.scss'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Container from 'react-bootstrap/Container'
-import CustomersService from '../customersService'
+import CustomersApiService from '../../../utils/api/customersApiService'
 
 class CustomerEdit extends Component {
 	static handleSubmit(event) {
@@ -23,10 +23,10 @@ class CustomerEdit extends Component {
 		}
 	}
 
-	componentDidMount() {
+	async componentDidMount() {
 		const customerId = parseInt(this.props.match.params.id)
 
-		this.setState({ customer: CustomersService.getCustomer(customerId) })
+		this.setState({ customer: await CustomersApiService.getCustomer(customerId) })
 	}
 
 	render() {
