@@ -39,24 +39,24 @@ export default function ProductCreateModal(props) {
 		setProduct(currentProduct)
 	}
 
-	const buildFormData = formData => {
-		formData.set('name', product.name)
-		formData.set('description', product.description)
-		formData.set('category', product.category)
-		formData.set('type', product.type)
-		formData.set('width', product.width)
-		formData.set('height', product.height)
-		formData.set('depth', product.depth)
-		formData.set('price[pln]', product.price.pln)
-		formData.set('price[eur]', product.price.eur)
-		formData.set('price[usd]', product.price.usd)
-		formData.set('image', product.image)
+	const buildProductData = productData => {
+		productData.set('name', product.name)
+		productData.set('description', product.description)
+		productData.set('category', product.category)
+		productData.set('type', product.type)
+		productData.set('width', product.width)
+		productData.set('height', product.height)
+		productData.set('depth', product.depth)
+		productData.set('price[pln]', product.price.pln)
+		productData.set('price[eur]', product.price.eur)
+		productData.set('price[usd]', product.price.usd)
+		productData.set('image', product.image)
 
-		return formData
+		return productData
 	}
 
 	const handleSubmit = async event => {
-		const formData = new FormData()
+		const productData = new FormData()
 		const form = event.currentTarget
 		event.preventDefault()
 
@@ -64,8 +64,8 @@ export default function ProductCreateModal(props) {
 			event.stopPropagation()
 		} else {
 			setIsValidated(true)
-			await buildFormData(formData)
-			await ProductsApiService.postProduct(formData)
+			await buildProductData(productData)
+			await ProductsApiService.postProduct(productData)
 
 			props.onModalClose()
 			props.onRefreshList()
