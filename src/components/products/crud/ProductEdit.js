@@ -91,7 +91,7 @@ function ProductEdit(props) {
 						<Row>
 							<Col>
 								<Form.Group controlId="productImage">
-									<ImageElement source={product.image} errorTxt="imageError" />
+									<ImageElement source={product.imageUrl} errorTxt="imageError" />
 								</Form.Group>
 							</Col>
 
@@ -104,7 +104,7 @@ function ProductEdit(props) {
 												onChange={handleChange}
 												type="text"
 												name="image"
-												defaultValue={product.image}
+												defaultValue={product.imageUrl}
 												required
 											/>
 										</Form.Group>

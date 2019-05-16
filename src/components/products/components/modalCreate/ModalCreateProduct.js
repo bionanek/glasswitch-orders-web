@@ -1,15 +1,11 @@
 import React, { useState } from 'react'
-import Form from 'react-bootstrap/Form'
-import Modal from 'react-bootstrap/Modal'
-import Col from 'react-bootstrap/Col'
-import Button from 'react-bootstrap/Button'
+import { Form, Modal, Col, Button } from 'react-bootstrap/'
 import ProductsApiService from '../../../../utils/api/productsApiService'
 import './ModalCreateProduct.scss'
 
 export default function ProductCreateModal(props) {
 	const [product, setProduct] = useState({})
 	const [isValidated, setIsValidated] = useState(false)
-
 	const title = props.title ? props.title : 'Create Product'
 
 	const handleModalClose = () => {
@@ -31,17 +27,36 @@ export default function ProductCreateModal(props) {
 
 	const handleFormControlChange = event => {
 		let currentProduct = product
-		const { id, name, value } = event.target
+		const { id, name, value, files } = event.target
 
 		if (id === 'productPrice') {
 			currentProduct = addProductPrice(currentProduct, name, value)
+		} else if (id === 'productImage') {
+			currentProduct[name] = files[0]
 		} else {
 			currentProduct[name] = value
 		}
 		setProduct(currentProduct)
 	}
 
+	const buildFormData = formData => {
+		formData.set('name', product.name)
+		formData.set('description', product.description)
+		formData.set('category', product.category)
+		formData.set('type', product.type)
+		formData.set('width', product.width)
+		formData.set('height', product.height)
+		formData.set('depth', product.depth)
+		formData.set('price[pln]', product.price.pln)
+		formData.set('price[eur]', product.price.eur)
+		formData.set('price[usd]', product.price.usd)
+		formData.set('image', product.image)
+
+		return formData
+	}
+
 	const handleSubmit = async event => {
+		const formData = new FormData()
 		const form = event.currentTarget
 		event.preventDefault()
 
@@ -49,7 +64,8 @@ export default function ProductCreateModal(props) {
 			event.stopPropagation()
 		} else {
 			setIsValidated(true)
-			await ProductsApiService.postProduct(product)
+			await buildFormData(formData)
+			await ProductsApiService.postProduct(formData)
 
 			props.onModalClose()
 			props.onRefreshList()
@@ -147,9 +163,9 @@ export default function ProductCreateModal(props) {
 						<Form.Label>Image</Form.Label>
 						<Form.Control
 							onChange={handleFormControlChange}
-							type="text"
+							type="file"
 							name="image"
-							placeholder="Image"
+							// placeholder="Image"
 							required
 						/>
 					</Form.Group>
