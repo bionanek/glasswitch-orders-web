@@ -4,6 +4,7 @@ import { Row, Col, Form, Button, Container } from 'react-bootstrap/'
 import ImageElement from '../../common/ImageElement'
 import ProductsApiService from '../../../utils/api/productsApiService'
 import ConfirmationModal from '../../common/modals/confirmationModal/ConfirmationModal'
+import buildProductData from '../ProductsUtils'
 
 function ProductEdit(props) {
 	const [product, setProduct] = useState(null)
@@ -19,12 +20,14 @@ function ProductEdit(props) {
 		fetchData()
 	}, [])
 
-	const handleChange = event => {
+	const handleFormChange = event => {
 		const currentProduct = product
-		const { id, name, value } = event.target
+		const { id, name, value, files } = event.target
 
 		if (id === 'productPrice') {
 			currentProduct.price[name] = value
+		} else if (id === 'productImageUpload') {
+			currentProduct[name] = files[0]
 		} else {
 			currentProduct[name] = value
 		}
@@ -40,9 +43,10 @@ function ProductEdit(props) {
 			event.stopPropagation()
 		} else {
 			setIsValidated(true)
-			await ProductsApiService.updateProduct(props.match.params.id, product)
+			const productData = buildProductData(product)
+			await ProductsApiService.updateProduct(props.match.params.id, productData)
+
 			props.history.push('/products')
-			setIsValidated(false)
 		}
 	}
 
@@ -78,7 +82,7 @@ function ProductEdit(props) {
 								<Form.Group controlId="productName">
 									<Form.Label>Name</Form.Label>
 									<Form.Control
-										onChange={handleChange}
+										onChange={handleFormChange}
 										type="text"
 										name="name"
 										defaultValue={product.name}
@@ -86,42 +90,34 @@ function ProductEdit(props) {
 									/>
 								</Form.Group>
 							</Col>
+
+							<Col sm>
+								<Form.Group controlId="productImageUpload">
+									<Form.Label>Image</Form.Label>
+									<Form.Control onChange={handleFormChange} type="file" name="image" required />
+								</Form.Group>
+							</Col>
 						</Row>
 
 						<Row>
 							<Col>
 								<Form.Group controlId="productImage">
-									<ImageElement source={product.image} errorTxt="imageError" />
+									<ImageElement source={product.imageUrl} errorTxt="imageError" />
 								</Form.Group>
 							</Col>
 
 							<Col>
 								<Row>
 									<Col sm>
-										<Form.Group controlId="productImageUrl">
-											<Form.Label>Image URL</Form.Label>
-											<Form.Control
-												onChange={handleChange}
-												type="text"
-												name="image"
-												defaultValue={product.image}
-												required
-											/>
-										</Form.Group>
-									</Col>
-								</Row>
-
-								<Row>
-									<Col sm>
 										<Form.Group controlId="productDescription">
 											<Form.Label>Description</Form.Label>
 											<Form.Control
-												onChange={handleChange}
+												onChange={handleFormChange}
 												type="text"
 												name="description"
 												as="textarea"
 												defaultValue={product.description}
-												rows="9"
+												rows="15"
 												required
 											/>
 										</Form.Group>
@@ -135,7 +131,7 @@ function ProductEdit(props) {
 								<Form.Group controlId="productType">
 									<Form.Label>Type</Form.Label>
 									<Form.Control
-										onChange={handleChange}
+										onChange={handleFormChange}
 										type="text"
 										name="type"
 										defaultValue={product.type}
@@ -148,7 +144,7 @@ function ProductEdit(props) {
 								<Form.Group controlId="productCategory">
 									<Form.Label>Category</Form.Label>
 									<Form.Control
-										onChange={handleChange}
+										onChange={handleFormChange}
 										type="text"
 										name="category"
 										defaultValue={product.category}
@@ -163,7 +159,7 @@ function ProductEdit(props) {
 								<Form.Group controlId="productWidth">
 									<Form.Label>Width</Form.Label>
 									<Form.Control
-										onChange={handleChange}
+										onChange={handleFormChange}
 										type="text"
 										name="width"
 										defaultValue={product.width}
@@ -176,7 +172,7 @@ function ProductEdit(props) {
 								<Form.Group controlId="productHeight">
 									<Form.Label>Height</Form.Label>
 									<Form.Control
-										onChange={handleChange}
+										onChange={handleFormChange}
 										type="text"
 										name="height"
 										defaultValue={product.height}
@@ -189,7 +185,7 @@ function ProductEdit(props) {
 								<Form.Group controlId="productDepth">
 									<Form.Label>Depth</Form.Label>
 									<Form.Control
-										onChange={handleChange}
+										onChange={handleFormChange}
 										type="text"
 										name="depth"
 										defaultValue={product.depth}
@@ -204,7 +200,7 @@ function ProductEdit(props) {
 								<Form.Group controlId="productPrice">
 									<Form.Label>PLN</Form.Label>
 									<Form.Control
-										onChange={handleChange}
+										onChange={handleFormChange}
 										type="text"
 										name="pln"
 										defaultValue={product.price.pln}
@@ -217,7 +213,7 @@ function ProductEdit(props) {
 								<Form.Group controlId="productPrice">
 									<Form.Label>EUR</Form.Label>
 									<Form.Control
-										onChange={handleChange}
+										onChange={handleFormChange}
 										type="text"
 										name="eur"
 										defaultValue={product.price.eur}
@@ -230,7 +226,7 @@ function ProductEdit(props) {
 								<Form.Group controlId="productPrice">
 									<Form.Label>USD</Form.Label>
 									<Form.Control
-										onChange={handleChange}
+										onChange={handleFormChange}
 										type="text"
 										name="usd"
 										defaultValue={product.price.usd}

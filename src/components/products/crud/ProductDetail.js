@@ -30,7 +30,7 @@ export default function ProductDetail(props) {
 					</Row>
 
 					<Row>
-						<ImageElement source={product.image} errorTxt="imageError" />
+						<ImageElement source={product.imageUrl} errorTxt="imageError" />
 						<Col />
 						<DetailElement header="Description:" value={product.description} />
 					</Row>

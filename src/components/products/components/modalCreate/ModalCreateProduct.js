@@ -1,15 +1,12 @@
 import React, { useState } from 'react'
-import Form from 'react-bootstrap/Form'
-import Modal from 'react-bootstrap/Modal'
-import Col from 'react-bootstrap/Col'
-import Button from 'react-bootstrap/Button'
+import { Form, Modal, Col, Button } from 'react-bootstrap/'
 import ProductsApiService from '../../../../utils/api/productsApiService'
 import './ModalCreateProduct.scss'
+import buildProductData from '../../ProductsUtils'
 
 export default function ProductCreateModal(props) {
 	const [product, setProduct] = useState({})
 	const [isValidated, setIsValidated] = useState(false)
-
 	const title = props.title ? props.title : 'Create Product'
 
 	const handleModalClose = () => {
@@ -31,10 +28,12 @@ export default function ProductCreateModal(props) {
 
 	const handleFormControlChange = event => {
 		let currentProduct = product
-		const { id, name, value } = event.target
+		const { id, name, value, files } = event.target
 
 		if (id === 'productPrice') {
 			currentProduct = addProductPrice(currentProduct, name, value)
+		} else if (id === 'productImage') {
+			currentProduct[name] = files[0]
 		} else {
 			currentProduct[name] = value
 		}
@@ -49,7 +48,8 @@ export default function ProductCreateModal(props) {
 			event.stopPropagation()
 		} else {
 			setIsValidated(true)
-			await ProductsApiService.postProduct(product)
+			const productData = buildProductData(product)
+			await ProductsApiService.postProduct(productData)
 
 			props.onModalClose()
 			props.onRefreshList()
@@ -145,13 +145,7 @@ export default function ProductCreateModal(props) {
 
 					<Form.Group controlId="productImage">
 						<Form.Label>Image</Form.Label>
-						<Form.Control
-							onChange={handleFormControlChange}
-							type="text"
-							name="image"
-							placeholder="Image"
-							required
-						/>
+						<Form.Control onChange={handleFormControlChange} type="file" name="image" required />
 					</Form.Group>
 
 					<Form.Row>
