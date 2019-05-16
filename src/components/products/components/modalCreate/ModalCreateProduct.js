@@ -145,13 +145,7 @@ export default function ProductCreateModal(props) {
 
 					<Form.Group controlId="productImage">
 						<Form.Label>Image</Form.Label>
-						<Form.Control
-							onChange={handleFormControlChange}
-							type="file"
-							name="image"
-							// placeholder="Image"
-							required
-						/>
+						<Form.Control onChange={handleFormControlChange} type="file" name="image" required />
 					</Form.Group>
 
 					<Form.Row>
