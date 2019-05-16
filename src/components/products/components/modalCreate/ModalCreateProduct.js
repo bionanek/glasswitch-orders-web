@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Form, Modal, Col, Button } from 'react-bootstrap/'
 import ProductsApiService from '../../../../utils/api/productsApiService'
 import './ModalCreateProduct.scss'
+import buildProductData from '../../ProductsUtils'
 
 export default function ProductCreateModal(props) {
 	const [product, setProduct] = useState({})
@@ -39,24 +40,7 @@ export default function ProductCreateModal(props) {
 		setProduct(currentProduct)
 	}
 
-	const buildProductData = productData => {
-		productData.set('name', product.name)
-		productData.set('description', product.description)
-		productData.set('category', product.category)
-		productData.set('type', product.type)
-		productData.set('width', product.width)
-		productData.set('height', product.height)
-		productData.set('depth', product.depth)
-		productData.set('price[pln]', product.price.pln)
-		productData.set('price[eur]', product.price.eur)
-		productData.set('price[usd]', product.price.usd)
-		productData.set('image', product.image)
-
-		return productData
-	}
-
 	const handleSubmit = async event => {
-		const productData = new FormData()
 		const form = event.currentTarget
 		event.preventDefault()
 
@@ -64,7 +48,7 @@ export default function ProductCreateModal(props) {
 			event.stopPropagation()
 		} else {
 			setIsValidated(true)
-			await buildProductData(productData)
+			const productData = buildProductData(product)
 			await ProductsApiService.postProduct(productData)
 
 			props.onModalClose()
