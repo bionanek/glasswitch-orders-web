@@ -27,6 +27,8 @@ function ProductEdit(props) {
 			currentProduct.price[name] = value
 		} else if (id === 'productImageUpload') {
 			currentProduct.image = files[0]
+		} else if (id === 'productCode') {
+			currentProduct[name] = 'GW-' + value
 		} else {
 			currentProduct[name] = value
 		}
@@ -80,11 +82,13 @@ function ProductEdit(props) {
 							<Col>
 								<Form.Group controlId="productName">
 									<Form.Label>Product Name</Form.Label>
-									<InputGroup>
-										<InputGroup.Prepend>
-											<InputGroup.Text>{product.name}</InputGroup.Text>
-										</InputGroup.Prepend>
-									</InputGroup>
+									<Form.Control
+										onChange={handleFormChange}
+										type="text"
+										name="type"
+										defaultValue={product.name}
+										required
+									/>
 								</Form.Group>
 							</Col>
 
@@ -93,8 +97,15 @@ function ProductEdit(props) {
 									<Form.Label>Product Code</Form.Label>
 									<InputGroup>
 										<InputGroup.Prepend>
-											<InputGroup.Text>{product.code}</InputGroup.Text>
+											<InputGroup.Text>GW-</InputGroup.Text>
 										</InputGroup.Prepend>
+										<Form.Control
+											onChange={handleFormChange}
+											type="text"
+											name="code"
+											defaultValue={product.code.split('-')[1]}
+											required
+										/>
 									</InputGroup>
 								</Form.Group>
 							</Col>
