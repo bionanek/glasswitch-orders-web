@@ -90,7 +90,18 @@ function ProductEdit(props) {
 									/>
 								</Form.Group>
 							</Col>
-
+							<Col>
+								<Form.Group controlId="productCode">
+									<Form.Label>Product Code</Form.Label>
+									<Form.Control
+										onChange={handleFormChange}
+										type="text"
+										name="code"
+										defaultValue={product.code}
+										required
+									/>
+								</Form.Group>
+							</Col>
 							<Col sm>
 								<Form.Group controlId="productImageUpload">
 									<Form.Label>Image</Form.Label>

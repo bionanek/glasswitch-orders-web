@@ -1,9 +1,6 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
-import Button from 'react-bootstrap/Button'
-import Col from 'react-bootstrap/Col'
-import Row from 'react-bootstrap/Row'
-
+import { Button, Col, Row } from 'react-bootstrap/'
 import SimpleList from '../../common/simpleList/SimpleList'
 import ProductsApiService from '../../../utils/api/productsApiService'
 import ProductCreateModal from '../components/modalCreate/ModalCreateProduct'
@@ -88,13 +85,14 @@ class ProductsList extends Component {
 						</Button>
 					</Col>
 				</Row>
+
 				<Row>
 					<Col>
 						<div className="products-list-wrapper">
 							<SimpleList
 								elementsList={prods}
 								titleFieldName="name"
-								subtitleFieldName="description"
+								subtitleFieldName="code"
 								deletable
 								editable
 								clickable
@@ -102,6 +100,7 @@ class ProductsList extends Component {
 						</div>
 					</Col>
 				</Row>
+
 				<ProductCreateModal
 					isOpen={this.state.isProductCreateModalOpen}
 					onModalClose={this.closeProductModal}

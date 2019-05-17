@@ -2,6 +2,7 @@ export default function buildProductData(product) {
 	const productData = new FormData()
 
 	productData.set('name', product.name)
+	productData.set('code', product.code)
 	productData.set('description', product.description)
 	productData.set('category', product.category)
 	productData.set('type', product.type)

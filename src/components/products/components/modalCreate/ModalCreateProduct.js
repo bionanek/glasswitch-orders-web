@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Form, Modal, Col, Button } from 'react-bootstrap/'
+import { Form, Modal, Col, Button, InputGroup } from 'react-bootstrap/'
 import ProductsApiService from '../../../../utils/api/productsApiService'
 import './ModalCreateProduct.scss'
 import buildProductData from '../../ProductsUtils'
@@ -34,6 +34,8 @@ export default function ProductCreateModal(props) {
 			currentProduct = addProductPrice(currentProduct, name, value)
 		} else if (id === 'productImage') {
 			currentProduct[name] = files[0]
+		} else if (id === 'productCode') {
+			currentProduct[name] = 'GW-' + value
 		} else {
 			currentProduct[name] = value
 		}
@@ -70,6 +72,23 @@ export default function ProductCreateModal(props) {
 							placeholder="Name"
 							required
 						/>
+					</Form.Group>
+
+					<Form.Group controlId="productCode">
+						<Form.Label>Product Code</Form.Label>
+
+						<InputGroup id="productCode">
+							<InputGroup.Prepend>
+								<InputGroup.Text>GW-</InputGroup.Text>
+							</InputGroup.Prepend>
+							<Form.Control
+								onChange={handleFormControlChange}
+								type="text"
+								name="code"
+								placeholder="Code"
+								required
+							/>
+						</InputGroup>
 					</Form.Group>
 
 					<Form.Group controlId="productDescription">
