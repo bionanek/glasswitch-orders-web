@@ -25,6 +25,15 @@ export default class CustomersApiService {
     }
   }
 
+  static async updateCustomer(id, customer) {
+    try {
+      const response = await Axios.patch(apiUrl + id.toString(), customer, apiHeader)
+      return response.data
+    } catch (ex) {
+      throw Error(ex.message)
+    }
+  }
+
 	static async deleteCustomer(id) {
 		try {
 			const response = await Axios.delete(apiUrl + id.toString(), apiHeader)
