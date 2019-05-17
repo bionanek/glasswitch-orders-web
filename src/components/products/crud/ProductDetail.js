@@ -25,6 +25,10 @@ export default function ProductDetail(props) {
 						<Col>
 							<h1>{product.name}</h1>
 						</Col>
+
+						<Col>
+							<h2>{product.code}</h2>
+						</Col>
 					</Row>
 
 					<Row>

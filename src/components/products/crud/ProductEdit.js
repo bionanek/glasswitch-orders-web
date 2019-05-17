@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { withRouter } from 'react-router-dom'
-import { Row, Col, Form, Button, Container } from 'react-bootstrap/'
+import { Row, Col, Form, Button, Container, InputGroup } from 'react-bootstrap/'
 import ImageElement from '../../common/ImageElement'
 import ProductsApiService from '../../../utils/api/productsApiService'
 import ConfirmationModal from '../../common/modals/confirmationModal/ConfirmationModal'
@@ -16,7 +16,6 @@ function ProductEdit(props) {
 			const requestedProduct = await ProductsApiService.getProductById(props.match.params.id)
 			setProduct(requestedProduct.data)
 		}
-
 		fetchData()
 	}, [])
 
@@ -27,7 +26,7 @@ function ProductEdit(props) {
 		if (id === 'productPrice') {
 			currentProduct.price[name] = value
 		} else if (id === 'productImageUpload') {
-			currentProduct[name] = files[0]
+			currentProduct.image = files[0]
 		} else {
 			currentProduct[name] = value
 		}
@@ -78,7 +77,7 @@ function ProductEdit(props) {
 				<Container>
 					<Form onSubmit={handleSubmit} validated={isValidated}>
 						<Row>
-							<Col sm>
+							<Col>
 								<Form.Group controlId="productName">
 									<Form.Label>Name</Form.Label>
 									<Form.Control
@@ -90,22 +89,15 @@ function ProductEdit(props) {
 									/>
 								</Form.Group>
 							</Col>
+
 							<Col>
 								<Form.Group controlId="productCode">
 									<Form.Label>Product Code</Form.Label>
-									<Form.Control
-										onChange={handleFormChange}
-										type="text"
-										name="code"
-										defaultValue={product.code}
-										required
-									/>
-								</Form.Group>
-							</Col>
-							<Col sm>
-								<Form.Group controlId="productImageUpload">
-									<Form.Label>Image</Form.Label>
-									<Form.Control onChange={handleFormChange} type="file" name="image" required />
+									<InputGroup>
+										<InputGroup.Prepend>
+											<InputGroup.Text>{product.code}</InputGroup.Text>
+										</InputGroup.Prepend>
+									</InputGroup>
 								</Form.Group>
 							</Col>
 						</Row>
@@ -119,7 +111,12 @@ function ProductEdit(props) {
 
 							<Col>
 								<Row>
-									<Col sm>
+									<Col>
+										<Form.Group controlId="productImageUpload">
+											<Form.Label>Image</Form.Label>
+											<Form.Control onChange={handleFormChange} type="file" name="image" />
+										</Form.Group>
+
 										<Form.Group controlId="productDescription">
 											<Form.Label>Description</Form.Label>
 											<Form.Control
@@ -128,7 +125,7 @@ function ProductEdit(props) {
 												name="description"
 												as="textarea"
 												defaultValue={product.description}
-												rows="15"
+												rows="12"
 												required
 											/>
 										</Form.Group>
@@ -138,7 +135,7 @@ function ProductEdit(props) {
 						</Row>
 
 						<Row>
-							<Col sm>
+							<Col>
 								<Form.Group controlId="productType">
 									<Form.Label>Type</Form.Label>
 									<Form.Control
@@ -151,7 +148,7 @@ function ProductEdit(props) {
 								</Form.Group>
 							</Col>
 
-							<Col sm>
+							<Col>
 								<Form.Group controlId="productCategory">
 									<Form.Label>Category</Form.Label>
 									<Form.Control
@@ -166,7 +163,7 @@ function ProductEdit(props) {
 						</Row>
 
 						<Row>
-							<Col sm>
+							<Col>
 								<Form.Group controlId="productWidth">
 									<Form.Label>Width</Form.Label>
 									<Form.Control
@@ -179,7 +176,7 @@ function ProductEdit(props) {
 								</Form.Group>
 							</Col>
 
-							<Col sm>
+							<Col>
 								<Form.Group controlId="productHeight">
 									<Form.Label>Height</Form.Label>
 									<Form.Control
@@ -192,7 +189,7 @@ function ProductEdit(props) {
 								</Form.Group>
 							</Col>
 
-							<Col sm>
+							<Col>
 								<Form.Group controlId="productDepth">
 									<Form.Label>Depth</Form.Label>
 									<Form.Control
@@ -207,7 +204,7 @@ function ProductEdit(props) {
 						</Row>
 
 						<Row>
-							<Col sm>
+							<Col>
 								<Form.Group controlId="productPrice">
 									<Form.Label>PLN</Form.Label>
 									<Form.Control
@@ -220,7 +217,7 @@ function ProductEdit(props) {
 								</Form.Group>
 							</Col>
 
-							<Col sm>
+							<Col>
 								<Form.Group controlId="productPrice">
 									<Form.Label>EUR</Form.Label>
 									<Form.Control
@@ -233,7 +230,7 @@ function ProductEdit(props) {
 								</Form.Group>
 							</Col>
 
-							<Col sm>
+							<Col>
 								<Form.Group controlId="productPrice">
 									<Form.Label>USD</Form.Label>
 									<Form.Control
