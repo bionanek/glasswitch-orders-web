@@ -79,14 +79,12 @@ function ProductEdit(props) {
 						<Row>
 							<Col>
 								<Form.Group controlId="productName">
-									<Form.Label>Name</Form.Label>
-									<Form.Control
-										onChange={handleFormChange}
-										type="text"
-										name="name"
-										defaultValue={product.name}
-										required
-									/>
+									<Form.Label>Product Name</Form.Label>
+									<InputGroup>
+										<InputGroup.Prepend>
+											<InputGroup.Text>{product.name}</InputGroup.Text>
+										</InputGroup.Prepend>
+									</InputGroup>
 								</Form.Group>
 							</Col>
 
