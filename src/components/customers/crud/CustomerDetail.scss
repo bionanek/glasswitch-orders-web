@@ -6,3 +6,9 @@
 .customer-detail span {
 	color: white;
 }
+
+.customer-detail .edit-icon, .customer-detail .delete-icon {
+  vertical-align: middle;
+  padding: 8px;
+  cursor: pointer;
+}
