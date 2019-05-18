@@ -16,6 +16,15 @@ export default class OrdersApiService {
 		}
 	}
 
+	static async getOrderById(id) {
+		try {
+			const response = await Axios.get(apiUrl + id.toString(), apiHeader)
+			return response
+		} catch (ex) {
+			throw Error(ex.message)
+		}
+	}
+
 	static async deleteOrder(id) {
 		try {
 			const response = await Axios.delete(apiUrl + id.toString(), apiHeader)
