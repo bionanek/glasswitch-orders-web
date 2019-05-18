@@ -34,6 +34,15 @@ export default class CustomersApiService {
     }
   }
 
+  static async createCustomer(customer) {
+    try {
+      const response = await Axios.post(apiUrl, customer, apiHeader)
+      return response.data
+    } catch (ex) {
+      throw Error(ex.message)
+    }
+  }
+
 	static async deleteCustomer(id) {
 		try {
 			const response = await Axios.delete(apiUrl + id.toString(), apiHeader)
