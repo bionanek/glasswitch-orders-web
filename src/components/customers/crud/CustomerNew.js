@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import CustomersApiService from '../../../utils/api/customersApiService'
 import CustomerForm from './CustomerForm'
 
