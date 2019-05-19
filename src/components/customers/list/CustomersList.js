@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
+import Button from 'react-bootstrap/Button'
 import SimpleList from '../../common/simpleList/SimpleList'
 import CustomersApiService from '../../../utils/api/customersApiService'
+import './CustomersList.scss'
 
 class CustomersList extends Component {
 	constructor(props) {
@@ -51,11 +53,16 @@ class CustomersList extends Component {
 		const customers = await this.getAllCustomers()
 
 		this.setState({ customers })
-	}
+  }
+  
+  newCustomerClicked() {
+    this.props.history.push("/customers/new")
+  }
 
 	render() {
 		return (
 			<div className="customers-list-wrapper">
+        <Button variant="success" className="new-customer-button" onClick={() => this.newCustomerClicked()}>New Customer</Button>
 				<SimpleList
 					elementsList={this.state.customers}
 					titleFieldName="name"

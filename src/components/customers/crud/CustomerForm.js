@@ -177,7 +177,12 @@ class CustomerForm extends Component {
                   </Form.Group>
                 </Col>
               </Row>
-              <Button type="submit">Submit form</Button>
+              <Row>
+                <Col>
+                  <Button type="submit">Submit form</Button>
+                  <Button variant="danger" className="cancel-button" onClick={() => this.props.onCancel()}>Cancel</Button>
+                </Col>
+              </Row>
             </Form>
           </Container>
         ) : (

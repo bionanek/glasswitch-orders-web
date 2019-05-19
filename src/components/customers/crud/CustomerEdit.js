@@ -17,6 +17,10 @@ class CustomerEdit extends Component {
     this.setState({ customer: await CustomersApiService.getCustomer(customerId) })
   }
 
+  onCancel() {
+    this.props.history.push(`/customers/${parseInt(this.props.match.params.id)}`)
+  }
+
   async handleSubmit(event, customer) {
     event.preventDefault()
     event.stopPropagation()
@@ -30,7 +34,11 @@ class CustomerEdit extends Component {
   render() {
     const { customer } = this.state
     return (
-      <CustomerForm customer={customer} onSubmit={(e, cust) => this.handleSubmit(e, cust)} />
+      <CustomerForm
+        customer={customer}
+        onSubmit={(e, cust) => this.handleSubmit(e, cust)}
+        onCancel={() => this.onCancel()}
+      />
     )
   }
 }

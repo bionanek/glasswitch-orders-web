@@ -3,6 +3,10 @@ import CustomersApiService from '../../../utils/api/customersApiService'
 import CustomerForm from './CustomerForm'
 
 class CustomerNew extends Component {
+  onCancel() {
+    this.props.history.push(`/customers`)
+  }
+
   async handleSubmit(event, customer) {
     event.preventDefault()
     event.stopPropagation()
@@ -14,7 +18,7 @@ class CustomerNew extends Component {
 
   render() {
     return (
-      <CustomerForm customer={{}} onSubmit={(e, cust) => this.handleSubmit(e, cust)} />
+      <CustomerForm customer={{}} onSubmit={(e, cust) => this.handleSubmit(e, cust)} onCancel={() => this.onCancel()} />
     )
   }
 }
