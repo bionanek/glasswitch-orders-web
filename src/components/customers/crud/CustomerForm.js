@@ -8,6 +8,13 @@ import Container from 'react-bootstrap/Container'
 import { withRouter } from 'react-router-dom'
 
 class CustomerForm extends Component {
+  constructor(props) {
+    super(props)
+
+    // Could be set to false, but IMHO it is more user friendly to display what is requiered 
+    this.state = { validated: true }
+  }
+
   static getFormValues(form) {
     const customer = {
       name: form.formName.value,
@@ -27,19 +34,34 @@ class CustomerForm extends Component {
     return customer
   }
 
+  onSubmit(event) {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    } else {
+      const customer = CustomerForm.getFormValues(form)
+      this.props.onSubmit(event, customer)
+    }
+
+    this.setState({ validated: true });
+  }
+
   render() {
     const { customer } = this.props
+    const { validated } = this.state;
     // TODO: Add validations
     return (
       <div className="edit-new-form">
         {customer ? (
           <Container>
-            <Form onSubmit={e => this.props.onSubmit(e, CustomerForm.getFormValues(e.currentTarget))}>
+            <Form onSubmit={e => this.onSubmit(e)} noValidate validated={validated}>
               <Row>
                 <Col sm>
                   <Form.Group controlId="formName">
                     <Form.Label>Name</Form.Label>
                     <Form.Control
+                      required
                       type="text"
                       placeholder="Enter your name"
                       defaultValue={customer.name}
@@ -50,6 +72,7 @@ class CustomerForm extends Component {
                   <Form.Group controlId="formEmail">
                     <Form.Label>Email address</Form.Label>
                     <Form.Control
+                      required
                       type="email"
                       placeholder="Enter email"
                       defaultValue={customer.email}
@@ -72,6 +95,7 @@ class CustomerForm extends Component {
                   <Form.Group controlId="formVat">
                     <Form.Label>VAT identification number</Form.Label>
                     <Form.Control
+                      required
                       type="text"
                       placeholder="Enter your VAT"
                       defaultValue={customer.vatNumber}
@@ -89,6 +113,7 @@ class CustomerForm extends Component {
                   <Form.Group controlId="formDeliveryStreet">
                     <Form.Label>Street</Form.Label>
                     <Form.Control
+                      required
                       type="text"
                       placeholder="Enter the street"
                       defaultValue={customer.delivery_street}
@@ -101,6 +126,7 @@ class CustomerForm extends Component {
                   <Form.Group controlId="formDeliveryCity">
                     <Form.Label>City</Form.Label>
                     <Form.Control
+                      required
                       type="text"
                       placeholder="Enter the city"
                       defaultValue={customer.delivery_city}
@@ -111,6 +137,7 @@ class CustomerForm extends Component {
                   <Form.Group controlId="formDeliveryCountry">
                     <Form.Label>Country</Form.Label>
                     <Form.Control
+                      required
                       type="text"
                       placeholder="Enter the country"
                       defaultValue={customer.delivery_country}
@@ -138,6 +165,7 @@ class CustomerForm extends Component {
                   <Form.Group controlId="formBillingStreet">
                     <Form.Label>Street</Form.Label>
                     <Form.Control
+                      required
                       type="text"
                       placeholder="Enter the street"
                       defaultValue={customer.billing_street}
@@ -150,6 +178,7 @@ class CustomerForm extends Component {
                   <Form.Group controlId="formBillingCity">
                     <Form.Label>City</Form.Label>
                     <Form.Control
+                      required
                       type="text"
                       placeholder="Enter the city"
                       defaultValue={customer.billing_city}
@@ -160,6 +189,7 @@ class CustomerForm extends Component {
                   <Form.Group controlId="formBillingCountry">
                     <Form.Label>Country</Form.Label>
                     <Form.Control
+                      required
                       type="text"
                       placeholder="Enter the country"
                       defaultValue={customer.billing_country}
