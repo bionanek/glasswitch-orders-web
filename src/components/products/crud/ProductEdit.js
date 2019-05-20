@@ -27,7 +27,7 @@ function ProductEdit(props) {
 			case 'productPrice':
 				currentProduct.price[name] = value
 				break
-			case 'productImage':
+			case 'productImageUpload':
 				currentProduct.image = files[0]
 				break
 			case 'productCode':
@@ -40,7 +40,7 @@ function ProductEdit(props) {
 		setProduct(currentProduct)
 	}
 
-	const handleDataConfirm = async () => {
+	const handleEditDataConfirm = async () => {
 		setIsValidated(true)
 		const productData = buildProductData(product)
 		await ProductsApiService.updateProduct(props.match.params.id, productData)
@@ -55,7 +55,7 @@ function ProductEdit(props) {
 		if (form.checkValidity() === false) {
 			event.stopPropagation()
 		}
-		handleDataConfirm()
+		handleEditDataConfirm()
 	}
 
 	const openDeleteModal = () => {
