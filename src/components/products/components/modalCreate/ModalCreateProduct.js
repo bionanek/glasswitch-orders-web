@@ -30,16 +30,31 @@ export default function ProductCreateModal(props) {
 		let currentProduct = product
 		const { id, name, value, files } = event.target
 
-		if (id === 'productPrice') {
-			currentProduct = addProductPrice(currentProduct, name, value)
-		} else if (id === 'productImage') {
-			currentProduct[name] = files[0]
-		} else if (id === 'productCode') {
-			currentProduct[name] = 'GW-' + value
-		} else {
-			currentProduct[name] = value
+		switch (id) {
+			case 'productPrice':
+				currentProduct = addProductPrice(currentProduct, name, value)
+				break
+			case 'productImage':
+				currentProduct[name] = files[0]
+				break
+			case 'productCode':
+				currentProduct[name] = 'GW-' + value
+				break
+			default:
+				currentProduct[name] = value
+				break
 		}
 		setProduct(currentProduct)
+	}
+
+	const handleDataConfirm = async () => {
+		setIsValidated(true)
+		const productData = buildProductData(product)
+		await ProductsApiService.postProduct(productData)
+
+		props.onModalClose()
+		props.onRefreshList()
+		setIsValidated(false)
 	}
 
 	const handleSubmit = async event => {
@@ -48,15 +63,9 @@ export default function ProductCreateModal(props) {
 
 		if (form.checkValidity() === false) {
 			event.stopPropagation()
-		} else {
-			setIsValidated(true)
-			const productData = buildProductData(product)
-			await ProductsApiService.postProduct(productData)
-
-			props.onModalClose()
-			props.onRefreshList()
-			setIsValidated(false)
 		}
+
+		handleDataConfirm()
 	}
 
 	const productCreateForm = () => {
