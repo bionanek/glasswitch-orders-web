@@ -9,34 +9,6 @@ export default function OrderDetail(props) {
 	const [customer, setCustomer] = useState(null)
 	const [productsList, setProductsList] = useState([])
 
-	const IsConfirmationSent = () => {
-		if (order.confirmationSent === false) {
-			return <DetailElement header="Confirmation Sent?:" value="Not sent!" />
-		}
-		return <DetailElement header="Confirmation Sent?:" value="Sent!" />
-	}
-
-	const IsProformaSent = () => {
-		if (order.proformaSent === false) {
-			return <DetailElement header="Proforma Sent?:" value="Not sent!" />
-		}
-		return <DetailElement header="Proforma Sent?:" value="Sent!" />
-	}
-
-	const IsInvoiceSent = () => {
-		if (order.invoiceSent === false) {
-			return <DetailElement header="Invoice Sent?:" value="Not sent!" />
-		}
-		return <DetailElement header="Invoice Sent?:" value="Sent!" />
-	}
-
-	const IsPaymentSettled = () => {
-		if (order.settledPayment === false) {
-			return <DetailElement header="Settled Payment?:" value="Not sent!" />
-		}
-		return <DetailElement header="Settled Payment?:" value="Sent!" />
-	}
-
 	useEffect(() => {
 		const fetchData = async () => {
 			const fetchedOrder = await OrdersApiService.getOrderById(props.match.params.id)
@@ -89,10 +61,34 @@ export default function OrderDetail(props) {
 					</Row>
 
 					<Row>
-						<Col>{IsConfirmationSent()}</Col>
-						<Col>{IsProformaSent()}</Col>
-						<Col>{IsInvoiceSent()}</Col>
-						<Col>{IsPaymentSettled()}</Col>
+						<Col>
+							{order.confirmationSent ? (
+								<DetailElement header="Confirmation Sent?:" value="Sent!" />
+							) : (
+								<DetailElement header="Confirmation Sent?:" value="Not sent!" />
+							)}
+						</Col>
+						<Col>
+							{order.proformaSent ? (
+								<DetailElement header="Proforma Sent?:" value="Not sent!" />
+							) : (
+								<DetailElement header="Proforma Sent?:" value="Sent!" />
+							)}
+						</Col>
+						<Col>
+							{order.invoiceSent ? (
+								<DetailElement header="Invoice Sent?:" value="Not sent!" />
+							) : (
+								<DetailElement header="Invoice Sent?:" value="Sent!" />
+							)}
+						</Col>
+						<Col>
+							{order.settledPayment ? (
+								<DetailElement header="Settled Payment?:" value="Not sent!" />
+							) : (
+								<DetailElement header="Settled Payment?:" value="Sent!" />
+							)}
+						</Col>
 					</Row>
 
 					<Col>
