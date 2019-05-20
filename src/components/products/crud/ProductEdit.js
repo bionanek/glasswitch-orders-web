@@ -23,17 +23,29 @@ function ProductEdit(props) {
 		const currentProduct = product
 		const { id, name, value, files } = event.target
 
-		if (id === 'productPrice') {
-			currentProduct.price[name] = value
-		} else if (id === 'productImageUpload') {
-			currentProduct.image = files[0]
-		} else if (id === 'productCode') {
-			currentProduct[name] = 'GW-' + value
-		} else {
-			currentProduct[name] = value
+		switch (id) {
+			case 'productPrice':
+				currentProduct.price[name] = value
+				break
+			case 'productImage':
+				currentProduct.image = files[0]
+				break
+			case 'productCode':
+				currentProduct.code = 'GW-' + value
+				break
+			default:
+				currentProduct[name] = value
+				break
 		}
-
 		setProduct(currentProduct)
+	}
+
+	const handleDataConfirm = async () => {
+		setIsValidated(true)
+		const productData = buildProductData(product)
+		await ProductsApiService.updateProduct(props.match.params.id, productData)
+
+		props.history.push('/products')
 	}
 
 	const handleSubmit = async event => {
@@ -42,13 +54,8 @@ function ProductEdit(props) {
 
 		if (form.checkValidity() === false) {
 			event.stopPropagation()
-		} else {
-			setIsValidated(true)
-			const productData = buildProductData(product)
-			await ProductsApiService.updateProduct(props.match.params.id, productData)
-
-			props.history.push('/products')
 		}
+		handleDataConfirm()
 	}
 
 	const openDeleteModal = () => {
@@ -85,7 +92,7 @@ function ProductEdit(props) {
 									<Form.Control
 										onChange={handleFormChange}
 										type="text"
-										name="type"
+										name="name"
 										defaultValue={product.name}
 										required
 									/>
