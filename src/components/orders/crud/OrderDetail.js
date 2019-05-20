@@ -99,20 +99,19 @@ export default function OrderDetail(props) {
 						{productsList.map(product => {
 							return (
 								<Row>
-									<DetailElement header="Product Name" value={product.name} />
-									<DetailElement header="Quantity" value={product.products_orders.quantity} />
+									<DetailElement header="Product Name:" value={product.name} />
+									<DetailElement header="Product Code:" value={product.code} />
+									<DetailElement header="Quantity:" value={product.products_orders.quantity} />
 								</Row>
 							)
 						})}
 					</Col>
 
-					<Row>
-						<DetailElement header="Total Products Count:" value={order.productsCount} />
-						<DetailElement
-							header="Total Price"
-							value={order.productsTotalPrice + ' ' + order.currency.toUpperCase()}
-						/>
-					</Row>
+					<DetailElement header="Total Products Count:" value={order.productsCount} />
+					<DetailElement
+						header="Total Price"
+						value={order.productsTotalPrice + ' ' + order.currency.toUpperCase()}
+					/>
 				</Container>
 			) : (
 				<span>Order with given ID does not exist!</span>
