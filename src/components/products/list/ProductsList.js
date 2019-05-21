@@ -78,7 +78,7 @@ class ProductsList extends Component {
 					<Col>
 						<Button
 							className="button-create-product float-left"
-							variant="secondary"
+							variant="primary"
 							onClick={this.openProductModal}
 						>
 							Add Product
