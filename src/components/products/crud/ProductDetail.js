@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react'
+import { withRouter } from 'react-router-dom'
 import { Container, Row, Col } from 'react-bootstrap/'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTrashAlt, faEdit } from '@fortawesome/free-solid-svg-icons'
 import DetailElement from '../../common/DetailElement'
 import ProductsApiService from '../../../utils/api/productsApiService'
 import ImageElement from '../../common/ImageElement'
+import ConfirmationModal from '../../common/modals/confirmationModal/ConfirmationModal'
 import './ProductDetail.scss'
 
-export default function ProductDetail(props) {
+function ProductDetail(props) {
 	const [product, setProduct] = useState(null)
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -17,10 +22,32 @@ export default function ProductDetail(props) {
 		fetchData()
 	}, [])
 
+	const onEditClick = () => {
+		props.history.push(`/products/${parseInt(props.match.params.id)}/edit`)
+	}
+
+	const openDeleteModal = () => {
+		setIsDeleteModalOpen(true)
+	}
+
+	const closeDeleteModal = () => {
+		setIsDeleteModalOpen(false)
+	}
+
+	const handleDelete = event => {
+		event.stopPropagation()
+		openDeleteModal()
+	}
+
+	const onDeleteConfirm = async () => {
+		await ProductsApiService.deleteProduct(props.match.params.id)
+		props.history.push('/products')
+	}
+
 	return (
-		<div className="product-detail">
+		<Container className="product-detail">
 			{product ? (
-				<Container>
+				<>
 					<Row>
 						<Col>
 							<h1>{product.name}</h1>
@@ -28,6 +55,16 @@ export default function ProductDetail(props) {
 
 						<Col>
 							<h2>{product.code}</h2>
+						</Col>
+
+						<Col>
+							<span className="edit-icon-detail" onClick={onEditClick}>
+								<FontAwesomeIcon icon={faEdit} size="2x" />
+							</span>
+
+							<span className="delete-icon-detail" onClick={handleDelete}>
+								<FontAwesomeIcon icon={faTrashAlt} size="2x" />
+							</span>
 						</Col>
 					</Row>
 
@@ -69,13 +106,21 @@ export default function ProductDetail(props) {
 						<DetailElement header="Euro (EUR):" value={product.price.eur} />
 						<DetailElement header="US Dollar (USD):" value={product.price.usd} />
 					</Row>
-				</Container>
+
+					<ConfirmationModal
+						isOpen={isDeleteModalOpen}
+						onModalClose={closeDeleteModal}
+						onConfirm={onDeleteConfirm}
+					/>
+				</>
 			) : (
 				<span>
 					Product with ID:
 					{props.match.params.id} does not exists!
 				</span>
 			)}
-		</div>
+		</Container>
 	)
 }
+
+export default withRouter(ProductDetail)

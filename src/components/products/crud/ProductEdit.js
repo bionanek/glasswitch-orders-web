@@ -81,9 +81,9 @@ function ProductEdit(props) {
 	}
 
 	return (
-		<div className="product-edit">
+		<Container className="product-edit">
 			{product ? (
-				<Container>
+				<>
 					<Form onSubmit={handleSubmit} validated={isValidated}>
 						<Row>
 							<Col>
@@ -265,19 +265,19 @@ function ProductEdit(props) {
 
 						<Row>
 							<Col>
-								<Button onClick={handleGoBack} variant="outline-secondary" size="lg" block>
+								<Button onClick={handleGoBack} variant="secondary" size="lg" block>
 									Return To The List
 								</Button>
 							</Col>
 
 							<Col>
-								<Button onClick={handleDelete} variant="outline-danger" size="lg" block>
+								<Button onClick={handleDelete} variant="danger" size="lg" block>
 									Delete Product
 								</Button>
 							</Col>
 
 							<Col>
-								<Button type="submit" variant="outline-primary" size="lg" block>
+								<Button type="submit" variant="success" size="lg" block>
 									Submit Changes
 								</Button>
 							</Col>
@@ -288,14 +288,14 @@ function ProductEdit(props) {
 						onModalClose={closeDeleteModal}
 						onConfirm={onDeleteConfirm}
 					/>
-				</Container>
+				</>
 			) : (
 				<span>
 					Product with ID:
 					{props.match.params.id} does not exists!
 				</span>
 			)}
-		</div>
+		</Container>
 	)
 }
 

@@ -214,7 +214,7 @@ export default function ProductCreateModal(props) {
 					</Form.Row>
 
 					<Form.Row>
-						<Button className="button-create" variant="primary" type="submit">
+						<Button className="button-create" variant="success" type="submit">
 							Confirm
 						</Button>
 					</Form.Row>
