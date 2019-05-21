@@ -34,7 +34,7 @@ export default function ProductCreateModal(props) {
 			case 'productPrice':
 				currentProduct = addProductPrice(currentProduct, name, value)
 				break
-			case 'productImage':
+			case 'productImageUpload':
 				currentProduct[name] = files[0]
 				break
 			case 'productCode':
@@ -170,7 +170,7 @@ export default function ProductCreateModal(props) {
 						</Form.Group>
 					</Form.Row>
 
-					<Form.Group controlId="productImage">
+					<Form.Group controlId="productImageUpload">
 						<Form.Label>Image</Form.Label>
 						<Form.Control onChange={handleFormChange} type="file" name="image" required />
 					</Form.Group>

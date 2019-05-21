@@ -77,8 +77,8 @@ class ProductsList extends Component {
 				<Row>
 					<Col>
 						<Button
-							className="button-create-product float-right"
-							variant="primary"
+							className="button-create-product float-left"
+							variant="secondary"
 							onClick={this.openProductModal}
 						>
 							Add Product

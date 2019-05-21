@@ -32,7 +32,7 @@ export default function ProductDetail(props) {
 					</Row>
 
 					<Row>
-						<ImageElement source={product.imageUrl} errorTxt="imageError" />
+						<ImageElement source={"http://localhost:3001/" + product.imageUrl} errorTxt="imageError" />
 						<Col />
 						<DetailElement header="Description:" value={product.description} />
 					</Row>

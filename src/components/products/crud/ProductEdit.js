@@ -121,7 +121,10 @@ function ProductEdit(props) {
 						<Row>
 							<Col>
 								<Form.Group controlId="productImage">
-									<ImageElement source={product.imageUrl} errorTxt="imageError" />
+									<ImageElement
+										source={'http://localhost:3001/' + product.imageUrl}
+										errorTxt="imageError"
+									/>
 								</Form.Group>
 							</Col>
 
