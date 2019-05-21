@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import CustomersApiService from '../../../utils/api/customersApiService'
 import CustomerForm from './CustomerForm'
 
-class CustomerNew extends Component {
+class CustomerCreate extends Component {
   onCancel() {
     this.props.history.push(`/customers`)
   }
@@ -18,9 +18,13 @@ class CustomerNew extends Component {
 
   render() {
     return (
-      <CustomerForm customer={{}} onSubmit={(e, cust) => this.handleSubmit(e, cust)} onCancel={() => this.onCancel()} />
+      <CustomerForm
+        customer={{}}
+        onSubmit={(e, cust) => this.handleSubmit(e, cust)}
+        onCancel={() => this.onCancel()}
+      />
     )
   }
 }
 
-export default CustomerNew
+export default CustomerCreate
