@@ -20,10 +20,22 @@ export default function OrderDetail(props) {
 		fetchData()
 	}, [])
 
+	const getProductsListElements = () => {
+		return productsList.map(product => {
+			return (
+				<Row>
+					<DetailElement header="Product Name:" value={product.name} />
+					<DetailElement header="Product Code:" value={product.code} />
+					<DetailElement header="Quantity:" value={product.products_orders.quantity} />
+				</Row>
+			)
+		})
+	}
+
 	return (
-		<div className="order-detail">
+		<Container className="order-detail">
 			{order && customer ? (
-				<Container>
+				<>
 					<Row>
 						<Col>
 							<DetailElement header="Shipping Cost:" value={order.shippingCost} />
@@ -91,27 +103,17 @@ export default function OrderDetail(props) {
 						</Col>
 					</Row>
 
-					<Col>
-						{productsList.map(product => {
-							return (
-								<Row>
-									<DetailElement header="Product Name:" value={product.name} />
-									<DetailElement header="Product Code:" value={product.code} />
-									<DetailElement header="Quantity:" value={product.products_orders.quantity} />
-								</Row>
-							)
-						})}
-					</Col>
+					{getProductsListElements()}
 
 					<DetailElement header="Total Products Count:" value={order.productsCount} />
 					<DetailElement
 						header="Total Price"
 						value={order.productsTotalPrice + ' ' + order.currency.toUpperCase()}
 					/>
-				</Container>
+				</>
 			) : (
 				<span>Order with given ID does not exist!</span>
 			)}
-		</div>
+		</Container>
 	)
 }
