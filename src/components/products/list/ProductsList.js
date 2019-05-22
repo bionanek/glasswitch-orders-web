@@ -6,7 +6,7 @@ import { faList, faTh } from '@fortawesome/free-solid-svg-icons'
 import SimpleList from '../../common/simpleList/SimpleList'
 import ProductsApiService from '../../../utils/api/productsApiService'
 import ProductCreateModal from '../components/modalCreate/ModalCreateProduct'
-import ProductTile from '../components/tile/ProductTile'
+import ProductGrid from '../components/grid/ProductGrid'
 import './ProductsList.scss'
 
 class ProductsList extends Component {
@@ -104,6 +104,7 @@ class ProductsList extends Component {
 							<Button variant="secondary" onClick={this.renderListView}>
 								<FontAwesomeIcon icon={faList} size="2x" />
 							</Button>
+
 							<Button variant="secondary" onClick={this.renderGridView}>
 								<FontAwesomeIcon icon={faTh} size="2x" />
 							</Button>
@@ -127,20 +128,16 @@ class ProductsList extends Component {
 						</Col>
 					</Row>
 				) : (
-					<Row className="product-tile">
-						<ProductTile
-							productsList={prods}
-							imageSource="imageUrl"
-							name="name"
-							code="code"
-							pln="pln"
-							eur="eur"
-							usd="usd"
-							clickable
-							editable
-							deletable
-						/>
-					</Row>
+					<ProductGrid
+						className="product-grid"
+						productsList={prods}
+						imageSource="imageUrl"
+						name="name"
+						code="code"
+						pln="pln"
+						eur="eur"
+						usd="usd"
+					/>
 				)}
 
 				<ProductCreateModal

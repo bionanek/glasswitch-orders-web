@@ -4,21 +4,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrashAlt, faEdit } from '@fortawesome/free-solid-svg-icons'
 import { Button, ButtonGroup, Card, ListGroup, ListGroupItem } from 'react-bootstrap/'
 import ConfirmationModal from '../../../common/modals/confirmationModal/ConfirmationModal'
-import './ProductTileElement.scss'
 
-const ProductTileElement = props => {
+const ProductGridElement = props => {
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
-	const pushDetailsPage = () => {
-		props.history.push(`/products/${props.id}`)
+	const openDetailsPage = () => {
+		props.history.push(`/products/${props.id}/`)
 	}
 
-	const pushEditPage = () => {
+	const openEditPage = () => {
 		props.history.push(`/products/${props.id}/edit`)
-	}
-
-	const openDeleteModal = () => {
-		setIsDeleteModalOpen(true)
 	}
 
 	const closeDeleteModal = () => {
@@ -27,29 +22,35 @@ const ProductTileElement = props => {
 
 	const onDeleteButtonClick = event => {
 		event.stopPropagation()
-		openDeleteModal()
+		setIsDeleteModalOpen(true)
 	}
 
 	const onDeleteConfirm = () => {
 		if (props.element.deleteHandler) {
 			props.element.deleteHandler(props.element.id)
-		} else {
-			props.defaultOnDeleteClick(props.element, props.index)
+			return
 		}
+		props.defaultOnDeleteClick(props.element, props.index)
 	}
 
 	return (
 		<>
-			<Card className="product-tile" style={{ width: '18rem' }} onClick={pushDetailsPage}>
-				<Card.Img variant="top" src={props.imageUrl} />
+			<Card style={{ width: '18rem', margin: '15px' }}>
+				<Card.Img
+					variant="top"
+					style={{ cursor: 'pointer' }}
+					src={props.imageUrl}
+					onClick={openDetailsPage}
+				/>
 				<Card.Body>
 					<Card.Title>
 						{props.productCode}
-						<ButtonGroup className="buttons-layout-change float-right">
-							<Button variant="secondary" onClick={pushEditPage}>
+						<ButtonGroup className="float-right">
+							<Button variant="secondary" onClick={openEditPage}>
 								<FontAwesomeIcon icon={faEdit} />
 							</Button>
-							<Button variant="secondary" onClick={onDeleteButtonClick}>
+
+							<Button variant="danger" onClick={onDeleteButtonClick}>
 								<FontAwesomeIcon icon={faTrashAlt} />
 							</Button>
 						</ButtonGroup>
@@ -72,4 +73,4 @@ const ProductTileElement = props => {
 	)
 }
 
-export default withRouter(ProductTileElement)
+export default withRouter(ProductGridElement)

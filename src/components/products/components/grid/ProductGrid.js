@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { Row } from 'react-bootstrap/'
-import ProductTileElement from './ProductTileElement'
+import ProductGridElement from './ProductGridElement'
 
-export default function ProductTile({ productsList, imageSource, name, code, pln, eur, usd }) {
+export default function ProductGrid({ productsList, imageSource, name, code, pln, eur, usd }) {
 	const [products, setProducts] = useState([])
 
 	const getProductsGridView = () => {
 		return productsList.map((product, index) => {
 			return (
-				<ProductTileElement
+				<ProductGridElement
 					key={product.id ? product.id : index}
 					index={index}
 					element={product}
