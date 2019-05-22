@@ -58,17 +58,13 @@ function ProductEdit(props) {
 		handleEditDataConfirm()
 	}
 
-	const openDeleteModal = () => {
-		setIsDeleteModalOpen(true)
-	}
-
 	const closeDeleteModal = () => {
 		setIsDeleteModalOpen(false)
 	}
 
 	const handleDelete = event => {
 		event.stopPropagation()
-		openDeleteModal()
+		setIsDeleteModalOpen(true)
 	}
 
 	const onDeleteConfirm = async () => {
