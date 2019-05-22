@@ -209,7 +209,7 @@ class CustomerForm extends Component {
               </Row>
               <Row>
                 <Col>
-                  <Button type="submit">Submit form</Button>
+                  <Button type="submit" variant="success">{this.props.submitText}</Button>
                   <Button variant="danger" className="cancel-button" onClick={() => this.props.onCancel()}>Cancel</Button>
                 </Col>
               </Row>

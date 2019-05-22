@@ -41,6 +41,12 @@ class CustomerDetail extends Component {
     await CustomersApiService.deleteCustomer(parseInt(this.props.match.params.id))
     this.props.history.push("/customers")
   }
+  
+  getReturnButton() {
+    return (
+      <Button className="return-button" variant="secondary" onClick={() => this.backToList()}>Back to Customers List</Button>
+    )
+  }
 
   closeDeleteModal() {
     this.setState({ isDeleteModalOpen: false })
@@ -103,7 +109,7 @@ class CustomerDetail extends Component {
             </Row>
             <Row>
               <Col>
-                <Button className="return-button" onClick={() => this.backToList()}>Back to Customers List</Button>
+                {this.getReturnButton()}
               </Col>
             </Row>
           </Container>
@@ -119,7 +125,7 @@ class CustomerDetail extends Component {
             </Row>
             <Row>
               <Col>
-                <Button className="return-button" onClick={() => this.backToList()}>Back to Customers List</Button>
+                {this.getReturnButton()}
               </Col>
             </Row>
           </Container>
