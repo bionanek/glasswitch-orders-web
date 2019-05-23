@@ -1,7 +1,13 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
+import { Button, ButtonGroup, Col, Row } from 'react-bootstrap/'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faList, faTh } from '@fortawesome/free-solid-svg-icons'
 import SimpleList from '../../common/simpleList/SimpleList'
 import ProductsApiService from '../../../utils/api/productsApiService'
+import ProductCreateModal from '../components/modalCreate/ModalCreateProduct'
+import ProductGrid from '../components/grid/ProductGrid'
+import './ProductsList.scss'
 
 class ProductsList extends Component {
 	constructor(props) {
@@ -9,7 +15,15 @@ class ProductsList extends Component {
 
 		this.state = {
 			products: [],
+			isProductCreateModalOpen: false,
+			renderListView: true,
 		}
+
+		this.refreshList = this.refreshList.bind(this)
+		this.openProductModal = this.openProductModal.bind(this)
+		this.closeProductModal = this.closeProductModal.bind(this)
+		this.renderListView = this.renderListView.bind(this)
+		this.renderGridView = this.renderGridView.bind(this)
 	}
 
 	async componentDidMount() {
@@ -49,24 +63,89 @@ class ProductsList extends Component {
 	}
 
 	async refreshList() {
-		const products = await this.getAllProducts()
+		const prods = await this.getAllProducts()
 
-		this.setState({ products })
+		this.setState({ products: prods })
+	}
+
+	openProductModal() {
+		this.setState({ isProductCreateModalOpen: true })
+	}
+
+	closeProductModal() {
+		this.setState({ isProductCreateModalOpen: false })
+	}
+
+	renderListView = () => {
+		this.setState({ renderListView: true })
+	}
+
+	renderGridView = () => {
+		this.setState({ renderListView: false })
 	}
 
 	render() {
 		const prods = this.state.products
+		const layoutState = this.state.renderListView
+
 		return (
-			<div className="products-list-wrapper">
-				<SimpleList
-					elementsList={prods}
-					titleFieldName="name"
-					subtitleFieldName="description"
-					deletable
-					editable
-					clickable
+			<>
+				<Row>
+					<Col>
+						<Button
+							className="button-create-product float-left"
+							variant="primary"
+							onClick={this.openProductModal}
+						>
+							Add Product
+						</Button>
+
+						<ButtonGroup className="buttons-layout-change float-right">
+							<Button variant="secondary" onClick={this.renderListView}>
+								<FontAwesomeIcon icon={faList} size="2x" />
+							</Button>
+
+							<Button variant="secondary" onClick={this.renderGridView}>
+								<FontAwesomeIcon icon={faTh} size="2x" />
+							</Button>
+						</ButtonGroup>
+					</Col>
+				</Row>
+
+				{layoutState ? (
+					<Row>
+						<Col>
+							<div className="products-list-wrapper">
+								<SimpleList
+									elementsList={prods}
+									titleFieldName="name"
+									subtitleFieldName="code"
+									deletable
+									editable
+									clickable
+								/>
+							</div>
+						</Col>
+					</Row>
+				) : (
+					<ProductGrid
+						className="product-grid"
+						productsList={prods}
+						imageSource="imageUrl"
+						name="name"
+						code="code"
+						pln="pln"
+						eur="eur"
+						usd="usd"
+					/>
+				)}
+
+				<ProductCreateModal
+					isOpen={this.state.isProductCreateModalOpen}
+					onModalClose={this.closeProductModal}
+					onRefreshList={this.refreshList}
 				/>
-			</div>
+			</>
 		)
 	}
 }
