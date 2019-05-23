@@ -1,18 +1,20 @@
-import './App.scss';
+import './App.scss'
 
-import React, { Component } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import React, { Component } from 'react'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
 
-import Home from './components/home/Home';
-import Customers from './components/customers/Customers';
-import CustomerDetail from './components/customers/crud/CustomerDetail';
-import CustomerEdit from './components/customers/crud/CustomerEdit';
+import Home from './components/home/Home'
+import Customers from './components/customers/Customers'
+import CustomerDetail from './components/customers/crud/CustomerDetail'
+import CustomerEdit from './components/customers/crud/CustomerEdit'
 import CustomerCreate from './components/customers/crud/CustomerCreate';
 import Products from './components/products/Products'
-import About from './components/about/About';
-import RouteError from './components/common/RouteError';
-import Navigation from './components/common/navigation/Navigation';
+import Orders from './components/orders/Orders'
+import OrderDetail from './components/orders/crud/OrderDetail'
+import About from './components/about/About'
 import ScrollToTop from './components/common/navigation/ScrollToTop';
+import RouteError from './components/common/RouteError'
+import Navigation from './components/common/navigation/Navigation'
 
 class App extends Component {
   render() {
@@ -29,6 +31,8 @@ class App extends Component {
                   <Route path="/customers/:id" component={CustomerDetail} exact />
                   <Route path="/customers/:id/edit" component={CustomerEdit} />
                   <Route path='/products' component={Products} exact />
+                  <Route path="/orders" component={Orders} exact />
+                  <Route path="/orders/:id" component={OrderDetail} exact />
                   <Route path="/about" component={About} />
                   <Route component={RouteError} />
                 </Switch>
@@ -37,8 +41,8 @@ class App extends Component {
           </ScrollToTop>
         </BrowserRouter>
       </div>
-    );
+    )
   }
 }
 
-export default App;
+export default App
