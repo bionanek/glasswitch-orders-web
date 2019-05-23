@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button'
 import SimpleList from '../../common/simpleList/SimpleList'
 import CustomersApiService from '../../../utils/api/customersApiService'
 import './CustomersList.scss'
-import CustomerCreate from '../crud/CustomerCreate'
+import ModalCreateCustomer from '../crud/ModalCreateCustomer'
 
 class CustomersList extends Component {
   constructor(props) {
@@ -74,7 +74,7 @@ class CustomersList extends Component {
           editable
           clickable
         />
-        <CustomerCreate
+        <ModalCreateCustomer
           isOpen={this.state.isCustomerCreateModalOpen}
           onModalClose={() => this.openCloseCreateModal()}
         />

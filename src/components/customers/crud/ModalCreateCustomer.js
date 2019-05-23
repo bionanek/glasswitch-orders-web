@@ -2,9 +2,9 @@ import React from 'react'
 import { Modal } from 'react-bootstrap/'
 import CustomersApiService from '../../../utils/api/customersApiService'
 import CustomerForm from './CustomerForm'
-import './CustomerCreate.scss'
+import './ModalCreateCustomer.scss'
 
-const CustomerCreate = (props) => {
+const ModalCreateCustomer = (props) => {
   function onCancel() {
     props.onModalClose()
   }
@@ -37,4 +37,4 @@ const CustomerCreate = (props) => {
   )
 }
 
-export default CustomerCreate
+export default ModalCreateCustomer
