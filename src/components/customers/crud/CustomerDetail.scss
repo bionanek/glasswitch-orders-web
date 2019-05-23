@@ -1,8 +1,19 @@
 .customer-detail {
-	color: #61dafb;
-}
+  color: #61dafb;
+  
+  h2, span {
+    color: white;
+  }
 
-.customer-detail h2,
-.customer-detail span {
-	color: white;
+  .edit-icon, .delete-icon {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+    padding: 8px;
+    cursor: pointer;
+  }
+
+  .return-button {
+    margin-top: 15px;
+  }
 }
