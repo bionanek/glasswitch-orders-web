@@ -1,5 +1,6 @@
 import React from 'react'
 import { Modal } from 'react-bootstrap/'
+import { withRouter } from 'react-router-dom'
 import CustomersApiService from '../../../utils/api/customersApiService'
 import CustomerForm from './CustomerForm'
 import './ModalCreateCustomer.scss'
@@ -37,4 +38,4 @@ const ModalCreateCustomer = (props) => {
   )
 }
 
-export default ModalCreateCustomer
+export default withRouter(ModalCreateCustomer)
