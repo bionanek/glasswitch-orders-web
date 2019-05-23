@@ -38,6 +38,7 @@ class CustomerEdit extends Component {
         customer={customer}
         onSubmit={(e, cust) => this.handleSubmit(e, cust)}
         onCancel={() => this.onCancel()}
+        submitText="Edit Customer"
       />
     )
   }
