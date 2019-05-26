@@ -13,9 +13,10 @@ const ModalCreateCustomer = (props) => {
     event.preventDefault()
     event.stopPropagation()
 
-    const response = await CustomersApiService.createCustomer(customer)
+    await CustomersApiService.createCustomer(customer)
 
-    props.history.push(`/customers/${response.id}`)
+    props.onModalClose()
+    props.refreshList()
   }
 
   return (

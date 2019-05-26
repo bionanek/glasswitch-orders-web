@@ -77,6 +77,7 @@ class CustomersList extends Component {
         <ModalCreateCustomer
           isOpen={this.state.isCustomerCreateModalOpen}
           onModalClose={() => this.openCloseCreateModal()}
+          refreshList={() => this.refreshList()}
         />
       </div>
     )
