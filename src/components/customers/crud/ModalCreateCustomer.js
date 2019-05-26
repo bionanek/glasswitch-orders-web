@@ -1,6 +1,5 @@
 import React from 'react'
 import { Modal } from 'react-bootstrap/'
-import { withRouter } from 'react-router-dom'
 import CustomersApiService from '../../../utils/api/customersApiService'
 import CustomerForm from './CustomerForm'
 import './ModalCreateCustomer.scss'
@@ -14,9 +13,10 @@ const ModalCreateCustomer = (props) => {
     event.preventDefault()
     event.stopPropagation()
 
-    const response = await CustomersApiService.createCustomer(customer)
+    await CustomersApiService.createCustomer(customer)
 
-    props.history.push(`/customers/${response.id}`)
+    props.onModalClose()
+    props.refreshList()
   }
 
   return (
@@ -38,4 +38,4 @@ const ModalCreateCustomer = (props) => {
   )
 }
 
-export default withRouter(ModalCreateCustomer)
+export default ModalCreateCustomer
