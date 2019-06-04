@@ -10,14 +10,13 @@ import {
 	Button,
 	ButtonGroup,
 } from 'react-bootstrap'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSync } from '@fortawesome/free-solid-svg-icons'
 import CustomersApiService from '../../../utils/api/customersApiService'
 import ProductGrid from '../../products/components/grid/ProductGrid'
 import ProductsApiService from '../../../utils/api/productsApiService'
 import SimpleList from '../../common/simpleList/SimpleList'
 import DetailElement from '../../common/DetailElement'
 import OrdersApiService from '../../../utils/api/ordersApiService'
+import LoadingView from '../../common/LoadingView'
 import './OrderCreate.scss'
 
 function OrderCreate(props) {
@@ -201,28 +200,6 @@ function OrderCreate(props) {
 					<Dropdown.Item onClick={() => setSelectedCurrency('usd')}>USD</Dropdown.Item>
 				</DropdownButton>
 			</div>
-		)
-	}
-
-	const loadingView = () => {
-		return (
-			<Container>
-				<Row>
-					<Col />
-					<Col sm>
-						<FontAwesomeIcon
-							style={{ margin: '5px', color: 'white' }}
-							className="fa-spin"
-							icon={faSync}
-							size="4x"
-						/>
-						<Form.Label style={{ margin: '5px', color: 'white', fontSize: '72px' }}>
-							Loading
-						</Form.Label>
-					</Col>
-					<Col />
-				</Row>
-			</Container>
 		)
 	}
 
@@ -438,37 +415,42 @@ function OrderCreate(props) {
 						</Col>
 					</Row>
 
-					<Row style={{ color: 'black', background: 'yellow' }}>Selected Products</Row>
-					<ProductGrid
-						productsList={selectedProductsGrid}
-						imageSource="imageUrl"
-						name="name"
-						code="code"
-						pln="pln"
-						eur="eur"
-						usd="usd"
-						quantity={quantity}
-						clickable
-						editable
-						deletable
-						quantitySetter
-					/>
+					<Row>
+						<Col sm>
+							<Row style={{ color: 'black', background: 'green' }}>Selected Products</Row>
+							<ProductGrid
+								productsList={selectedProductsGrid}
+								imageSource="imageUrl"
+								name="name"
+								code="code"
+								pln="pln"
+								eur="eur"
+								usd="usd"
+								quantity={quantity}
+								clickable
+								editable
+								deletable
+								quantitySetter
+							/>
+						</Col>
 
-					<Row style={{ color: 'black', background: 'yellow' }}>All Products</Row>
-					<ProductGrid
-						productsList={products}
-						imageSource="imageUrl"
-						name="name"
-						code="code"
-						pln="pln"
-						eur="eur"
-						usd="usd"
-						quantity={quantity}
-						clickable
-						editable
-						deletable
-						quantitySetter
-					/>
+						<Col sm>
+							<Row style={{ color: 'black', background: 'red' }}>All Products</Row>
+							<ProductGrid
+								productsList={products}
+								imageSource="imageUrl"
+								name="name"
+								code="code"
+								pln="pln"
+								eur="eur"
+								usd="usd"
+								clickable
+								editable
+								deletable
+								quantitySetter
+							/>
+						</Col>
+					</Row>
 
 					<Row>
 						<Col sm>
@@ -506,7 +488,7 @@ function OrderCreate(props) {
 		fetchedProducts()
 	}, [])
 
-	return <> {isLoaded ? orderCreateView() : loadingView()} </>
+	return <> {isLoaded ? orderCreateView() : LoadingView()} </>
 }
 
 export default withRouter(OrderCreate)

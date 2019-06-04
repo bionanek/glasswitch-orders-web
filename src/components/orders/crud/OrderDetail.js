@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { Container, Row, Col, Form } from 'react-bootstrap/'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSync } from '@fortawesome/free-solid-svg-icons'
+import { Container, Row, Col } from 'react-bootstrap/'
 import DetailElement from '../../common/DetailElement'
 import OrdersApiService from '../../../utils/api/ordersApiService'
+import LoadingView from '../../common/LoadingView'
 import './OrderDetail.scss'
 
 export default function OrderDetail(props) {
@@ -31,28 +30,6 @@ export default function OrderDetail(props) {
 				</Row>
 			)
 		})
-	}
-
-	const loadingView = () => {
-		return (
-			<Container>
-				<Row>
-					<Col />
-					<Col sm>
-						<FontAwesomeIcon
-							style={{ margin: '5px', color: 'white' }}
-							className="fa-spin"
-							icon={faSync}
-							size="4x"
-						/>
-						<Form.Label style={{ margin: '5px', color: 'white', fontSize: '72px' }}>
-							Loading
-						</Form.Label>
-					</Col>
-					<Col />
-				</Row>
-			</Container>
-		)
 	}
 
 	const orderDetailsView = () => {
@@ -155,5 +132,5 @@ export default function OrderDetail(props) {
 		fetchData()
 	}, [])
 
-	return <>{isLoaded ? orderDetailsView() : loadingView()} </>
+	return <>{isLoaded ? orderDetailsView() : LoadingView()} </>
 }
