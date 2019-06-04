@@ -77,7 +77,7 @@ function ProductEdit(props) {
 	}
 
 	return (
-		<Container className="product-edit">
+		<Container style={{ color: 'white' }}>
 			{product ? (
 				<>
 					<Form onSubmit={handleSubmit} validated={isValidated}>

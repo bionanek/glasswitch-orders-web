@@ -7,7 +7,6 @@ import ConfirmationModal from '../modals/confirmationModal/ConfirmationModal'
 
 const SimpleListElement = props => {
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-	const isDeletable = props.isDeletable === undefined ? true : props.isDeletable
 
 	const openDeleteModal = () => {
 		setIsDeleteModalOpen(true)
@@ -42,16 +41,16 @@ const SimpleListElement = props => {
 					<span className="title">{props.title}</span>
 					<span className="sub-title">{props.subtitle}</span>
 					<span className="buttons-wrapper">
-						{props.isEditable && (
+						{props.isEditable ? (
 							<span className="edit-icon" onClick={props.element.editHandler} role="button">
 								<FontAwesomeIcon icon={faEdit} />
 							</span>
-						)}
-						{isDeletable && (
+						) : null}
+						{props.isDeletable ? (
 							<span className="delete-icon" onClick={onDeleteButtonClick} role="button">
 								<FontAwesomeIcon icon={faTrashAlt} />
 							</span>
-						)}
+						) : null}
 					</span>
 				</li>
 				<ConfirmationModal

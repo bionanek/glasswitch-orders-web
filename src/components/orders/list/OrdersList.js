@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
+import { Row, Col, Button } from 'react-bootstrap'
 import SimpleList from '../../common/simpleList/SimpleList'
 import OrdersApiService from '../../../utils/api/ordersApiService'
+import './OrdersList.scss'
 
 class OrdersList extends Component {
 	constructor(props) {
@@ -10,6 +12,8 @@ class OrdersList extends Component {
 		this.state = {
 			orders: [],
 		}
+
+		this.openOrderCreatePage = this.openOrderCreatePage.bind(this)
 	}
 
 	async componentDidMount() {
@@ -48,6 +52,10 @@ class OrdersList extends Component {
 		}, this)
 	}
 
+	openOrderCreatePage = () => {
+		this.props.history.push('/orders/create')
+	}
+
 	async refreshList() {
 		const orders = await this.getAllOrders()
 		this.setState({ orders })
@@ -55,7 +63,19 @@ class OrdersList extends Component {
 
 	render() {
 		return (
-			<div className="orders-list-wrapper">
+			<div className="order-list-wrapper">
+				<Row>
+					<Col>
+						<Button
+							className="button-create-order"
+							variant="primary"
+							onClick={this.openOrderCreatePage}
+						>
+							Put an Order
+						</Button>
+					</Col>
+				</Row>
+
 				<SimpleList
 					elementsList={this.state.orders}
 					titleFieldName="email"

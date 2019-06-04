@@ -89,23 +89,23 @@ class ProductsList extends Component {
 		const layoutState = this.state.renderListView
 
 		return (
-			<>
+			<div className="products-list-wrapper">
 				<Row>
 					<Col>
 						<Button
-							className="button-create-product float-left"
+							className="button-create-product"
 							variant="primary"
 							onClick={this.openProductModal}
 						>
 							Add Product
 						</Button>
 
-						<ButtonGroup className="buttons-layout-change float-right">
-							<Button variant="secondary" onClick={this.renderListView}>
+						<ButtonGroup className="buttons-layout-change">
+							<Button onClick={this.renderListView} variant="secondary">
 								<FontAwesomeIcon icon={faList} size="2x" />
 							</Button>
 
-							<Button variant="secondary" onClick={this.renderGridView}>
+							<Button onClick={this.renderGridView} variant="secondary">
 								<FontAwesomeIcon icon={faTh} size="2x" />
 							</Button>
 						</ButtonGroup>
@@ -113,23 +113,16 @@ class ProductsList extends Component {
 				</Row>
 
 				{layoutState ? (
-					<Row>
-						<Col>
-							<div className="products-list-wrapper">
-								<SimpleList
-									elementsList={prods}
-									titleFieldName="name"
-									subtitleFieldName="code"
-									deletable
-									editable
-									clickable
-								/>
-							</div>
-						</Col>
-					</Row>
+					<SimpleList
+						elementsList={prods}
+						titleFieldName="name"
+						subtitleFieldName="code"
+						deletable
+						editable
+						clickable
+					/>
 				) : (
 					<ProductGrid
-						className="product-grid"
 						productsList={prods}
 						imageSource="imageUrl"
 						name="name"
@@ -137,6 +130,9 @@ class ProductsList extends Component {
 						pln="pln"
 						eur="eur"
 						usd="usd"
+						clickable
+						editable
+						deletable
 					/>
 				)}
 
@@ -145,7 +141,7 @@ class ProductsList extends Component {
 					onModalClose={this.closeProductModal}
 					onRefreshList={this.refreshList}
 				/>
-			</>
+			</div>
 		)
 	}
 }
