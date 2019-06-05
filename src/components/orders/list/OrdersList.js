@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 import SimpleList from '../../common/simpleList/SimpleList'
 import OrdersApiService from '../../../utils/api/ordersApiService'
+import LoadingView from '../../common/LoadingView'
 
 class OrdersList extends Component {
 	constructor(props) {
@@ -9,12 +10,13 @@ class OrdersList extends Component {
 
 		this.state = {
 			orders: [],
+			isLoaded: false,
 		}
 	}
 
 	async componentDidMount() {
 		const orders = await this.getAllOrders()
-		this.setState({ orders: orders })
+		this.setState({ orders, isLoaded: true })
 	}
 
 	async getAllOrders() {
@@ -56,14 +58,18 @@ class OrdersList extends Component {
 	render() {
 		return (
 			<div className="orders-list-wrapper">
-				<SimpleList
-					elementsList={this.state.orders}
-					titleFieldName="email"
-					subtitleFieldName="deadline"
-					deletable
-					editable
-					clickable
-				/>
+				{this.state.isLoaded ? (
+					<SimpleList
+						elementsList={this.state.orders}
+						titleFieldName="email"
+						subtitleFieldName="deadline"
+						deletable
+						editable
+						clickable
+					/>
+				) : (
+					LoadingView()
+				)}
 			</div>
 		)
 	}

@@ -9,135 +9,140 @@ import DetailElement from '../../common/DetailElement'
 import CustomersApiService from '../../../utils/api/customersApiService'
 import './CustomerDetail.scss'
 import ConfirmationModal from '../../common/modals/confirmationModal/ConfirmationModal'
+import LoadingView from '../../common/LoadingView'
 
 class CustomerDetail extends Component {
-  constructor(props) {
-    super(props)
+	constructor(props) {
+		super(props)
 
-    this.state = {
-      customer: null,
-      isDeleteModalOpen: false,
-    }
-  }
+		this.state = {
+			customer: null,
+			isDeleteModalOpen: false,
+			isLoaded: false,
+		}
+	}
 
-  async componentDidMount() {
-    const customerId = parseInt(this.props.match.params.id)
+	async componentDidMount() {
+		const customerId = parseInt(this.props.match.params.id)
 
-    this.setState({ customer: await CustomersApiService.getCustomer(customerId) })
-  }
+		this.setState({ customer: await CustomersApiService.getCustomer(customerId), isLoaded: true })
+	}
 
-  // TODO: Move these handlers to components so that they can be reused
-  onEditClicked() {
-    const editUrl = `/customers/${parseInt(this.props.match.params.id)}/edit`
-    this.props.history.push(editUrl)
-  }
+	// TODO: Move these handlers to components so that they can be reused
+	onEditClicked() {
+		const editUrl = `/customers/${parseInt(this.props.match.params.id)}/edit`
+		this.props.history.push(editUrl)
+	}
 
-  onDeleteClicked(e) {
-    e.stopPropagation()
-    this.openDeleteModal()
-  }
+	onDeleteClicked(e) {
+		e.stopPropagation()
+		this.openDeleteModal()
+	}
 
-  async onDeleteConfirmed() {
-    await CustomersApiService.deleteCustomer(parseInt(this.props.match.params.id))
-    this.props.history.push("/customers")
-  }
-  
-  getReturnButton() {
-    return (
-      <Button className="return-button" variant="secondary" onClick={() => this.backToList()}>Back to Customers List</Button>
-    )
-  }
+	async onDeleteConfirmed() {
+		await CustomersApiService.deleteCustomer(parseInt(this.props.match.params.id))
+		this.props.history.push('/customers')
+	}
 
-  closeDeleteModal() {
-    this.setState({ isDeleteModalOpen: false })
-  }
+	getReturnButton() {
+		return (
+			<Button className="return-button" variant="secondary" onClick={() => this.backToList()}>
+				Back to Customers List
+			</Button>
+		)
+	}
 
-  openDeleteModal() {
-    this.setState({ isDeleteModalOpen: true })
-  }
+	closeDeleteModal() {
+		this.setState({ isDeleteModalOpen: false })
+	}
 
-  backToList() {
-    this.props.history.push("/customers")
-  }
+	openDeleteModal() {
+		this.setState({ isDeleteModalOpen: true })
+	}
 
-  render() {
-    const { customer } = this.state
+	backToList() {
+		this.props.history.push('/customers')
+	}
 
-    return (
-      <div className="customer-detail">
-        {customer ? (
-          <Container>
-            <Row>
-              <Col sm>
-                <h1>{customer.name}</h1>
-              </Col>
-              <Col sm>
-                <span className="edit-icon" onClick={() => this.onEditClicked()} role="button">
-                  <FontAwesomeIcon icon={faEdit} size="2x" />
-                </span>
-                <span className="delete-icon" onClick={() => this.openDeleteModal()} role="button">
-                  <FontAwesomeIcon icon={faTrashAlt} size="2x" />
-                </span>
-              </Col>
-            </Row>
-            <Row>
-              <DetailElement header="Email address:" value={customer.email} />
-              <DetailElement header="Phone number:" value={customer.phone} />
-              <DetailElement header="VAT identification number:" value={customer.vatNumber} />
-            </Row>
-            <Row>
-              <Col>
-                <h2>Delivery address</h2>
-              </Col>
-            </Row>
-            <Row>
-              <DetailElement header="Street:" value={customer.delivery_street} />
-              <DetailElement header="City:" value={customer.delivery_city} />
-              <DetailElement header="Country:" value={customer.delivery_country} />
-              <DetailElement header="Postcode:" value={customer.delivery_postCode} />
-            </Row>
-            <Row>
-              <Col>
-                <h2>Billing address</h2>
-              </Col>
-            </Row>
-            <Row>
-              <DetailElement header="Street:" value={customer.billing_street} />
-              <DetailElement header="City:" value={customer.billing_city} />
-              <DetailElement header="Country:" value={customer.billing_country} />
-              <DetailElement header="Postcode:" value={customer.billing_postCode} />
-            </Row>
-            <Row>
-              <Col>
-                {this.getReturnButton()}
-              </Col>
-            </Row>
-          </Container>
-        ) : (
-          <Container>
-            <Row>
-              <Col>
-                <span>
-                  Customer with ID:
-                  {this.props.match.params.id} does not exist!
-                </span>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                {this.getReturnButton()}
-              </Col>
-            </Row>
-          </Container>
-          )}
-        <ConfirmationModal
-          isOpen={this.state.isDeleteModalOpen}
-          onModalClose={() => this.closeDeleteModal()}
-          onConfirm={() => this.onDeleteConfirmed()}
-        />
-      </div>
-    )
-  }
+	customerDetailsView() {
+		const { customer } = this.state
+		return (
+			<div className="customer-detail">
+				{customer ? (
+					<Container>
+						<Row>
+							<Col sm>
+								<h1>{customer.name}</h1>
+							</Col>
+							<Col sm>
+								<span className="edit-icon" onClick={() => this.onEditClicked()} role="button">
+									<FontAwesomeIcon icon={faEdit} size="2x" />
+								</span>
+								<span className="delete-icon" onClick={() => this.openDeleteModal()} role="button">
+									<FontAwesomeIcon icon={faTrashAlt} size="2x" />
+								</span>
+							</Col>
+						</Row>
+						<Row>
+							<DetailElement header="Email address:" value={customer.email} />
+							<DetailElement header="Phone number:" value={customer.phone} />
+							<DetailElement header="VAT identification number:" value={customer.vatNumber} />
+						</Row>
+						<Row>
+							<Col>
+								<h2>Delivery address</h2>
+							</Col>
+						</Row>
+						<Row>
+							<DetailElement header="Street:" value={customer.delivery_street} />
+							<DetailElement header="City:" value={customer.delivery_city} />
+							<DetailElement header="Country:" value={customer.delivery_country} />
+							<DetailElement header="Postcode:" value={customer.delivery_postCode} />
+						</Row>
+						<Row>
+							<Col>
+								<h2>Billing address</h2>
+							</Col>
+						</Row>
+						<Row>
+							<DetailElement header="Street:" value={customer.billing_street} />
+							<DetailElement header="City:" value={customer.billing_city} />
+							<DetailElement header="Country:" value={customer.billing_country} />
+							<DetailElement header="Postcode:" value={customer.billing_postCode} />
+						</Row>
+						<Row>
+							<Col>{this.getReturnButton()}</Col>
+						</Row>
+					</Container>
+				) : (
+					<Container>
+						<Row>
+							<Col>
+								<span>
+									Customer with ID:
+									{this.props.match.params.id} does not exist!
+								</span>
+							</Col>
+						</Row>
+						<Row>
+							<Col>{this.getReturnButton()}</Col>
+						</Row>
+					</Container>
+				)}
+				<ConfirmationModal
+					isOpen={this.state.isDeleteModalOpen}
+					onModalClose={() => this.closeDeleteModal()}
+					onConfirm={() => this.onDeleteConfirmed()}
+				/>
+			</div>
+		)
+	}
+
+	render() {
+		const { isLoaded } = this.state
+
+		return <div>{isLoaded ? this.customerDetailsView() : LoadingView()}</div>
+	}
 }
 
 export default CustomerDetail
