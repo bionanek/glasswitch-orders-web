@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
-import { Row, Col, Button } from 'react-bootstrap'
 import SimpleList from '../../common/simpleList/SimpleList'
 import OrdersApiService from '../../../utils/api/ordersApiService'
-import './OrdersList.scss'
+import LoadingView from '../../common/LoadingView'
 
 class OrdersList extends Component {
 	constructor(props) {
@@ -11,6 +10,7 @@ class OrdersList extends Component {
 
 		this.state = {
 			orders: [],
+			isLoaded: false,
 		}
 
 		this.openOrderCreatePage = this.openOrderCreatePage.bind(this)
@@ -18,7 +18,7 @@ class OrdersList extends Component {
 
 	async componentDidMount() {
 		const orders = await this.getAllOrders()
-		this.setState({ orders: orders })
+		this.setState({ orders, isLoaded: true })
 	}
 
 	async getAllOrders() {
@@ -63,27 +63,19 @@ class OrdersList extends Component {
 
 	render() {
 		return (
-			<div className="order-list-wrapper">
-				<Row>
-					<Col>
-						<Button
-							className="button-create-order"
-							variant="primary"
-							onClick={this.openOrderCreatePage}
-						>
-							Put an Order
-						</Button>
-					</Col>
-				</Row>
-
-				<SimpleList
-					elementsList={this.state.orders}
-					titleFieldName="email"
-					subtitleFieldName="deadline"
-					deletable
-					editable
-					clickable
-				/>
+			<div className="orders-list-wrapper">
+				{this.state.isLoaded ? (
+					<SimpleList
+						elementsList={this.state.orders}
+						titleFieldName="email"
+						subtitleFieldName="deadline"
+						deletable
+						editable
+						clickable
+					/>
+				) : (
+					LoadingView()
+				)}
 			</div>
 		)
 	}

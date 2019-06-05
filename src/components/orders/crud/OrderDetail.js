@@ -12,10 +12,23 @@ export default function OrderDetail(props) {
 	const [customer, setCustomer] = useState(null)
 	const [productsList, setProductsList] = useState([])
 
+	useEffect(() => {
+		const fetchData = async () => {
+			const fetchedOrder = await OrdersApiService.getOrderById(props.match.params.id)
+
+			setOrder(fetchedOrder.data)
+			setCustomer(fetchedOrder.data.customer)
+			setProductsList(fetchedOrder.data.products)
+
+			setIsLoaded(true)
+		}
+		fetchData()
+	}, [])
+
 	const getProductsListElements = () => {
 		return productsList.map(product => {
 			return (
-				<Row style={{ background: 'purple' }} key={product.id}>
+				<Row key={product.id}>
 					<Col sm>
 						<DetailElement header="Product Name:" value={product.name} />
 					</Col>
@@ -38,64 +51,64 @@ export default function OrderDetail(props) {
 				{order && customer ? (
 					<>
 						<Row>
-							<Col sm>
+							<Col>
 								<DetailElement header="Shipping Cost:" value={order.shippingCost} />
 							</Col>
-							<Col sm>
+							<Col>
 								<DetailElement header="Shipping Company:" value={order.shippingCompany} />
 							</Col>
-							<Col sm>
+							<Col>
 								<DetailElement header="Deadline:" value={order.deadline} />
 							</Col>
 						</Row>
 
 						<Row>
-							<Col sm>
+							<Col>
 								<DetailElement header="Email:" value={order.email} />
 							</Col>
-							<Col sm>
+							<Col>
 								<DetailElement header="Currency:" value={order.currency.toUpperCase()} />
 							</Col>
-							<Col sm>
+							<Col>
 								<DetailElement header="Notes:" value={order.notes} />
 							</Col>
 						</Row>
 
-						<Row style={{ background: 'purple' }}>
-							<Col sm>
+						<Row>
+							<Col>
 								<DetailElement header="Customer Name:" value={customer.name} />
 							</Col>
-							<Col sm>
+							<Col>
 								<DetailElement header="Customer Email:" value={customer.email} />
 							</Col>
-							<Col sm>
+							<Col>
 								<DetailElement header="VAT Identification Number:" value={customer.vatNumber} />
 							</Col>
 						</Row>
 
 						<Row>
-							<Col sm>
+							<Col>
 								{order.confirmationSent ? (
 									<DetailElement header="Confirmation Sent?:" value="Sent!" />
 								) : (
 									<DetailElement header="Confirmation Sent?:" value="Not sent!" />
 								)}
 							</Col>
-							<Col sm>
+							<Col>
 								{order.proformaSent ? (
 									<DetailElement header="Proforma Sent?:" value="Sent!" />
 								) : (
 									<DetailElement header="Proforma Sent?:" value="Not sent!" />
 								)}
 							</Col>
-							<Col sm>
+							<Col>
 								{order.invoiceSent ? (
 									<DetailElement header="Invoice Sent?:" value="Sent!" />
 								) : (
 									<DetailElement header="Invoice Sent?:" value="Not sent!" />
 								)}
 							</Col>
-							<Col sm>
+							<Col>
 								{order.settledPayment ? (
 									<DetailElement header="Settled Payment?:" value="Sent!" />
 								) : (
@@ -119,18 +132,5 @@ export default function OrderDetail(props) {
 		)
 	}
 
-	useEffect(() => {
-		const fetchData = async () => {
-			const fetchedOrder = await OrdersApiService.getOrderById(props.match.params.id)
-
-			setOrder(fetchedOrder.data)
-			setCustomer(fetchedOrder.data.customer)
-			setProductsList(fetchedOrder.data.products)
-
-			setIsLoaded(true)
-		}
-		fetchData()
-	}, [])
-
-	return <>{isLoaded ? orderDetailsView() : LoadingView()} </>
+	return <> {isLoaded ? orderDetailsView() : LoadingView()} </>
 }
