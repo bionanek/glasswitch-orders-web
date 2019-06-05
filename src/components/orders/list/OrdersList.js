@@ -56,11 +56,9 @@ class OrdersList extends Component {
 	}
 
 	render() {
-		const { isLoaded } = this.state
-
 		return (
 			<div className="orders-list-wrapper">
-				{isLoaded ? (
+				{this.state.isLoaded ? (
 					<SimpleList
 						elementsList={this.state.orders}
 						titleFieldName="email"

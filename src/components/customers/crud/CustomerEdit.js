@@ -34,12 +34,11 @@ class CustomerEdit extends Component {
 	}
 
 	render() {
-		const { customer, isLoaded } = this.state
 		return (
 			<div>
-				{isLoaded ? (
+				{this.state.isLoaded ? (
 					<CustomerForm
-						customer={customer}
+						customer={this.state.customer}
 						onSubmit={(e, cust) => this.handleSubmit(e, cust)}
 						onCancel={() => this.onCancel()}
 						submitText="Edit Customer"
