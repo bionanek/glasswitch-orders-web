@@ -5,11 +5,13 @@ import SimpleListElement from './SimpleListElement'
 
 export default function SimpleList({
 	elementsList,
-	deletable,
-	editable,
-	clickable,
 	titleFieldName,
 	subtitleFieldName,
+	quantityField,
+	clickable,
+	editable,
+	deletable,
+	dynamicElement,
 }) {
 	const [elements, setElements] = useState([])
 
@@ -27,11 +29,14 @@ export default function SimpleList({
 					isClickable={isListClickable}
 					isEditable={isListEditable}
 					isDeletable={isListDeletable}
-					element={el}
 					defaultOnDeleteClick={(element, id) => defaultOnDeleteClick(element, id)}
+					element={el}
 					title={el[titleFieldName]}
 					subtitle={el[subtitleFieldName]}
-				/>
+					quantity={quantityField}
+				>
+					{dynamicElement ? dynamicElement() : null}
+				</SimpleListElement>
 			)
 		})
 	}

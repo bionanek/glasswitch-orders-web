@@ -131,8 +131,6 @@ class ProductsList extends Component {
 						eur="eur"
 						usd="usd"
 						clickable
-						editable
-						deletable
 					/>
 				)}
 

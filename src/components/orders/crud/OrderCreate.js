@@ -26,7 +26,7 @@ function OrderCreate(props) {
 	const [customer, setCustomer] = useState([])
 	const [products, setProducts] = useState([])
 
-	const [selectedProductsGrid, setSelectedProductsGrid] = useState([])
+	const [selectedProducts, setSelectedProducts] = useState([])
 	const [selectedCustomer, setSelectedCustomer] = useState({})
 	const [productExistsInOrder, setProductExistsInOrder] = useState(false)
 	const [quantity, setQuantity] = useState(0)
@@ -38,23 +38,34 @@ function OrderCreate(props) {
 	const [isInvoiceSent, setIsInvoiceSent] = useState(false)
 	const [isPaymentSettled, setIsPaymentSettled] = useState(false)
 
-	const selectedProductsGridReactiveObjects = productsList => {
+	function quantitySetter(prodQuantity) {
+		return (
+			<Form.Control
+				type="number"
+				name="quantity"
+				placeholder="Quantity"
+				defaultValue={prodQuantity}
+			/>
+		)
+	}
+
+	const selectedProductsReactiveObjects = productsList => {
 		return productsList.map(productElement => {
 			const productRO = { ...productElement }
 			const currentOrder = order
 
-			productRO.quantitySetter = () => {}
-
-			productRO.clickHandler = () => {
-				for (let n = 0; n < selectedProductsGrid.length; n++) {
-					if (selectedProductsGrid[n].id === productRO.id) {
-						selectedProductsGrid.splice(n, 1)
+			productRO.deleteHandler = () => {
+				for (let n = 0; n < selectedProducts.length; n++) {
+					if (selectedProducts[n].id === productRO.id) {
+						selectedProducts.splice(n, 1)
 						currentOrder.wantedProducts.splice(n, 1)
-						setSelectedProductsGrid(selectedProductsGridReactiveObjects(selectedProductsGrid))
+						setSelectedProducts(selectedProductsReactiveObjects(selectedProducts))
 						return
 					}
 				}
 			}
+
+			productRO.quantitySetter = () => {}
 
 			return productRO
 		})
@@ -75,8 +86,8 @@ function OrderCreate(props) {
 			}
 
 			productRO.clickHandler = () => {
-				for (let n = 0; n < selectedProductsGrid.length; n++) {
-					if (selectedProductsGrid[n].id === productRO.id) {
+				for (let n = 0; n < selectedProducts.length; n++) {
+					if (selectedProducts[n].id === productRO.id) {
 						setProductExistsInOrder(true)
 						return
 					}
@@ -87,8 +98,8 @@ function OrderCreate(props) {
 					selectedProduct.quantity = parseInt(prodQuantity)
 
 					currentOrder.wantedProducts.push(selectedProduct)
-					selectedProductsGrid.push(productRO)
-					setSelectedProductsGrid(selectedProductsGridReactiveObjects(selectedProductsGrid))
+					selectedProducts.push(productRO)
+					setSelectedProducts(selectedProductsReactiveObjects(selectedProducts))
 
 					setOrder(currentOrder)
 				}
@@ -415,42 +426,28 @@ function OrderCreate(props) {
 						</Col>
 					</Row>
 
-					<Row>
-						<Col sm>
-							<Row style={{ color: 'black', background: 'green' }}>Selected Products</Row>
-							<ProductGrid
-								productsList={selectedProductsGrid}
-								imageSource="imageUrl"
-								name="name"
-								code="code"
-								pln="pln"
-								eur="eur"
-								usd="usd"
-								quantity={quantity}
-								clickable
-								editable
-								deletable
-								quantitySetter
-							/>
-						</Col>
+					<Row style={{ color: 'black', background: 'green' }}>Selected Products</Row>
+					<SimpleList
+						elementsList={selectedProducts}
+						titleFieldName="code"
+						subtitleFieldName="name"
+						quantityField={quantity}
+						dynamicElement={quantitySetter}
+						deletable
+					/>
 
-						<Col sm>
-							<Row style={{ color: 'black', background: 'red' }}>All Products</Row>
-							<ProductGrid
-								productsList={products}
-								imageSource="imageUrl"
-								name="name"
-								code="code"
-								pln="pln"
-								eur="eur"
-								usd="usd"
-								clickable
-								editable
-								deletable
-								quantitySetter
-							/>
-						</Col>
-					</Row>
+					<Row style={{ color: 'black', background: 'red' }}>All Products</Row>
+					<ProductGrid
+						productsList={products}
+						imageSource="imageUrl"
+						name="name"
+						code="code"
+						pln="pln"
+						eur="eur"
+						usd="usd"
+						dynamicElement={quantitySetter}
+						clickable
+					/>
 
 					<Row>
 						<Col sm>
@@ -484,7 +481,6 @@ function OrderCreate(props) {
 
 			setIsLoaded(true)
 		}
-		orderCreateView()
 		fetchedProducts()
 	}, [])
 

@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { withRouter } from 'react-router-dom'
+import { Card, ListGroup, ListGroupItem, Button, ButtonGroup } from 'react-bootstrap/'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrashAlt, faEdit } from '@fortawesome/free-solid-svg-icons'
-import { Button, ButtonGroup, Card, ListGroup, ListGroupItem, Form } from 'react-bootstrap/'
+import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import ConfirmationModal from '../../../common/modals/confirmationModal/ConfirmationModal'
 
 const ProductGridElement = props => {
@@ -49,35 +49,21 @@ const ProductGridElement = props => {
 					<ListGroupItem>{'EUR ' + props.priceEUR}</ListGroupItem>
 					<ListGroupItem>{'USD ' + props.priceUSD}</ListGroupItem>
 
-					{props.element.editHandler ? (
+					{props.children ? (
+						<ListGroupItem>{props.children}</ListGroupItem>
+					) : (
 						<ListGroupItem>
 							<ButtonGroup style={{ width: '100%' }}>
-								{props.element.editHandler ? (
-									<Button onClick={props.element.editHandler} variant="secondary">
-										<FontAwesomeIcon icon={faEdit} />
-									</Button>
-								) : null}
+								<Button onClick={props.element.editHandler} variant="secondary">
+									<FontAwesomeIcon icon={faEdit} />
+								</Button>
 
-								{props.element.deleteHandler ? (
-									<Button onClick={onDeleteButtonClick} variant="danger">
-										<FontAwesomeIcon icon={faTrashAlt} />
-									</Button>
-								) : null}
+								<Button onClick={onDeleteButtonClick} variant="danger">
+									<FontAwesomeIcon icon={faTrashAlt} />
+								</Button>
 							</ButtonGroup>
 						</ListGroupItem>
-					) : null}
-
-					{props.element.quantitySetter ? (
-						<ListGroupItem>
-							<Form.Control
-								onChange={props.element.quantitySetter}
-								type="number"
-								name="quantity"
-								placeholder={props.quantity ? null : 'Quantity'}
-								defaultValue={props.quantity ? props.quantity : null}
-							/>
-						</ListGroupItem>
-					) : null}
+					)}
 				</ListGroup>
 			</Card>
 

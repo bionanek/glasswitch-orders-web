@@ -23,7 +23,7 @@ const SimpleListElement = props => {
 
 	const onDeleteConfirm = () => {
 		if (props.element.deleteHandler) {
-			props.element.deleteHandler(props.element.id)
+			props.element.deleteHandler()
 		} else {
 			props.defaultOnDeleteClick(props.element, props.index)
 		}
@@ -38,8 +38,11 @@ const SimpleListElement = props => {
 					}`}
 					onClick={props.element.clickHandler}
 				>
+					<span>{props.children}</span>
+
 					<span className="title">{props.title}</span>
 					<span className="sub-title">{props.subtitle}</span>
+
 					<span className="buttons-wrapper">
 						{props.isEditable ? (
 							<span className="edit-icon" onClick={props.element.editHandler} role="button">

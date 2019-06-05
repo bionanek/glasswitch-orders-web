@@ -10,20 +10,14 @@ export default function ProductGrid({
 	pln,
 	eur,
 	usd,
-	quantity,
 	clickable,
 	editable,
 	deletable,
-	quantitySetter,
+	dynamicElement,
 }) {
 	const [products, setProducts] = useState([])
 
-	const getProductsGridView = (
-		isTileClickable,
-		isTileEditable,
-		isTileDeletable,
-		isQuantitySetable,
-	) => {
+	const getProductsGridView = (isTileClickable, isTileEditable, isTileDeletable) => {
 		return productsList.map((product, index) => {
 			return (
 				<ProductGridElement
@@ -37,26 +31,20 @@ export default function ProductGrid({
 					pricePLN={product.price[pln]}
 					priceEUR={product.price[eur]}
 					priceUSD={product.price[usd]}
-					quantity={quantity}
 					isClickable={isTileClickable}
 					isEditable={isTileEditable}
 					isDeletable={isTileDeletable}
-					isQuantitySetable={isQuantitySetable}
-				/>
+				>
+					{dynamicElement ? dynamicElement() : null}
+				</ProductGridElement>
 			)
 		})
 	}
 
 	useEffect(() => {
-		const elements = getProductsGridView(
-			productsList,
-			clickable,
-			editable,
-			deletable,
-			quantitySetter,
-		)
+		const elements = getProductsGridView(productsList, clickable, editable, deletable)
 		setProducts(elements)
-	}, [productsList, clickable, editable, deletable, quantitySetter])
+	}, [productsList, clickable, editable, deletable])
 
 	return <Row style={{ padding: '10px' }}>{products}</Row>
 }
