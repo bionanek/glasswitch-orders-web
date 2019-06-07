@@ -90,18 +90,18 @@ class ProductsList extends Component {
 		return (
 			<>
 				{this.state.isLoaded ? (
-					<div>
+					<div className="products-list-wrapper">
 						<Row>
 							<Col>
 								<Button
-									className="button-create-product float-left"
+									className="button-create-product"
 									variant="primary"
 									onClick={this.openProductModal}
 								>
 									Add Product
 								</Button>
 
-								<ButtonGroup className="buttons-layout-change float-right">
+								<ButtonGroup className="buttons-layout-change">
 									<Button variant="secondary" onClick={this.renderListView}>
 										<FontAwesomeIcon icon={faList} size="2x" />
 									</Button>

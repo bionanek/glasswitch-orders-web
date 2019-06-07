@@ -29,7 +29,6 @@ function OrderCreate(props) {
 	const [selectedProducts, setSelectedProducts] = useState([])
 	const [selectedCustomer, setSelectedCustomer] = useState({})
 	const [productExistsInOrder, setProductExistsInOrder] = useState(false)
-	const [quantity, setQuantity] = useState(0)
 
 	const [isValidated, setIsValidated] = useState(false)
 	const [selectedCurrency, setSelectedCurrency] = useState(false)
@@ -38,9 +37,18 @@ function OrderCreate(props) {
 	const [isInvoiceSent, setIsInvoiceSent] = useState(false)
 	const [isPaymentSettled, setIsPaymentSettled] = useState(false)
 
-	function quantitySetter(prodQuantity) {
+	let quantity
+
+	const quantitySetter = event => {
+		quantity = event.target.value
+		return quantity
+	}
+
+	const quantityInput = prodQuantity => {
 		return (
-			<Form.Control
+			<input
+				onChange={quantitySetter}
+				style={{ width: '100%' }}
 				type="number"
 				name="quantity"
 				placeholder="Quantity"
@@ -65,8 +73,6 @@ function OrderCreate(props) {
 				}
 			}
 
-			productRO.quantitySetter = () => {}
-
 			return productRO
 		})
 	}
@@ -76,14 +82,7 @@ function OrderCreate(props) {
 			const productRO = { ...productElement }
 			const currentOrder = order
 			const selectedProduct = {}
-			let prodQuantity
-
 			currentOrder.wantedProducts = []
-
-			productRO.quantitySetter = event => {
-				prodQuantity = event.target.value
-				setQuantity(prodQuantity)
-			}
 
 			productRO.clickHandler = () => {
 				for (let n = 0; n < selectedProducts.length; n++) {
@@ -95,7 +94,8 @@ function OrderCreate(props) {
 
 				if (productExistsInOrder === false) {
 					selectedProduct.id = productRO.id
-					selectedProduct.quantity = parseInt(prodQuantity)
+					selectedProduct.quantity = quantity
+					productRO.quantity = quantity
 
 					currentOrder.wantedProducts.push(selectedProduct)
 					selectedProducts.push(productRO)
@@ -136,14 +136,14 @@ function OrderCreate(props) {
 	}
 
 	const handleCustomerSearch = async event => {
-		const customer = event.target.value
+		const customerSearch = event.target.value
 
-		if (customer === '') {
+		if (customerSearch === '') {
 			setCustomer([])
 			return
 		}
 
-		const foundCustomer = await CustomersApiService.searchCustomer(customer)
+		const foundCustomer = await CustomersApiService.searchCustomer(customerSearch)
 		setCustomer(setCustomerReactiveObject(foundCustomer.data))
 	}
 
@@ -406,11 +406,13 @@ function OrderCreate(props) {
 						clickable
 					/>
 
-					<Row style={{ color: 'white', background: 'purple' }}>
-						<DetailElement header="Customer Name:" value={selectedCustomer.name} />
-						<DetailElement header="Customer Email:" value={selectedCustomer.email} />
-						<DetailElement header="Vat Number:" value={selectedCustomer.vatNumber} />
-					</Row>
+					{selectedCustomer.name ? (
+						<Row style={{ color: 'white', background: 'purple' }}>
+							<DetailElement header="Customer Name:" value={selectedCustomer.name} />
+							<DetailElement header="Customer Email:" value={selectedCustomer.email} />
+							<DetailElement header="Vat Number:" value={selectedCustomer.vatNumber} />
+						</Row>
+					) : null}
 
 					<Row>
 						<Col sm>
@@ -426,17 +428,14 @@ function OrderCreate(props) {
 						</Col>
 					</Row>
 
-					<Row style={{ color: 'black', background: 'green' }}>Selected Products</Row>
 					<SimpleList
 						elementsList={selectedProducts}
 						titleFieldName="code"
 						subtitleFieldName="name"
-						quantityField={quantity}
-						dynamicElement={quantitySetter}
+						dynamicElement={quantityInput}
 						deletable
 					/>
 
-					<Row style={{ color: 'black', background: 'red' }}>All Products</Row>
 					<ProductGrid
 						productsList={products}
 						imageSource="imageUrl"
@@ -445,7 +444,7 @@ function OrderCreate(props) {
 						pln="pln"
 						eur="eur"
 						usd="usd"
-						dynamicElement={quantitySetter}
+						dynamicElement={quantityInput}
 						clickable
 					/>
 

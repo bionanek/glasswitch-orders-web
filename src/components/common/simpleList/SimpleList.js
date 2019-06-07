@@ -7,7 +7,6 @@ export default function SimpleList({
 	elementsList,
 	titleFieldName,
 	subtitleFieldName,
-	quantityField,
 	clickable,
 	editable,
 	deletable,
@@ -33,9 +32,8 @@ export default function SimpleList({
 					element={el}
 					title={el[titleFieldName]}
 					subtitle={el[subtitleFieldName]}
-					quantity={quantityField}
 				>
-					{dynamicElement ? dynamicElement() : null}
+					{dynamicElement ? dynamicElement(el.quantity) : null}
 				</SimpleListElement>
 			)
 		})

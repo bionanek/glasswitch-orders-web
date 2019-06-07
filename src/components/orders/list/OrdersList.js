@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
+import { Button, Row } from 'react-bootstrap/'
 import SimpleList from '../../common/simpleList/SimpleList'
 import OrdersApiService from '../../../utils/api/ordersApiService'
 import LoadingView from '../../common/LoadingView'
+import './OrdersList.scss'
 
 class OrdersList extends Component {
 	constructor(props) {
@@ -63,16 +65,28 @@ class OrdersList extends Component {
 
 	render() {
 		return (
-			<div className="orders-list-wrapper">
+			<div>
 				{this.state.isLoaded ? (
-					<SimpleList
-						elementsList={this.state.orders}
-						titleFieldName="email"
-						subtitleFieldName="deadline"
-						deletable
-						editable
-						clickable
-					/>
+					<div className="orders-list-wrapper">
+						<Row>
+							<Button
+								className="button-create-order"
+								variant="primary"
+								onClick={this.openOrderCreatePage}
+							>
+								Put an order
+							</Button>
+						</Row>
+
+						<SimpleList
+							elementsList={this.state.orders}
+							titleFieldName="email"
+							subtitleFieldName="deadline"
+							deletable
+							editable
+							clickable
+						/>
+					</div>
 				) : (
 					LoadingView()
 				)}

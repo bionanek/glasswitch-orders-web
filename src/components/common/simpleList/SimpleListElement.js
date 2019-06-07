@@ -38,7 +38,7 @@ const SimpleListElement = props => {
 					}`}
 					onClick={props.element.clickHandler}
 				>
-					<span>{props.children}</span>
+					<span className="children">{props.children}</span>
 
 					<span className="title">{props.title}</span>
 					<span className="sub-title">{props.subtitle}</span>
