@@ -6,6 +6,7 @@ import ProductsApiService from '../../../utils/api/productsApiService'
 import ConfirmationModal from '../../common/modals/confirmationModal/ConfirmationModal'
 import buildProductData from '../ProductsUtils'
 import LoadingView from '../../common/LoadingView'
+import './ProductEdit.scss'
 
 function ProductEdit(props) {
 	const [isLoaded, setIsLoaded] = useState(false)
@@ -43,6 +44,7 @@ function ProductEdit(props) {
 				break
 		}
 		setProduct(currentProduct)
+		console.log('TCL: ProductEdit -> currentProduct.code', currentProduct.code)
 	}
 
 	const handleEditDataConfirm = async () => {
@@ -83,9 +85,9 @@ function ProductEdit(props) {
 
 	const productEditView = () => {
 		return (
-			<Container className="product-edit">
+			<div className="product-edit-form">
 				{product ? (
-					<>
+					<Container>
 						<Form onSubmit={handleSubmit} validated={isValidated}>
 							<Row>
 								<Col>
@@ -106,13 +108,14 @@ function ProductEdit(props) {
 										<Form.Label>Product Code</Form.Label>
 										<InputGroup>
 											<InputGroup.Prepend>
-												<InputGroup.Text>GW-</InputGroup.Text>
+												<InputGroup.Text style={{ color: 'black' }}>GW-</InputGroup.Text>
 											</InputGroup.Prepend>
 											<Form.Control
 												onChange={handleFormChange}
 												type="text"
 												name="code"
-												defaultValue={product.code.split('-')[1]}
+												defaultValue={product.code.split('GW-')[1]}
+												pattern="[^'/\x22:?<>|*\\]+"
 												required
 											/>
 										</InputGroup>
@@ -135,7 +138,12 @@ function ProductEdit(props) {
 										<Col>
 											<Form.Group controlId="productImageUpload">
 												<Form.Label>Image</Form.Label>
-												<Form.Control onChange={handleFormChange} type="file" name="image" />
+												<Form.Control
+													onChange={handleFormChange}
+													style={{ color: 'white' }}
+													type="file"
+													name="image"
+												/>
 											</Form.Group>
 
 											<Form.Group controlId="productDescription">
@@ -290,14 +298,14 @@ function ProductEdit(props) {
 							onModalClose={closeDeleteModal}
 							onConfirm={onDeleteConfirm}
 						/>
-					</>
+					</Container>
 				) : (
 					<span>
 						Product with ID:
 						{props.match.params.id} does not exists!
 					</span>
 				)}
-			</Container>
+			</div>
 		)
 	}
 
