@@ -84,9 +84,9 @@ function ProductEdit(props) {
 
 	const productEditView = () => {
 		return (
-			<div className="product-edit-form">
+			<Container className="product-edit-form">
 				{product ? (
-					<Container>
+					<>
 						<Form onSubmit={handleSubmit} validated={isValidated}>
 							<Row>
 								<Col>
@@ -297,14 +297,14 @@ function ProductEdit(props) {
 							onModalClose={closeDeleteModal}
 							onConfirm={onDeleteConfirm}
 						/>
-					</Container>
+					</>
 				) : (
 					<span>
 						Product with ID:
 						{props.match.params.id} does not exists!
 					</span>
 				)}
-			</div>
+			</Container>
 		)
 	}
 
