@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { withRouter } from 'react-router-dom'
-import { Container, Row, Col } from 'react-bootstrap/'
+import { Container, Row, Col, Button } from 'react-bootstrap/'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrashAlt, faEdit } from '@fortawesome/free-solid-svg-icons'
 import DetailElement from '../../common/DetailElement'
 import ProductsApiService from '../../../utils/api/productsApiService'
 import ImageElement from '../../common/ImageElement'
 import ConfirmationModal from '../../common/modals/confirmationModal/ConfirmationModal'
-import './ProductDetail.scss'
 import LoadingView from '../../common/LoadingView'
+import './ProductDetail.scss'
 
 function ProductDetail(props) {
 	const [isLoaded, setIsLoaded] = useState(false)
@@ -50,9 +50,9 @@ function ProductDetail(props) {
 
 	const productDetailsView = () => {
 		return (
-			<Container className="product-detail">
+			<div>
 				{product ? (
-					<>
+					<Container className="product-detail">
 						<Row>
 							<Col>
 								<h1>{product.name}</h1>
@@ -63,13 +63,21 @@ function ProductDetail(props) {
 							</Col>
 
 							<Col>
-								<span className="edit-icon-detail" onClick={onEditClick}>
+								<Button
+									onClick={onEditClick}
+									className="edit-icon-detail"
+									variant="outline-secondary"
+								>
 									<FontAwesomeIcon icon={faEdit} size="2x" />
-								</span>
+								</Button>
 
-								<span className="delete-icon-detail" onClick={handleDelete}>
+								<Button
+									onClick={handleDelete}
+									className="delete-icon-detail"
+									variant="outline-danger"
+								>
 									<FontAwesomeIcon icon={faTrashAlt} size="2x" />
-								</span>
+								</Button>
 							</Col>
 						</Row>
 
@@ -117,14 +125,14 @@ function ProductDetail(props) {
 							onModalClose={closeDeleteModal}
 							onConfirm={onDeleteConfirm}
 						/>
-					</>
+					</Container>
 				) : (
 					<span>
 						Product with ID:
 						{props.match.params.id} does not exists!
 					</span>
 				)}
-			</Container>
+			</div>
 		)
 	}
 
