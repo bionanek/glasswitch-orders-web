@@ -102,11 +102,17 @@ class ProductsList extends Component {
 								</Button>
 
 								<ButtonGroup className="buttons-layout-change float-right">
-									<Button variant="secondary" onClick={this.renderListView}>
+									<Button
+										onClick={this.renderListView}
+										variant={this.state.renderListView ? 'success' : 'secondary'}
+									>
 										<FontAwesomeIcon icon={faList} size="2x" />
 									</Button>
 
-									<Button variant="secondary" onClick={this.renderGridView}>
+									<Button
+										onClick={this.renderGridView}
+										variant={this.state.renderListView ? 'secondary' : 'success'}
+									>
 										<FontAwesomeIcon icon={faTh} size="2x" />
 									</Button>
 								</ButtonGroup>
