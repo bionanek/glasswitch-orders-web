@@ -44,7 +44,6 @@ function ProductEdit(props) {
 				break
 		}
 		setProduct(currentProduct)
-		console.log('TCL: ProductEdit -> currentProduct.code', currentProduct.code)
 	}
 
 	const handleEditDataConfirm = async () => {
