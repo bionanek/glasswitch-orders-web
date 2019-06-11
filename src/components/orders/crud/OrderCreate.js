@@ -24,7 +24,7 @@ function OrderCreate(props) {
 
 	const [order, setOrder] = useState({})
 	const [customer, setCustomer] = useState([])
-	const [products, setProducts] = useState([])
+	const [availableProducts, setAvailableProducts] = useState([])
 
 	const [selectedProducts, setSelectedProducts] = useState([])
 	const [selectedCustomer, setSelectedCustomer] = useState({})
@@ -38,7 +38,7 @@ function OrderCreate(props) {
 	const [isPaymentSettled, setIsPaymentSettled] = useState(false)
 
 	function getCurrentProduct(id) {
-		return [...products].find(product => product.id === id)
+		return [...availableProducts].find(product => product.id === id)
 	}
 
 	// TODO:
@@ -46,13 +46,14 @@ function OrderCreate(props) {
 	// * when you click on quantity textbox - highlight all text
 
 	const quantitySetter = event => {
-		const allProducts = [...products]
+		const allProducts = [...availableProducts]
 		const targetProduct = getCurrentProduct(+event.target.id)
 		targetProduct.quantity = event.target.value
-		setProducts(allProducts)
+		setAvailableProducts(allProducts)
 	}
 
-	const quantityInput = (productId, product = null) => {
+	const quantityInput = (productId, _product = null) => {
+		let product = _product
 		if (product === null) {
 			product = getCurrentProduct(productId)
 		}
@@ -79,7 +80,7 @@ function OrderCreate(props) {
 
 			productRO.quantity = 0
 			productRO.deleteHandler = () => {
-				for (let n = 0; n < selectedProducts.length; n++) {
+				for (let n = 0; n < selectedProducts.length; n += 1) {
 					if (selectedProducts[n].id === productRO.id) {
 						const selectedProds = [...selectedProducts]
 						selectedProds.splice(n, 1)
@@ -97,7 +98,7 @@ function OrderCreate(props) {
 	useEffect(() => {
 		const fetchedProducts = async () => {
 			const prods = await ProductsApiService.getAllProducts()
-			setProducts(productsReactiveObjects(prods.data))
+			setAvailableProducts(productsReactiveObjects(prods.data))
 
 			setIsLoaded(true)
 		}
@@ -109,12 +110,12 @@ function OrderCreate(props) {
 
 		if (product === '') {
 			const prods = await ProductsApiService.getAllProducts()
-			setProducts(productsReactiveObjects(prods.data))
+			setAvailableProducts(productsReactiveObjects(prods.data))
 			return
 		}
 
 		const foundProduct = await ProductsApiService.searchProduct(product)
-		setProducts(productsReactiveObjects(foundProduct.data))
+		setAvailableProducts(productsReactiveObjects(foundProduct.data))
 	}
 
 	const setCustomerReactiveObject = customerResults => {
@@ -180,33 +181,36 @@ function OrderCreate(props) {
 		setOrder(currentOrder)
 	}
 
-	const onProductClick = productId => {
-		const allProducts = [...products]
-		const product = allProducts.find(p => p.id === +productId)
+	function handleAvailableProductSelection(productId) {
 		const allSelected = [...selectedProducts]
+		const allAvailable = [...availableProducts]
+		const selectedProduct = allAvailable.find(p => p.id === +productId)
 
+		allAvailable.splice(allAvailable.indexOf(selectedProduct), 1)
+		setAvailableProducts(allAvailable)
+
+		const currentOrder = { ...order }
+		currentOrder.wantedProducts.push({
+			id: selectedProduct.id,
+			quantity: selectedProduct.quantity,
+		})
+
+		allSelected.push(selectedProduct)
+		setSelectedProducts(allSelected)
+
+		setOrder(currentOrder)
+	}
+
+	const onProductClick = productId => {
 		for (let n = 0; n < selectedProducts.length; n += 1) {
-			if (allSelected[n].id === product.id) {
+			if (selectedProducts[n].id === productId) {
 				setProductExistsInOrder(true)
 				return
 			}
 		}
 
 		if (productExistsInOrder === false) {
-			allProducts.splice(allProducts.indexOf(product), 1)
-			setProducts(allProducts)
-
-			const selectedProduct = {
-				id: product.id,
-				quantity: product.quantity,
-			}
-
-			const currentOrder = order
-			currentOrder.wantedProducts.push(selectedProduct)
-			allSelected.push(product)
-			setSelectedProducts(allSelected)
-
-			setOrder(currentOrder)
+			handleAvailableProductSelection(productId)
 		}
 	}
 
@@ -462,7 +466,7 @@ function OrderCreate(props) {
 					/>
 
 					<ProductGrid
-						productsList={products}
+						productsList={availableProducts}
 						imageSource="imageUrl"
 						name="name"
 						code="code"
