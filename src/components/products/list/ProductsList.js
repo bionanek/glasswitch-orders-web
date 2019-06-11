@@ -7,6 +7,7 @@ import SimpleList from '../../common/simpleList/SimpleList'
 import ProductsApiService from '../../../utils/api/productsApiService'
 import ProductCreateModal from '../components/modalCreate/ModalCreateProduct'
 import ProductGrid from '../components/grid/ProductGrid'
+import LoadingView from '../../common/LoadingView'
 import './ProductsList.scss'
 
 class ProductsList extends Component {
@@ -17,6 +18,7 @@ class ProductsList extends Component {
 			products: [],
 			isProductCreateModalOpen: false,
 			renderListView: true,
+			isLoaded: false,
 		}
 
 		this.refreshList = this.refreshList.bind(this)
@@ -28,7 +30,7 @@ class ProductsList extends Component {
 
 	async componentDidMount() {
 		const prods = await this.getAllProducts()
-		this.setState({ products: prods })
+		this.setState({ products: prods, isLoaded: true })
 	}
 
 	async getAllProducts() {
@@ -85,66 +87,75 @@ class ProductsList extends Component {
 	}
 
 	render() {
-		const prods = this.state.products
-		const layoutState = this.state.renderListView
-
 		return (
 			<>
-				<Row>
-					<Col>
-						<Button
-							className="button-create-product float-left"
-							variant="primary"
-							onClick={this.openProductModal}
-						>
-							Add Product
-						</Button>
+				{this.state.isLoaded ? (
+					<div>
+						<Row>
+							<Col>
+								<Button
+									className="button-create-product float-left"
+									variant="primary"
+									onClick={this.openProductModal}
+								>
+									Add Product
+								</Button>
 
-						<ButtonGroup className="buttons-layout-change float-right">
-							<Button variant="secondary" onClick={this.renderListView}>
-								<FontAwesomeIcon icon={faList} size="2x" />
-							</Button>
+								<ButtonGroup className="buttons-layout-change float-right">
+									<Button
+										onClick={this.renderListView}
+										variant={this.state.renderListView ? 'success' : 'secondary'}
+									>
+										<FontAwesomeIcon icon={faList} size="2x" />
+									</Button>
 
-							<Button variant="secondary" onClick={this.renderGridView}>
-								<FontAwesomeIcon icon={faTh} size="2x" />
-							</Button>
-						</ButtonGroup>
-					</Col>
-				</Row>
+									<Button
+										onClick={this.renderGridView}
+										variant={this.state.renderListView ? 'secondary' : 'success'}
+									>
+										<FontAwesomeIcon icon={faTh} size="2x" />
+									</Button>
+								</ButtonGroup>
+							</Col>
+						</Row>
 
-				{layoutState ? (
-					<Row>
-						<Col>
-							<div className="products-list-wrapper">
-								<SimpleList
-									elementsList={prods}
-									titleFieldName="name"
-									subtitleFieldName="code"
-									deletable
-									editable
-									clickable
-								/>
-							</div>
-						</Col>
-					</Row>
+						{this.state.renderListView ? (
+							<Row>
+								<Col>
+									<div className="products-list-wrapper">
+										<SimpleList
+											elementsList={this.state.products}
+											titleFieldName="name"
+											subtitleFieldName="code"
+											deletable
+											editable
+											clickable
+										/>
+									</div>
+								</Col>
+							</Row>
+						) : (
+							<ProductGrid
+								className="product-grid"
+								productsList={this.state.products}
+								imageSource="imageUrl"
+								name="name"
+								code="code"
+								pln="pln"
+								eur="eur"
+								usd="usd"
+							/>
+						)}
+
+						<ProductCreateModal
+							isOpen={this.state.isProductCreateModalOpen}
+							onModalClose={this.closeProductModal}
+							onRefreshList={this.refreshList}
+						/>
+					</div>
 				) : (
-					<ProductGrid
-						className="product-grid"
-						productsList={prods}
-						imageSource="imageUrl"
-						name="name"
-						code="code"
-						pln="pln"
-						eur="eur"
-						usd="usd"
-					/>
+					LoadingView()
 				)}
-
-				<ProductCreateModal
-					isOpen={this.state.isProductCreateModalOpen}
-					onModalClose={this.closeProductModal}
-					onRefreshList={this.refreshList}
-				/>
 			</>
 		)
 	}

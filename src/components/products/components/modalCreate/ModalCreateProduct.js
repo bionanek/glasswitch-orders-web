@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { Form, Modal, Col, Button, InputGroup } from 'react-bootstrap/'
 import ProductsApiService from '../../../../utils/api/productsApiService'
-import './ModalCreateProduct.scss'
 import buildProductData from '../../ProductsUtils'
+import './ModalCreateProduct.scss'
 
 export default function ProductCreateModal(props) {
 	const [product, setProduct] = useState({})
@@ -94,6 +94,7 @@ export default function ProductCreateModal(props) {
 								type="text"
 								name="code"
 								placeholder="Code"
+								pattern="[^'/\x22:?<>|*\\]+"
 								required
 							/>
 						</InputGroup>
