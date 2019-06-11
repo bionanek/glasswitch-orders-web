@@ -1,7 +1,11 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
+import Button from 'react-bootstrap/Button'
 import SimpleList from '../../common/simpleList/SimpleList'
 import CustomersApiService from '../../../utils/api/customersApiService'
+import './CustomersList.scss'
+import ModalCreateCustomer from '../crud/ModalCreateCustomer'
+import LoadingView from '../../common/LoadingView'
 
 class CustomersList extends Component {
 	constructor(props) {
@@ -9,11 +13,13 @@ class CustomersList extends Component {
 
 		this.state = {
 			customers: [],
+			isCustomerCreateModalOpen: false,
+			isLoaded: false,
 		}
 	}
 
 	async componentDidMount() {
-		this.setState({ customers: await this.getAllCustomers() })
+		this.setState({ customers: await this.getAllCustomers(), isLoaded: true })
 	}
 
 	async getAllCustomers() {
@@ -47,6 +53,11 @@ class CustomersList extends Component {
 		}, this)
 	}
 
+	openCloseCreateModal() {
+		const isOpen = this.state.isCustomerCreateModalOpen
+		this.setState({ isCustomerCreateModalOpen: !isOpen })
+	}
+
 	async refreshList() {
 		const customers = await this.getAllCustomers()
 
@@ -55,16 +66,34 @@ class CustomersList extends Component {
 
 	render() {
 		return (
-			<div className="customers-list-wrapper">
-				<SimpleList
-					elementsList={this.state.customers}
-					titleFieldName="name"
-					subtitleFieldName="delivery_country"
-					deletable
-					editable
-					clickable
-				/>
-			</div>
+			<>
+				{this.state.isLoaded ? (
+					<div className="customers-list-wrapper">
+						<Button
+							variant="primary"
+							className="new-customer-button"
+							onClick={() => this.openCloseCreateModal()}
+						>
+							New Customer
+						</Button>
+						<SimpleList
+							elementsList={this.state.customers}
+							titleFieldName="name"
+							subtitleFieldName="delivery_country"
+							deletable
+							editable
+							clickable
+						/>
+						<ModalCreateCustomer
+							isOpen={this.state.isCustomerCreateModalOpen}
+							onModalClose={() => this.openCloseCreateModal()}
+							refreshList={() => this.refreshList()}
+						/>
+					</div>
+				) : (
+					LoadingView()
+				)}
+			</>
 		)
 	}
 }
