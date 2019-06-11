@@ -34,7 +34,7 @@ export default function SimpleList({
 					title={el[titleFieldName]}
 					subtitle={el[subtitleFieldName]}
 				>
-					{dynamicElement ? dynamicElement(id) : null}
+					{dynamicElement ? dynamicElement(id, el) : null}
 				</SimpleListElement>
 			)
 		})

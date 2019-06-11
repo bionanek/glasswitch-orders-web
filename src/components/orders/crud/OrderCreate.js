@@ -42,24 +42,24 @@ function OrderCreate(props) {
 	}
 
 	// TODO:
-	// * after adding product to selected - remove it from availables
 	// * ater deleting from selected - move it to availables
 	// * when you click on quantity textbox - highlight all text
 
 	const quantitySetter = event => {
-		// this must go, quantity should be set only on click
 		const allProducts = [...products]
 		const targetProduct = getCurrentProduct(+event.target.id)
 		targetProduct.quantity = event.target.value
-
 		setProducts(allProducts)
 	}
 
-	const quantityInput = productId => {
-		const product = getCurrentProduct(productId)
+	const quantityInput = (productId, product = null) => {
+		if (product === null) {
+			product = getCurrentProduct(productId)
+		}
+
 		return (
 			<input
-				onChange={quantitySetter}
+				onBlur={quantitySetter}
 				style={{ width: '100%' }}
 				type="number"
 				name="quantity"
@@ -69,26 +69,6 @@ function OrderCreate(props) {
 			/>
 		)
 	}
-
-	// const selectedProductsReactiveObjects = productsList => {
-	// 	return productsList.map(productElement => {
-	// 		const productRO = { ...productElement }
-	// 		const currentOrder = order
-
-	// 		productRO.deleteHandler = () => {
-	// 			for (let n = 0; n < selectedProducts.length; n++) {
-	// 				if (selectedProducts[n].id === productRO.id) {
-	// 					selectedProducts.splice(n, 1)
-	// 					currentOrder.wantedProducts.splice(n, 1)
-	// 					setSelectedProducts(selectedProducts)
-	// 					return
-	// 				}
-	// 			}
-	// 		}
-
-	// 		return productRO
-	// 	})
-	// }
 
 	const productsReactiveObjects = productsList => {
 		return productsList.map(productElement => {
@@ -108,28 +88,6 @@ function OrderCreate(props) {
 						return
 					}
 				}
-			}
-			productRO.clickHandler = () => {
-				// for (let n = 0; n < selectedProducts.length; n++) {
-				// 	if (selectedProducts[n].id === productRO.id) {
-				// 		setProductExistsInOrder(true)
-				// 		return
-				// 	}
-				// }
-				// if (productExistsInOrder === false) {
-				// 	const selectedProduct = {
-				// 		id: productRO.id,
-				// 		quantity: productRO.quantity,
-				// 	}
-				// 	currentOrder.wantedProducts.push(selectedProduct)
-				// 	console.log('Before: ')
-				// 	console.log(selectedProducts)
-				// 	selected.push(productRO)
-				// 	console.log('After: ')
-				// 	console.log(selectedProducts)
-				// 	// setSelectedProducts(selectedProductsReactiveObjects(selectedProducts))
-				// 	setOrder(currentOrder)
-				// }
 			}
 
 			return productRO
@@ -235,6 +193,9 @@ function OrderCreate(props) {
 		}
 
 		if (productExistsInOrder === false) {
+			allProducts.splice(allProducts.indexOf(product), 1)
+			setProducts(allProducts)
+
 			const selectedProduct = {
 				id: product.id,
 				quantity: product.quantity,
@@ -242,13 +203,8 @@ function OrderCreate(props) {
 
 			const currentOrder = order
 			currentOrder.wantedProducts.push(selectedProduct)
-			console.log('Before: ')
-			console.log(selectedProducts)
 			allSelected.push(product)
-			console.log('After: ')
-			console.log(selectedProducts)
 			setSelectedProducts(allSelected)
-			// setSelectedProducts(selectedProductsReactiveObjects(selectedProducts))
 
 			setOrder(currentOrder)
 		}
@@ -498,7 +454,7 @@ function OrderCreate(props) {
 					</Row>
 
 					<SimpleList
-						elementsList={[...selectedProducts]}
+						elementsList={selectedProducts}
 						titleFieldName="code"
 						subtitleFieldName="name"
 						dynamicElement={quantityInput}
@@ -506,7 +462,7 @@ function OrderCreate(props) {
 					/>
 
 					<ProductGrid
-						productsList={[...products]}
+						productsList={products}
 						imageSource="imageUrl"
 						name="name"
 						code="code"
