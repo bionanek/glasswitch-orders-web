@@ -37,77 +37,106 @@ function OrderCreate(props) {
 	const [isInvoiceSent, setIsInvoiceSent] = useState(false)
 	const [isPaymentSettled, setIsPaymentSettled] = useState(false)
 
-	let quantity
-
 	const quantitySetter = event => {
-		quantity = event.target.value
-		return quantity
+		const allProducts = [...products]
+		const targetProduct = allProducts.find(product => product.id === +event.target.id)
+		targetProduct.quantity = event.target.value
+
+		setProducts(allProducts)
+		// setsele
 	}
 
-	const quantityInput = prodQuantity => {
+	const quantityInput = productId => {
 		return (
 			<input
 				onChange={quantitySetter}
 				style={{ width: '100%' }}
 				type="number"
 				name="quantity"
+				id={productId}
 				placeholder="Quantity"
-				defaultValue={prodQuantity}
+				defaultValue="0"
 			/>
 		)
 	}
 
-	const selectedProductsReactiveObjects = productsList => {
-		return productsList.map(productElement => {
-			const productRO = { ...productElement }
-			const currentOrder = order
+	// const selectedProductsReactiveObjects = productsList => {
+	// 	return productsList.map(productElement => {
+	// 		const productRO = { ...productElement }
+	// 		const currentOrder = order
 
-			productRO.deleteHandler = () => {
-				for (let n = 0; n < selectedProducts.length; n++) {
-					if (selectedProducts[n].id === productRO.id) {
-						selectedProducts.splice(n, 1)
-						currentOrder.wantedProducts.splice(n, 1)
-						setSelectedProducts(selectedProductsReactiveObjects(selectedProducts))
-						return
-					}
-				}
-			}
+	// 		productRO.deleteHandler = () => {
+	// 			for (let n = 0; n < selectedProducts.length; n++) {
+	// 				if (selectedProducts[n].id === productRO.id) {
+	// 					selectedProducts.splice(n, 1)
+	// 					currentOrder.wantedProducts.splice(n, 1)
+	// 					setSelectedProducts(selectedProducts)
+	// 					return
+	// 				}
+	// 			}
+	// 		}
 
-			return productRO
-		})
-	}
+	// 		return productRO
+	// 	})
+	// }
+
+	// const foo = (productRO, currentOrder) =>
 
 	const productsReactiveObjects = productsList => {
 		return productsList.map(productElement => {
 			const productRO = { ...productElement }
 			const currentOrder = order
-			const selectedProduct = {}
+
 			currentOrder.wantedProducts = []
 
-			productRO.clickHandler = () => {
+			productRO.quantity = 0
+			productRO.deleteHandler = () => {
 				for (let n = 0; n < selectedProducts.length; n++) {
 					if (selectedProducts[n].id === productRO.id) {
-						setProductExistsInOrder(true)
+						const selectedProds = [...selectedProducts]
+						selectedProds.splice(n, 1)
+						currentOrder.wantedProducts.splice(n, 1)
+						setSelectedProducts(selectedProds)
 						return
 					}
 				}
-
-				if (productExistsInOrder === false) {
-					selectedProduct.id = productRO.id
-					selectedProduct.quantity = quantity
-					productRO.quantity = quantity
-
-					currentOrder.wantedProducts.push(selectedProduct)
-					selectedProducts.push(productRO)
-					setSelectedProducts(selectedProductsReactiveObjects(selectedProducts))
-
-					setOrder(currentOrder)
-				}
+			}
+			productRO.clickHandler = () => {
+				// for (let n = 0; n < selectedProducts.length; n++) {
+				// 	if (selectedProducts[n].id === productRO.id) {
+				// 		setProductExistsInOrder(true)
+				// 		return
+				// 	}
+				// }
+				// if (productExistsInOrder === false) {
+				// 	const selectedProduct = {
+				// 		id: productRO.id,
+				// 		quantity: productRO.quantity,
+				// 	}
+				// 	currentOrder.wantedProducts.push(selectedProduct)
+				// 	console.log('Before: ')
+				// 	console.log(selectedProducts)
+				// 	selected.push(productRO)
+				// 	console.log('After: ')
+				// 	console.log(selectedProducts)
+				// 	// setSelectedProducts(selectedProductsReactiveObjects(selectedProducts))
+				// 	setOrder(currentOrder)
+				// }
 			}
 
 			return productRO
 		})
 	}
+
+	useEffect(() => {
+		const fetchedProducts = async () => {
+			const prods = await ProductsApiService.getAllProducts()
+			setProducts(productsReactiveObjects(prods.data))
+
+			setIsLoaded(true)
+		}
+		fetchedProducts()
+	}, [])
 
 	const handleProductSearch = async event => {
 		const product = event.target.value
@@ -183,6 +212,38 @@ function OrderCreate(props) {
 		}
 
 		setOrder(currentOrder)
+	}
+
+	const onProductClick = productId => {
+		const allProducts = [...products]
+		const product = allProducts.find(p => p.id === +productId)
+		const allSelected = [...selectedProducts]
+
+		for (let n = 0; n < selectedProducts.length; n += 1) {
+			if (allSelected[n].id === product.id) {
+				setProductExistsInOrder(true)
+				return
+			}
+		}
+
+		if (productExistsInOrder === false) {
+			const selectedProduct = {
+				id: product.id,
+				quantity: product.quantity,
+			}
+
+			const currentOrder = order
+			currentOrder.wantedProducts.push(selectedProduct)
+			console.log('Before: ')
+			console.log(selectedProducts)
+			allSelected.push(product)
+			console.log('After: ')
+			console.log(selectedProducts)
+			setSelectedProducts(allSelected)
+			// setSelectedProducts(selectedProductsReactiveObjects(selectedProducts))
+
+			setOrder(currentOrder)
+		}
 	}
 
 	const currencyPicker = () => {
@@ -429,7 +490,7 @@ function OrderCreate(props) {
 					</Row>
 
 					<SimpleList
-						elementsList={selectedProducts}
+						elementsList={[...selectedProducts]}
 						titleFieldName="code"
 						subtitleFieldName="name"
 						dynamicElement={quantityInput}
@@ -437,7 +498,7 @@ function OrderCreate(props) {
 					/>
 
 					<ProductGrid
-						productsList={products}
+						productsList={[...products]}
 						imageSource="imageUrl"
 						name="name"
 						code="code"
@@ -446,6 +507,7 @@ function OrderCreate(props) {
 						usd="usd"
 						dynamicElement={quantityInput}
 						clickable
+						onClick={onProductClick}
 					/>
 
 					<Row>
@@ -472,16 +534,6 @@ function OrderCreate(props) {
 			</Container>
 		)
 	}
-
-	useEffect(() => {
-		const fetchedProducts = async () => {
-			const prods = await ProductsApiService.getAllProducts()
-			setProducts(productsReactiveObjects(prods.data))
-
-			setIsLoaded(true)
-		}
-		fetchedProducts()
-	}, [])
 
 	return <> {isLoaded ? orderCreateView() : LoadingView()} </>
 }
