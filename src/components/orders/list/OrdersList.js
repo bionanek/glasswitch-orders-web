@@ -48,7 +48,7 @@ function OrdersList(props) {
 	}, [])
 
 	return (
-		<Container className="orders-list-wrapper">
+		<Container className="orders-list-wrapper" fluid>
 			{isLoaded ? (
 				<>
 					<Button className="new-order-button">Put an Order</Button>
