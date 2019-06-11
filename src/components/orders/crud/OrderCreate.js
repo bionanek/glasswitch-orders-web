@@ -37,16 +37,26 @@ function OrderCreate(props) {
 	const [isInvoiceSent, setIsInvoiceSent] = useState(false)
 	const [isPaymentSettled, setIsPaymentSettled] = useState(false)
 
+	function getCurrentProduct(id) {
+		return [...products].find(product => product.id === id)
+	}
+
+	// TODO:
+	// * after adding product to selected - remove it from availables
+	// * ater deleting from selected - move it to availables
+	// * when you click on quantity textbox - highlight all text
+
 	const quantitySetter = event => {
+		// this must go, quantity should be set only on click
 		const allProducts = [...products]
-		const targetProduct = allProducts.find(product => product.id === +event.target.id)
+		const targetProduct = getCurrentProduct(+event.target.id)
 		targetProduct.quantity = event.target.value
 
 		setProducts(allProducts)
-		// setsele
 	}
 
 	const quantityInput = productId => {
+		const product = getCurrentProduct(productId)
 		return (
 			<input
 				onChange={quantitySetter}
@@ -55,7 +65,7 @@ function OrderCreate(props) {
 				name="quantity"
 				id={productId}
 				placeholder="Quantity"
-				defaultValue="0"
+				defaultValue={product.quantity}
 			/>
 		)
 	}
@@ -79,8 +89,6 @@ function OrderCreate(props) {
 	// 		return productRO
 	// 	})
 	// }
-
-	// const foo = (productRO, currentOrder) =>
 
 	const productsReactiveObjects = productsList => {
 		return productsList.map(productElement => {
