@@ -38,7 +38,9 @@ const ProductGridElement = props => {
 					variant="top"
 					style={{ cursor: 'pointer' }}
 					src={props.imageUrl}
-					onClick={() => props.onClick(props.id)}
+					onClick={() =>
+						props.onClick ? props.onClick(props.id) : props.element.clickHandler(props.id)
+					}
 				/>
 				<Card.Body>
 					<Card.Title>{props.productCode}</Card.Title>
