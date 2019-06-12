@@ -11,6 +11,7 @@ export default function SimpleList({
 	editable,
 	deletable,
 	dynamicElement,
+	onDelete,
 }) {
 	const [elements, setElements] = useState([])
 
@@ -30,6 +31,7 @@ export default function SimpleList({
 					isEditable={isListEditable}
 					isDeletable={isListDeletable}
 					defaultOnDeleteClick={(element, elId) => defaultOnDeleteClick(element, elId)}
+					onDelete={onDelete}
 					element={el}
 					title={el[titleFieldName]}
 					subtitle={el[subtitleFieldName]}

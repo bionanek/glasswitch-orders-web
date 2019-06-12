@@ -42,14 +42,29 @@ function OrderCreate(props) {
 	}
 
 	// TODO:
-	// * ater deleting from selected - move it to availables
-	// * when you click on quantity textbox - highlight all text
+	// * ater deleting from selected - move it to availables - that's done but now it has to go back to the same index as it was before being selected
+	// * think about how to improve quantity setter as it's a bit heavy
 
 	const quantitySetter = event => {
-		const allProducts = [...availableProducts]
-		const targetProduct = getCurrentProduct(+event.target.id)
-		targetProduct.quantity = event.target.value
-		setAvailableProducts(allProducts)
+		let targetProduct = [...selectedProducts].find(product => product.id === +event.target.id)
+		let isAvailable = false
+
+		if (!targetProduct) {
+			targetProduct = getCurrentProduct(+event.target.id)
+			isAvailable = true
+		}
+		targetProduct.quantity = +event.target.value
+
+		if (isAvailable) {
+			const allProducts = [...availableProducts]
+			allProducts[targetProduct] = targetProduct
+			setAvailableProducts(allProducts)
+			return
+		}
+
+		const selectedProds = [...selectedProducts]
+		selectedProds[targetProduct] = targetProduct
+		setSelectedProducts(selectedProds)
 	}
 
 	const quantityInput = (productId, _product = null) => {
@@ -61,6 +76,7 @@ function OrderCreate(props) {
 		return (
 			<input
 				onBlur={quantitySetter}
+				onFocus={event => event.target.select()}
 				style={{ width: '100%' }}
 				type="number"
 				name="quantity"
@@ -79,17 +95,6 @@ function OrderCreate(props) {
 			currentOrder.wantedProducts = []
 
 			productRO.quantity = 0
-			productRO.deleteHandler = () => {
-				for (let n = 0; n < selectedProducts.length; n += 1) {
-					if (selectedProducts[n].id === productRO.id) {
-						const selectedProds = [...selectedProducts]
-						selectedProds.splice(n, 1)
-						currentOrder.wantedProducts.splice(n, 1)
-						setSelectedProducts(selectedProds)
-						return
-					}
-				}
-			}
 
 			return productRO
 		})
@@ -211,6 +216,20 @@ function OrderCreate(props) {
 
 		if (productExistsInOrder === false) {
 			handleAvailableProductSelection(productId)
+		}
+	}
+
+	const onSelectedProductDelete = product => {
+		const indexOfProduct = selectedProducts.indexOf(product)
+		if (indexOfProduct >= 0) {
+			const selectedProds = [...selectedProducts]
+			const availables = [...availableProducts]
+			const currentOrder = { ...order }
+			selectedProds.splice(indexOfProduct, 1)
+			currentOrder.wantedProducts.splice(indexOfProduct, 1)
+			setSelectedProducts(selectedProds)
+			availables.push(product)
+			setAvailableProducts(availables) // TODO: add product back to available
 		}
 	}
 
@@ -462,6 +481,7 @@ function OrderCreate(props) {
 						titleFieldName="code"
 						subtitleFieldName="name"
 						dynamicElement={quantityInput}
+						onDelete={onSelectedProductDelete}
 						deletable
 					/>
 

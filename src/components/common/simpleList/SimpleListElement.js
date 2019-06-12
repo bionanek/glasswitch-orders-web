@@ -24,6 +24,8 @@ const SimpleListElement = props => {
 	const onDeleteConfirm = () => {
 		if (props.element.deleteHandler) {
 			props.element.deleteHandler()
+		} else if (props.onDelete) {
+			props.onDelete(props.element)
 		} else {
 			props.defaultOnDeleteClick(props.element, props.index)
 		}
