@@ -28,8 +28,8 @@ function OrdersList(props) {
 				const deleteResult = await OrdersApiService.deleteOrder(orderId)
 
 				if (deleteResult !== undefined && deleteResult.status === 200) {
-					const response = await OrdersApiService.getAllOrders()
-					setOrders(getOrdersReactiveObjectsList(response.data))
+					const fetchedOrders = await OrdersApiService.getAllOrders()
+					setOrders(getOrdersReactiveObjectsList(fetchedOrders.data))
 				}
 			}
 
@@ -39,19 +39,18 @@ function OrdersList(props) {
 
 	useEffect(() => {
 		const fetchData = async () => {
-			const response = await OrdersApiService.getAllOrders()
-			setOrders(getOrdersReactiveObjectsList(response.data))
-
-			setIsLoaded(true)
+			const fetchedOrders = await OrdersApiService.getAllOrders()
+			setOrders(getOrdersReactiveObjectsList(fetchedOrders.data))
 		}
 		fetchData()
+		setIsLoaded(true)
 	}, [])
 
 	return (
 		<Container className="orders-list-wrapper" fluid>
 			{isLoaded ? (
 				<>
-					<Button className="new-order-button">Put an Order</Button>
+					<Button className="new-order-button">Place an Order</Button>
 
 					<SimpleList
 						elementsList={orders}
