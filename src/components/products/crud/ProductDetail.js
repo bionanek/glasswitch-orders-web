@@ -50,9 +50,9 @@ function ProductDetail(props) {
 
 	const productDetailsView = () => {
 		return (
-			<div>
+			<Container className="product-detail" fluid>
 				{product ? (
-					<Container className="product-detail">
+					<>
 						<Row>
 							<Col>
 								<h1>{product.name}</h1>
@@ -125,14 +125,14 @@ function ProductDetail(props) {
 							onModalClose={closeDeleteModal}
 							onConfirm={onDeleteConfirm}
 						/>
-					</Container>
+					</>
 				) : (
 					<span>
 						Product with ID:
 						{props.match.params.id} does not exists!
 					</span>
 				)}
-			</div>
+			</Container>
 		)
 	}
 
