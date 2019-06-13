@@ -38,16 +38,18 @@ const ProductGridElement = props => {
 					variant="top"
 					style={{ cursor: 'pointer' }}
 					src={props.imageUrl}
-					onClick={props.element.clickHandler}
+					onClick={() =>
+						props.onClick ? props.onClick(props.id) : props.element.clickHandler(props.id)
+					}
 				/>
 				<Card.Body>
 					<Card.Title>{props.productCode}</Card.Title>
 					<Card.Text>{props.productName}</Card.Text>
 				</Card.Body>
 				<ListGroup style={{ padding: '3px' }}>
-					<ListGroupItem>{'PLN ' + props.pricePLN}</ListGroupItem>
-					<ListGroupItem>{'EUR ' + props.priceEUR}</ListGroupItem>
-					<ListGroupItem>{'USD ' + props.priceUSD}</ListGroupItem>
+					<ListGroupItem>{`PLN ${props.pricePLN}`}</ListGroupItem>
+					<ListGroupItem>{`EUR ${props.priceEUR}`}</ListGroupItem>
+					<ListGroupItem>{`USD ${props.priceUSD}`}</ListGroupItem>
 
 					{props.children ? (
 						<ListGroupItem>{props.children}</ListGroupItem>

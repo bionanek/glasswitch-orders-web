@@ -24,7 +24,7 @@ function OrderCreate(props) {
 
 	const [order, setOrder] = useState({})
 	const [customer, setCustomer] = useState([])
-	const [products, setProducts] = useState([])
+	const [availableProducts, setAvailableProducts] = useState([])
 
 	const [selectedProducts, setSelectedProducts] = useState([])
 	const [selectedCustomer, setSelectedCustomer] = useState({})
@@ -37,89 +37,90 @@ function OrderCreate(props) {
 	const [isInvoiceSent, setIsInvoiceSent] = useState(false)
 	const [isPaymentSettled, setIsPaymentSettled] = useState(false)
 
-	let quantity
-
-	const quantitySetter = event => {
-		quantity = event.target.value
-		return quantity
+	function getCurrentProduct(id) {
+		return [...availableProducts].find(product => product.id === id)
 	}
 
-	const quantityInput = prodQuantity => {
+	// TODO:
+	// * ater deleting from selected - move it to availables - that's done but now it has to go back to the same index as it was before being selected
+	// * think about how to improve quantity setter as it's a bit heavy
+
+	const quantitySetter = event => {
+		let targetProduct = [...selectedProducts].find(product => product.id === +event.target.id)
+		let isAvailable = false
+
+		if (!targetProduct) {
+			targetProduct = getCurrentProduct(+event.target.id)
+			isAvailable = true
+		}
+		targetProduct.quantity = +event.target.value
+
+		if (isAvailable) {
+			const allProducts = [...availableProducts]
+			allProducts[targetProduct] = targetProduct
+			setAvailableProducts(allProducts)
+			return
+		}
+
+		const selectedProds = [...selectedProducts]
+		selectedProds[targetProduct] = targetProduct
+		setSelectedProducts(selectedProds)
+	}
+
+	const quantityInput = (productId, _product = null) => {
+		let product = _product
+		if (product === null) {
+			product = getCurrentProduct(productId)
+		}
+
 		return (
 			<input
-				onChange={quantitySetter}
+				onBlur={quantitySetter}
+				onFocus={event => event.target.select()}
 				style={{ width: '100%' }}
 				type="number"
 				name="quantity"
+				id={productId}
 				placeholder="Quantity"
-				defaultValue={prodQuantity}
+				defaultValue={product.quantity}
 			/>
 		)
-	}
-
-	const selectedProductsReactiveObjects = productsList => {
-		return productsList.map(productElement => {
-			const productRO = { ...productElement }
-			const currentOrder = order
-
-			productRO.deleteHandler = () => {
-				for (let n = 0; n < selectedProducts.length; n++) {
-					if (selectedProducts[n].id === productRO.id) {
-						selectedProducts.splice(n, 1)
-						currentOrder.wantedProducts.splice(n, 1)
-						setSelectedProducts(selectedProductsReactiveObjects(selectedProducts))
-						return
-					}
-				}
-			}
-
-			return productRO
-		})
 	}
 
 	const productsReactiveObjects = productsList => {
 		return productsList.map(productElement => {
 			const productRO = { ...productElement }
 			const currentOrder = order
-			const selectedProduct = {}
+
 			currentOrder.wantedProducts = []
 
-			productRO.clickHandler = () => {
-				for (let n = 0; n < selectedProducts.length; n++) {
-					if (selectedProducts[n].id === productRO.id) {
-						setProductExistsInOrder(true)
-						return
-					}
-				}
-
-				if (productExistsInOrder === false) {
-					selectedProduct.id = productRO.id
-					selectedProduct.quantity = quantity
-					productRO.quantity = quantity
-
-					currentOrder.wantedProducts.push(selectedProduct)
-					selectedProducts.push(productRO)
-					setSelectedProducts(selectedProductsReactiveObjects(selectedProducts))
-
-					setOrder(currentOrder)
-				}
-			}
+			productRO.quantity = 0
 
 			return productRO
 		})
 	}
+
+	useEffect(() => {
+		const fetchedProducts = async () => {
+			const prods = await ProductsApiService.getAllProducts()
+			setAvailableProducts(productsReactiveObjects(prods.data))
+
+			setIsLoaded(true)
+		}
+		fetchedProducts()
+	}, [])
 
 	const handleProductSearch = async event => {
 		const product = event.target.value
 
 		if (product === '') {
 			const prods = await ProductsApiService.getAllProducts()
-			setProducts(productsReactiveObjects(prods.data))
+			setAvailableProducts(productsReactiveObjects(prods.data))
 			return
 		}
 
 		const foundProduct = await ProductsApiService.searchProduct(product)
-		setProducts(productsReactiveObjects(foundProduct.data))
+		setAvailableProducts(productsReactiveObjects(foundProduct.data))
 	}
 
 	const setCustomerReactiveObject = customerResults => {
@@ -183,6 +184,53 @@ function OrderCreate(props) {
 		}
 
 		setOrder(currentOrder)
+	}
+
+	function handleAvailableProductSelection(productId) {
+		const allSelected = [...selectedProducts]
+		const allAvailable = [...availableProducts]
+		const selectedProduct = allAvailable.find(p => p.id === +productId)
+
+		allAvailable.splice(allAvailable.indexOf(selectedProduct), 1)
+		setAvailableProducts(allAvailable)
+
+		const currentOrder = { ...order }
+		currentOrder.wantedProducts.push({
+			id: selectedProduct.id,
+			quantity: selectedProduct.quantity,
+		})
+
+		allSelected.push(selectedProduct)
+		setSelectedProducts(allSelected)
+
+		setOrder(currentOrder)
+	}
+
+	const onProductClick = productId => {
+		for (let n = 0; n < selectedProducts.length; n += 1) {
+			if (selectedProducts[n].id === productId) {
+				setProductExistsInOrder(true)
+				return
+			}
+		}
+
+		if (productExistsInOrder === false) {
+			handleAvailableProductSelection(productId)
+		}
+	}
+
+	const onSelectedProductDelete = product => {
+		const indexOfProduct = selectedProducts.indexOf(product)
+		if (indexOfProduct >= 0) {
+			const selectedProds = [...selectedProducts]
+			const availables = [...availableProducts]
+			const currentOrder = { ...order }
+			selectedProds.splice(indexOfProduct, 1)
+			currentOrder.wantedProducts.splice(indexOfProduct, 1)
+			setSelectedProducts(selectedProds)
+			availables.push(product)
+			setAvailableProducts(availables) // TODO: add product back to available
+		}
 	}
 
 	const currencyPicker = () => {
@@ -433,11 +481,12 @@ function OrderCreate(props) {
 						titleFieldName="code"
 						subtitleFieldName="name"
 						dynamicElement={quantityInput}
+						onDelete={onSelectedProductDelete}
 						deletable
 					/>
 
 					<ProductGrid
-						productsList={products}
+						productsList={availableProducts}
 						imageSource="imageUrl"
 						name="name"
 						code="code"
@@ -446,6 +495,7 @@ function OrderCreate(props) {
 						usd="usd"
 						dynamicElement={quantityInput}
 						clickable
+						onClick={onProductClick}
 					/>
 
 					<Row>
@@ -472,16 +522,6 @@ function OrderCreate(props) {
 			</Container>
 		)
 	}
-
-	useEffect(() => {
-		const fetchedProducts = async () => {
-			const prods = await ProductsApiService.getAllProducts()
-			setProducts(productsReactiveObjects(prods.data))
-
-			setIsLoaded(true)
-		}
-		fetchedProducts()
-	}, [])
 
 	return <> {isLoaded ? orderCreateView() : LoadingView()} </>
 }

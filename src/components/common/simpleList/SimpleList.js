@@ -11,6 +11,7 @@ export default function SimpleList({
 	editable,
 	deletable,
 	dynamicElement,
+	onDelete,
 }) {
 	const [elements, setElements] = useState([])
 
@@ -21,19 +22,21 @@ export default function SimpleList({
 
 	function getListElementsHTML(itemsList, isListDeletable, isListEditable, isListClickable) {
 		return itemsList.map((el, index) => {
+			const id = el.id ? el.id : index
 			return (
 				<SimpleListElement
-					key={el.id ? el.id : index}
+					key={id}
 					index={index}
 					isClickable={isListClickable}
 					isEditable={isListEditable}
 					isDeletable={isListDeletable}
-					defaultOnDeleteClick={(element, id) => defaultOnDeleteClick(element, id)}
+					defaultOnDeleteClick={(element, elId) => defaultOnDeleteClick(element, elId)}
+					onDelete={onDelete}
 					element={el}
 					title={el[titleFieldName]}
 					subtitle={el[subtitleFieldName]}
 				>
-					{dynamicElement ? dynamicElement(el.quantity) : null}
+					{dynamicElement ? dynamicElement(id, el) : null}
 				</SimpleListElement>
 			)
 		})
