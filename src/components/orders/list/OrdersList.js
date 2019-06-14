@@ -1,98 +1,71 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect } from 'react'
 import { withRouter } from 'react-router-dom'
-import { Button, Row } from 'react-bootstrap/'
+import { Button, Container } from 'react-bootstrap/'
 import SimpleList from '../../common/simpleList/SimpleList'
 import OrdersApiService from '../../../utils/api/ordersApiService'
 import LoadingView from '../../common/LoadingView'
 import './OrdersList.scss'
 
-class OrdersList extends Component {
-	constructor(props) {
-		super(props)
+function OrdersList(props) {
+	const [isLoaded, setIsLoaded] = useState(false)
+	const [orders, setOrders] = useState([])
 
-		this.state = {
-			orders: [],
-			isLoaded: false,
-		}
-
-		this.openOrderCreatePage = this.openOrderCreatePage.bind(this)
-	}
-
-	async componentDidMount() {
-		const orders = await this.getAllOrders()
-		this.setState({ orders, isLoaded: true })
-	}
-
-	async getAllOrders() {
-		const response = await OrdersApiService.getAllOrders()
-		return this.getOrdersReactiveObjectsList(response.data)
-	}
-
-	getOrdersReactiveObjectsList(ordersList) {
+	const getOrdersReactiveObjectsList = ordersList => {
 		return ordersList.map(order => {
 			const orderRO = { ...order }
 
 			orderRO.editHandler = event => {
 				event.stopPropagation()
 				const editUrl = `orders/${order.id}/edit`
-				this.props.history.push(editUrl)
+				props.history.push(editUrl)
 			}
 
 			orderRO.clickHandler = () => {
-				this.props.history.push(`orders/${order.id}`)
+				props.history.push(`orders/${order.id}`)
 			}
 
 			orderRO.deleteHandler = async orderId => {
 				const deleteResult = await OrdersApiService.deleteOrder(orderId)
 
 				if (deleteResult !== undefined && deleteResult.status === 200) {
-					this.refreshList()
+					const fetchedOrders = await OrdersApiService.getAllOrders()
+					setOrders(getOrdersReactiveObjectsList(fetchedOrders.data))
 				}
 			}
 
 			return orderRO
-		}, this)
+		})
 	}
 
-	openOrderCreatePage = () => {
-		this.props.history.push('/orders/create')
-	}
+	useEffect(() => {
+		const fetchData = async () => {
+			const fetchedOrders = await OrdersApiService.getAllOrders()
+			setOrders(getOrdersReactiveObjectsList(fetchedOrders.data))
+		}
+		fetchData()
+		setIsLoaded(true)
+	}, [])
 
-	async refreshList() {
-		const orders = await this.getAllOrders()
-		this.setState({ orders })
-	}
+	return (
+		<Container className="orders-list-wrapper" fluid>
+			{isLoaded ? (
+				<>
+					<Button className="new-order-button">Place an Order</Button>
 
-	render() {
-		return (
-			<div>
-				{this.state.isLoaded ? (
-					<div className="orders-list-wrapper">
-						<Row>
-							<Button
-								className="button-create-order"
-								variant="primary"
-								onClick={this.openOrderCreatePage}
-							>
-								Put an order
-							</Button>
-						</Row>
-
-						<SimpleList
-							elementsList={this.state.orders}
-							titleFieldName="email"
-							subtitleFieldName="deadline"
-							deletable
-							editable
-							clickable
-						/>
-					</div>
-				) : (
-					LoadingView()
-				)}
-			</div>
-		)
-	}
+					<SimpleList
+						elementsList={orders}
+						titleFieldName="email"
+						subtitleFieldName="deadline"
+						deletable
+						editable
+						clickable
+					/>
+				</>
+			) : (
+				LoadingView()
+			)}
+		</Container>
+	)
 }
 
 export default withRouter(OrdersList)

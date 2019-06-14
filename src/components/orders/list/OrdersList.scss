@@ -1,8 +1,7 @@
-.order-list-wrapper {
-	margin: 15px;
-}
+.orders-list-wrapper {
+	padding: 0 50px;
 
-.button-create-order {
-	margin-bottom: 10px;
-	float: left;
+	.new-order-button {
+		margin-bottom: 15px;
+	}
 }

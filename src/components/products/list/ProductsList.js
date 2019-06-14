@@ -1,158 +1,123 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect } from 'react'
 import { withRouter } from 'react-router-dom'
-import { Button, ButtonGroup, Col, Row } from 'react-bootstrap/'
+import { Container, Button, ButtonGroup, Col, Row } from 'react-bootstrap/'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faList, faTh } from '@fortawesome/free-solid-svg-icons'
 import SimpleList from '../../common/simpleList/SimpleList'
 import ProductsApiService from '../../../utils/api/productsApiService'
 import ProductCreateModal from '../components/modalCreate/ModalCreateProduct'
 import ProductGrid from '../components/grid/ProductGrid'
-import './ProductsList.scss'
 import LoadingView from '../../common/LoadingView'
+import './ProductsList.scss'
 
-class ProductsList extends Component {
-	constructor(props) {
-		super(props)
+function ProductsList(props) {
+	const [isLoaded, setIsLoaded] = useState(false)
 
-		this.state = {
-			products: [],
-			isProductCreateModalOpen: false,
-			renderListView: true,
-			isLoaded: false,
-		}
+	const [products, setProducts] = useState([])
+	const [listView, setListView] = useState(true)
+	const [isProductCreateModalOpen, setIsProductCreateModalOpen] = useState(false)
 
-		this.refreshList = this.refreshList.bind(this)
-		this.openProductModal = this.openProductModal.bind(this)
-		this.closeProductModal = this.closeProductModal.bind(this)
-		this.renderListView = this.renderListView.bind(this)
-		this.renderGridView = this.renderGridView.bind(this)
-	}
-
-	async componentDidMount() {
-		const prods = await this.getAllProducts()
-		this.setState({ products: prods, isLoaded: true })
-	}
-
-	async getAllProducts() {
-		const response = await ProductsApiService.getAllProducts()
-		return this.getProductsReactiveObjectsList(response.data)
-	}
-
-	getProductsReactiveObjectsList(productsList) {
+	const getProductsReactiveObjectsList = productsList => {
 		return productsList.map(product => {
 			const productRO = { ...product }
 
-			productRO.editHandler = e => {
-				e.stopPropagation()
-				const editUrl = `products/${product.id}/edit`
-				this.props.history.push(editUrl)
+			productRO.clickHandler = () => {
+				props.history.push(`products/${product.id}`)
 			}
 
-			productRO.clickHandler = () => {
-				this.props.history.push(`products/${product.id}`)
+			productRO.editHandler = event => {
+				event.stopPropagation()
+				const editUrl = `products/${product.id}/edit`
+				props.history.push(editUrl)
 			}
 
 			productRO.deleteHandler = async productId => {
 				const deleteResult = await ProductsApiService.deleteProduct(productId)
 
 				if (deleteResult !== undefined && deleteResult.status === 200) {
-					this.refreshList()
+					const fetchedProducts = await ProductsApiService.getAllProducts()
+					setProducts(getProductsReactiveObjectsList(fetchedProducts.data))
 				}
 			}
 
 			return productRO
-		}, this)
+		})
 	}
 
-	async refreshList() {
-		const prods = await this.getAllProducts()
-
-		this.setState({ products: prods })
+	const fetchData = async () => {
+		const fetchedProducts = await ProductsApiService.getAllProducts()
+		setProducts(getProductsReactiveObjectsList(fetchedProducts.data))
 	}
 
-	openProductModal() {
-		this.setState({ isProductCreateModalOpen: true })
-	}
+	useEffect(() => {
+		fetchData()
+		setIsLoaded(true)
+	}, [])
 
-	closeProductModal() {
-		this.setState({ isProductCreateModalOpen: false })
-	}
+	return (
+		<Container className="products-list-wrapper" fluid>
+			{isLoaded ? (
+				<>
+					<Row>
+						<Col>
+							<Button
+								className="create-product-button"
+								variant="primary"
+								onClick={() => setIsProductCreateModalOpen(true)}
+							>
+								Add Product
+							</Button>
 
-	renderListView = () => {
-		this.setState({ renderListView: true })
-	}
-
-	renderGridView = () => {
-		this.setState({ renderListView: false })
-	}
-
-	render() {
-		return (
-			<>
-				{this.state.isLoaded ? (
-					<div className="products-list-wrapper">
-						<Row>
-							<Col>
+							<ButtonGroup className="layout-change-buttons">
 								<Button
-									className="button-create-product"
-									variant="primary"
-									onClick={this.openProductModal}
+									onClick={() => setListView(true)}
+									variant={listView ? 'success' : 'secondary'}
 								>
-									Add Product
+									<FontAwesomeIcon icon={faList} size="2x" />
 								</Button>
 
-								<ButtonGroup className="buttons-layout-change">
-									<Button variant="secondary" onClick={this.renderListView}>
-										<FontAwesomeIcon icon={faList} size="2x" />
-									</Button>
+								<Button
+									onClick={() => setListView(false)}
+									variant={listView ? 'secondary' : 'success'}
+								>
+									<FontAwesomeIcon icon={faTh} size="2x" />
+								</Button>
+							</ButtonGroup>
+						</Col>
+					</Row>
 
-									<Button variant="secondary" onClick={this.renderGridView}>
-										<FontAwesomeIcon icon={faTh} size="2x" />
-									</Button>
-								</ButtonGroup>
-							</Col>
-						</Row>
-
-						{this.state.renderListView ? (
-							<Row>
-								<Col>
-									<div className="products-list-wrapper">
-										<SimpleList
-											elementsList={this.state.products}
-											titleFieldName="name"
-											subtitleFieldName="code"
-											deletable
-											editable
-											clickable
-										/>
-									</div>
-								</Col>
-							</Row>
-						) : (
-							<ProductGrid
-								className="product-grid"
-								productsList={this.state.products}
-								imageSource="imageUrl"
-								name="name"
-								code="code"
-								pln="pln"
-								eur="eur"
-								usd="usd"
-							/>
-						)}
-
-						<ProductCreateModal
-							isOpen={this.state.isProductCreateModalOpen}
-							onModalClose={this.closeProductModal}
-							onRefreshList={this.refreshList}
+					{listView ? (
+						<SimpleList
+							elementsList={products}
+							titleFieldName="name"
+							subtitleFieldName="code"
+							deletable
+							editable
+							clickable
 						/>
-					</div>
-				) : (
-					LoadingView()
-				)}
-			</>
-		)
-	}
+					) : (
+						<ProductGrid
+							productsList={products}
+							imageSource="imageUrl"
+							name="name"
+							code="code"
+							pln="pln"
+							eur="eur"
+							usd="usd"
+						/>
+					)}
+
+					<ProductCreateModal
+						isOpen={isProductCreateModalOpen}
+						onModalClose={() => setIsProductCreateModalOpen(false)}
+						onRefreshList={fetchData}
+					/>
+				</>
+			) : (
+				LoadingView()
+			)}
+		</Container>
+	)
 }
 
 export default withRouter(ProductsList)
