@@ -128,8 +128,8 @@ function OrderCreate(props) {
 		currentOrder.invoiceSent = isInvoiceSent
 		currentOrder.settledPayment = isPaymentSettled
 		currentOrder.customerId = selectedCustomer.id
-		currentOrder.deadline = date.toISOString().split("T")[0]
-		
+		currentOrder.deadline = date.toISOString().split('T')[0]
+
 		await OrdersApiService.postOrder(currentOrder)
 		props.history.push('/orders')
 	}
@@ -200,7 +200,7 @@ function OrderCreate(props) {
 			currentOrder.wantedProducts.splice(indexOfProduct, 1)
 			setSelectedProducts(selectedProds)
 			availables.push(product)
-			setAvailableProducts(availables) // TODO: add product back to available
+			setAvailableProducts(availables)
 		}
 	}
 
@@ -214,31 +214,18 @@ function OrderCreate(props) {
 	}, [])
 
 	const currencyPicker = () => {
-		let title = 'Currency Picker'
-
-		switch (selectedCurrency) {
-			case 'pln':
-				title = 'PLN'
-				break
-			case 'usd':
-				title = 'USD'
-				break
-			case 'eur':
-				title = 'EUR'
-				break
-			default:
-				title = 'Currency Picker'
-		}
-
 		return (
-			<div>
+			<>
 				<Form.Label>Currency</Form.Label>
-				<DropdownButton title={title} variant="primary">
+				<DropdownButton
+					title={selectedCurrency.toUpperCase() || 'Currency Picker'}
+					variant="primary"
+				>
 					<Dropdown.Item onClick={() => setSelectedCurrency('pln')}>PLN</Dropdown.Item>
 					<Dropdown.Item onClick={() => setSelectedCurrency('eur')}>EUR</Dropdown.Item>
 					<Dropdown.Item onClick={() => setSelectedCurrency('usd')}>USD</Dropdown.Item>
 				</DropdownButton>
-			</div>
+			</>
 		)
 	}
 
