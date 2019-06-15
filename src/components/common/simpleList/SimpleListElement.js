@@ -38,7 +38,13 @@ const SimpleListElement = props => {
 					className={`list-element ${
 						props.isClickable && props.element.clickHandler ? 'clickable' : ''
 					}`}
-					onClick={props.element.clickHandler}
+					onClick={
+						props.onClick
+							? () => {
+									props.onClick(props.element)
+							  }
+							: props.element.clickHandler
+					}
 				>
 					<span className="children">{props.children}</span>
 

@@ -39,7 +39,7 @@ const ProductGridElement = props => {
 					style={{ cursor: 'pointer' }}
 					src={props.imageUrl}
 					onClick={() =>
-						props.onClick ? props.onClick(props.id) : props.element.clickHandler(props.id)
+						props.onClick ? props.onClick(props.element) : props.element.clickHandler(props.id)
 					}
 				/>
 				<Card.Body>

@@ -10,6 +10,7 @@ import {
 	Button,
 	ButtonGroup,
 } from 'react-bootstrap'
+import DatePicker from 'react-date-picker'
 import CustomersApiService from '../../../utils/api/customersApiService'
 import ProductGrid from '../../products/components/grid/ProductGrid'
 import ProductsApiService from '../../../utils/api/productsApiService'
@@ -22,16 +23,17 @@ import './OrderCreate.scss'
 function OrderCreate(props) {
 	const [isLoaded, setIsLoaded] = useState(false)
 
-	const [order, setOrder] = useState({})
-	const [customer, setCustomer] = useState([])
-	const [availableProducts, setAvailableProducts] = useState([])
-
-	const [selectedProducts, setSelectedProducts] = useState([])
+	const [order, setOrder] = useState({ wantedProducts: [] })
 	const [selectedCustomer, setSelectedCustomer] = useState({})
-	const [productExistsInOrder, setProductExistsInOrder] = useState(false)
 
+	const [customers, setAvailableCustomers] = useState([])
+	const [availableProducts, setAvailableProducts] = useState([])
+	const [selectedProducts, setSelectedProducts] = useState([])
+
+	const [date, setDate] = useState(new Date())
+
+	const [selectedCurrency, setSelectedCurrency] = useState('')
 	const [isValidated, setIsValidated] = useState(false)
-	const [selectedCurrency, setSelectedCurrency] = useState(false)
 	const [isConfirmationSent, setIsConfirmationSent] = useState(false)
 	const [isProformaSent, setIsProformaSent] = useState(false)
 	const [isInvoiceSent, setIsInvoiceSent] = useState(false)
@@ -40,10 +42,6 @@ function OrderCreate(props) {
 	function getCurrentProduct(id) {
 		return [...availableProducts].find(product => product.id === id)
 	}
-
-	// TODO:
-	// * ater deleting from selected - move it to availables - that's done but now it has to go back to the same index as it was before being selected
-	// * think about how to improve quantity setter as it's a bit heavy
 
 	const quantitySetter = event => {
 		let targetProduct = [...selectedProducts].find(product => product.id === +event.target.id)
@@ -82,70 +80,42 @@ function OrderCreate(props) {
 				name="quantity"
 				id={productId}
 				placeholder="Quantity"
-				defaultValue={product.quantity}
+				defaultValue={product.quantity === 0 ? null : product.quantity}
 			/>
 		)
 	}
 
-	const productsReactiveObjects = productsList => {
+	const initializeQuantityInProducts = productsList => {
 		return productsList.map(productElement => {
-			const productRO = { ...productElement }
-			const currentOrder = order
-
-			currentOrder.wantedProducts = []
-
-			productRO.quantity = 0
-
-			return productRO
+			const product = productElement
+			product.quantity = 0
+			return productElement
 		})
 	}
-
-	useEffect(() => {
-		const fetchedProducts = async () => {
-			const prods = await ProductsApiService.getAllProducts()
-			setAvailableProducts(productsReactiveObjects(prods.data))
-
-			setIsLoaded(true)
-		}
-		fetchedProducts()
-	}, [])
 
 	const handleProductSearch = async event => {
 		const product = event.target.value
 
 		if (product === '') {
-			const prods = await ProductsApiService.getAllProducts()
-			setAvailableProducts(productsReactiveObjects(prods.data))
+			const fetchedProducts = await ProductsApiService.getAllProducts()
+			setAvailableProducts(initializeQuantityInProducts(fetchedProducts.data))
 			return
 		}
 
 		const foundProduct = await ProductsApiService.searchProduct(product)
-		setAvailableProducts(productsReactiveObjects(foundProduct.data))
-	}
-
-	const setCustomerReactiveObject = customerResults => {
-		return customerResults.map(customerElement => {
-			const customerRO = { ...customerElement }
-
-			customerRO.clickHandler = () => {
-				setCustomer([])
-				setSelectedCustomer(customerRO)
-			}
-
-			return customerRO
-		})
+		setAvailableProducts(initializeQuantityInProducts(foundProduct.data))
 	}
 
 	const handleCustomerSearch = async event => {
 		const customerSearch = event.target.value
 
 		if (customerSearch === '') {
-			setCustomer([])
+			setAvailableCustomers([])
 			return
 		}
 
 		const foundCustomer = await CustomersApiService.searchCustomer(customerSearch)
-		setCustomer(setCustomerReactiveObject(foundCustomer.data))
+		setAvailableCustomers(foundCustomer.data)
 	}
 
 	const handleDataConfirm = async () => {
@@ -158,7 +128,8 @@ function OrderCreate(props) {
 		currentOrder.invoiceSent = isInvoiceSent
 		currentOrder.settledPayment = isPaymentSettled
 		currentOrder.customerId = selectedCustomer.id
-
+		currentOrder.deadline = date.toISOString().split("T")[0]
+		
 		await OrdersApiService.postOrder(currentOrder)
 		props.history.push('/orders')
 	}
@@ -186,10 +157,10 @@ function OrderCreate(props) {
 		setOrder(currentOrder)
 	}
 
-	function handleAvailableProductSelection(productId) {
+	function handleAvailableProductSelection(product) {
 		const allSelected = [...selectedProducts]
 		const allAvailable = [...availableProducts]
-		const selectedProduct = allAvailable.find(p => p.id === +productId)
+		const selectedProduct = allAvailable.find(el => el.id === product.id)
 
 		allAvailable.splice(allAvailable.indexOf(selectedProduct), 1)
 		setAvailableProducts(allAvailable)
@@ -206,17 +177,17 @@ function OrderCreate(props) {
 		setOrder(currentOrder)
 	}
 
-	const onProductClick = productId => {
-		for (let n = 0; n < selectedProducts.length; n += 1) {
-			if (selectedProducts[n].id === productId) {
-				setProductExistsInOrder(true)
-				return
-			}
+	const onAvailableCustomerClick = customer => {
+		setAvailableCustomers([])
+		setSelectedCustomer(customer)
+	}
+
+	const onAvailableProductClick = product => {
+		if (selectedProducts[product]) {
+			return
 		}
 
-		if (productExistsInOrder === false) {
-			handleAvailableProductSelection(productId)
-		}
+		handleAvailableProductSelection(product)
 	}
 
 	const onSelectedProductDelete = product => {
@@ -232,6 +203,15 @@ function OrderCreate(props) {
 			setAvailableProducts(availables) // TODO: add product back to available
 		}
 	}
+
+	useEffect(() => {
+		const fetchData = async () => {
+			const fetchedProducts = await ProductsApiService.getAllProducts()
+			setAvailableProducts(initializeQuantityInProducts(fetchedProducts.data))
+			setIsLoaded(true)
+		}
+		fetchData()
+	}, [])
 
 	const currencyPicker = () => {
 		let title = 'Currency Picker'
@@ -405,15 +385,19 @@ function OrderCreate(props) {
 
 						<Col sm>
 							<Form.Group controlId="deadline">
-								<Form.Label>Deadline</Form.Label>
-								<Form.Control
-									onChange={handleFormChange}
-									type="text"
-									name="deadline"
-									placeholder="YYYY-MM-DD"
-									pattern="[0-9]+([-][0-9]+)([-][0-9]+)?"
-									required
-								/>
+								<Row>
+									<Form.Label>Deadline</Form.Label>
+								</Row>
+
+								<Row>
+									<DatePicker
+										onChange={date => setDate(date)}
+										className="date-picker"
+										name="deadline"
+										format="y-M-dd"
+										value={date}
+									/>
+								</Row>
 							</Form.Group>
 						</Col>
 					</Row>
@@ -447,13 +431,6 @@ function OrderCreate(props) {
 						</Col>
 					</Row>
 
-					<SimpleList
-						elementsList={customer}
-						titleFieldName="name"
-						subtitleFieldName="email"
-						clickable
-					/>
-
 					{selectedCustomer.name ? (
 						<Row style={{ color: 'white', background: 'purple' }}>
 							<DetailElement header="Customer Name:" value={selectedCustomer.name} />
@@ -461,6 +438,16 @@ function OrderCreate(props) {
 							<DetailElement header="Vat Number:" value={selectedCustomer.vatNumber} />
 						</Row>
 					) : null}
+
+					{customers.length !== 0 && (
+						<SimpleList
+							elementsList={customers}
+							titleFieldName="name"
+							subtitleFieldName="email"
+							onClick={onAvailableCustomerClick}
+							clickable
+						/>
+					)}
 
 					<Row>
 						<Col sm>
@@ -476,14 +463,16 @@ function OrderCreate(props) {
 						</Col>
 					</Row>
 
-					<SimpleList
-						elementsList={selectedProducts}
-						titleFieldName="code"
-						subtitleFieldName="name"
-						dynamicElement={quantityInput}
-						onDelete={onSelectedProductDelete}
-						deletable
-					/>
+					{selectedProducts.length !== 0 && (
+						<SimpleList
+							elementsList={selectedProducts}
+							titleFieldName="code"
+							subtitleFieldName="name"
+							dynamicElement={quantityInput}
+							onDelete={onSelectedProductDelete}
+							deletable
+						/>
+					)}
 
 					<ProductGrid
 						productsList={availableProducts}
@@ -495,7 +484,7 @@ function OrderCreate(props) {
 						usd="usd"
 						dynamicElement={quantityInput}
 						clickable
-						onClick={onProductClick}
+						onClick={onAvailableProductClick}
 					/>
 
 					<Row>

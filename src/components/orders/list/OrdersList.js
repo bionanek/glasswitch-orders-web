@@ -41,16 +41,18 @@ function OrdersList(props) {
 		const fetchData = async () => {
 			const fetchedOrders = await OrdersApiService.getAllOrders()
 			setOrders(getOrdersReactiveObjectsList(fetchedOrders.data))
+			setIsLoaded(true)
 		}
 		fetchData()
-		setIsLoaded(true)
 	}, [])
 
 	return (
 		<Container className="orders-list-wrapper" fluid>
 			{isLoaded ? (
 				<>
-					<Button className="new-order-button">Place an Order</Button>
+					<Button onClick={() => props.history.push('orders/create')} className="new-order-button">
+						Place an Order
+					</Button>
 
 					<SimpleList
 						elementsList={orders}
