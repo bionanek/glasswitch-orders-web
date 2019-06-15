@@ -213,28 +213,22 @@ function OrderCreate(props) {
 		fetchData()
 	}, [])
 
-	const currencyPicker = () => {
-		return (
-			<>
-				<Form.Label>Currency</Form.Label>
-				<DropdownButton
-					title={selectedCurrency.toUpperCase() || 'Currency Picker'}
-					variant="primary"
-				>
-					<Dropdown.Item onClick={() => setSelectedCurrency('pln')}>PLN</Dropdown.Item>
-					<Dropdown.Item onClick={() => setSelectedCurrency('eur')}>EUR</Dropdown.Item>
-					<Dropdown.Item onClick={() => setSelectedCurrency('usd')}>USD</Dropdown.Item>
-				</DropdownButton>
-			</>
-		)
-	}
-
 	const orderCreateView = () => {
 		return (
 			<Container className="order-create">
 				<Form onSubmit={handleSubmit} validated={isValidated}>
 					<Row>
-						<Col sm>{currencyPicker()}</Col>
+						<Col sm>
+							<Form.Label>Currency</Form.Label>
+							<DropdownButton
+								title={selectedCurrency.toUpperCase() || 'Currency Picker'}
+								variant="primary"
+							>
+								<Dropdown.Item onClick={() => setSelectedCurrency('pln')}>PLN</Dropdown.Item>
+								<Dropdown.Item onClick={() => setSelectedCurrency('eur')}>EUR</Dropdown.Item>
+								<Dropdown.Item onClick={() => setSelectedCurrency('usd')}>USD</Dropdown.Item>
+							</DropdownButton>
+						</Col>
 
 						<Col sm>
 							<Form.Group>
