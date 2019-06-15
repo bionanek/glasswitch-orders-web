@@ -23,7 +23,7 @@ const SimpleListElement = props => {
 
 	const onDeleteConfirm = () => {
 		if (props.element.deleteHandler) {
-			props.element.deleteHandler()
+			props.element.deleteHandler(props.element.id)
 		} else if (props.onDelete) {
 			props.onDelete(props.element)
 		} else {
