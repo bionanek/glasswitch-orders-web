@@ -118,45 +118,6 @@ function OrderCreate(props) {
 		setAvailableCustomers(foundCustomer.data)
 	}
 
-	const handleDataConfirm = async () => {
-		const currentOrder = order
-		setIsValidated(true)
-
-		currentOrder.currency = selectedCurrency
-		currentOrder.confirmationSent = isConfirmationSent
-		currentOrder.proformaSent = isProformaSent
-		currentOrder.invoiceSent = isInvoiceSent
-		currentOrder.settledPayment = isPaymentSettled
-		currentOrder.customerId = selectedCustomer.id
-		currentOrder.deadline = date.toISOString().split('T')[0]
-
-		await OrdersApiService.postOrder(currentOrder)
-		props.history.push('/orders')
-	}
-
-	const handleSubmit = async event => {
-		const form = event.currentTarget
-		event.preventDefault()
-
-		if (form.checkValidity() === false) {
-			event.stopPropagation()
-		}
-		handleDataConfirm()
-	}
-
-	const handleFormChange = event => {
-		const currentOrder = order
-		const { id, name, value } = event.target
-
-		switch (id) {
-			default:
-				currentOrder[name] = value
-				break
-		}
-
-		setOrder(currentOrder)
-	}
-
 	function handleAvailableProductSelection(product) {
 		const allSelected = [...selectedProducts]
 		const allAvailable = [...availableProducts]
@@ -192,16 +153,60 @@ function OrderCreate(props) {
 
 	const onSelectedProductDelete = product => {
 		const indexOfProduct = selectedProducts.indexOf(product)
+
 		if (indexOfProduct >= 0) {
 			const selectedProds = [...selectedProducts]
 			const availables = [...availableProducts]
 			const currentOrder = { ...order }
+			const prod = { ...product }
+			prod.quantity = 0
+
 			selectedProds.splice(indexOfProduct, 1)
 			currentOrder.wantedProducts.splice(indexOfProduct, 1)
 			setSelectedProducts(selectedProds)
-			availables.push(product)
+			availables.push(prod)
 			setAvailableProducts(availables)
 		}
+	}
+
+	const handleDataConfirm = async () => {
+		const currentOrder = order
+		setIsValidated(true)
+
+		currentOrder.currency = selectedCurrency
+		currentOrder.confirmationSent = isConfirmationSent
+		currentOrder.proformaSent = isProformaSent
+		currentOrder.invoiceSent = isInvoiceSent
+		currentOrder.settledPayment = isPaymentSettled
+		currentOrder.customerId = selectedCustomer.id
+		currentOrder.deadline = date.toISOString().split('T')[0]
+		console.log('TCL: handleDataConfirm -> currentOrder', currentOrder)
+
+		// await OrdersApiService.postOrder(currentOrder)
+		// props.history.push('/orders')
+	}
+
+	const handleSubmit = async event => {
+		const form = event.currentTarget
+		event.preventDefault()
+
+		if (form.checkValidity() === false) {
+			event.stopPropagation()
+		}
+		handleDataConfirm()
+	}
+
+	const handleFormChange = event => {
+		const currentOrder = order
+		const { id, name, value } = event.target
+
+		switch (id) {
+			default:
+				currentOrder[name] = value
+				break
+		}
+
+		setOrder(currentOrder)
 	}
 
 	useEffect(() => {
@@ -321,6 +326,19 @@ function OrderCreate(props) {
 								</ButtonGroup>
 							</Form.Group>
 						</Col>
+
+						<Col sm>
+							<Form.Group controlId="deadline">
+								<Form.Label>Deadline</Form.Label>
+								<DatePicker
+									onChange={date => setDate(date)}
+									className="date-picker"
+									name="deadline"
+									format="y-M-dd"
+									value={date}
+								/>
+							</Form.Group>
+						</Col>
 					</Row>
 
 					<Row>
@@ -363,24 +381,6 @@ function OrderCreate(props) {
 								/>
 							</Form.Group>
 						</Col>
-
-						<Col sm>
-							<Form.Group controlId="deadline">
-								<Row>
-									<Form.Label>Deadline</Form.Label>
-								</Row>
-
-								<Row>
-									<DatePicker
-										onChange={date => setDate(date)}
-										className="date-picker"
-										name="deadline"
-										format="y-M-dd"
-										value={date}
-									/>
-								</Row>
-							</Form.Group>
-						</Col>
 					</Row>
 
 					<Row>
@@ -413,7 +413,7 @@ function OrderCreate(props) {
 					</Row>
 
 					{selectedCustomer.name ? (
-						<Row style={{ color: 'white', background: 'purple' }}>
+						<Row style={{ color: 'white', fontSize: '21px' }}>
 							<DetailElement header="Customer Name:" value={selectedCustomer.name} />
 							<DetailElement header="Customer Email:" value={selectedCustomer.email} />
 							<DetailElement header="Vat Number:" value={selectedCustomer.vatNumber} />
