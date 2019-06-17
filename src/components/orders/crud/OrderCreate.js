@@ -61,7 +61,7 @@ function OrderCreate(props) {
 		}
 
 		const selectedProds = [...selectedProducts]
-		selectedProds[targetProduct] = targetProduct
+		selectedProds[selectedProds.indexOf(targetProduct)] = targetProduct
 		setSelectedProducts(selectedProds)
 	}
 
@@ -180,6 +180,12 @@ function OrderCreate(props) {
 		currentOrder.settledPayment = isPaymentSettled
 		currentOrder.customerId = selectedCustomer.id
 		currentOrder.deadline = date.toISOString().split('T')[0]
+		currentOrder.wantedProducts = selectedProducts.map(prod => {
+			return {
+				id: prod.id,
+				quantity: prod.quantity,
+			}
+		})
 		console.log('TCL: handleDataConfirm -> currentOrder', currentOrder)
 
 		// await OrdersApiService.postOrder(currentOrder)
