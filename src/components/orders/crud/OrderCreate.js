@@ -186,10 +186,9 @@ function OrderCreate(props) {
 				quantity: prod.quantity,
 			}
 		})
-		console.log('TCL: handleDataConfirm -> currentOrder', currentOrder)
 
-		// await OrdersApiService.postOrder(currentOrder)
-		// props.history.push('/orders')
+		await OrdersApiService.postOrder(currentOrder)
+		props.history.push('/orders')
 	}
 
 	const handleSubmit = async event => {
