@@ -27,7 +27,7 @@ export default function OrderDetail(props) {
 	}, [])
 
 	const quantityLabel = (productId, product) => {
-		return <span id={productId}>Quantity: {product.products_orders.quantity}</span>
+		return <> Quantity: {product.products_orders.quantity} </>
 	}
 
 	const orderDetailsView = () => {
