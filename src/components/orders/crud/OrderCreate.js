@@ -340,6 +340,7 @@ function OrderCreate(props) {
 									className="date-picker"
 									name="deadline"
 									format="y-M-dd"
+									minDate={new Date()}
 									value={date}
 								/>
 							</Form.Group>
