@@ -14,38 +14,47 @@ export default class CustomersApiService {
 		} catch (ex) {
 			throw Error(ex.message)
 		}
-  }
-  
-  static async getCustomer(id) {
-    try {
-      const response = await Axios.get(apiUrl + id.toString(), apiHeader)
-      return response.data
-    } catch (ex) {
-      throw Error(ex.message)
-    }
-  }
+	}
 
-  static async updateCustomer(id, customer) {
-    try {
-      const response = await Axios.patch(apiUrl + id.toString(), customer, apiHeader)
-      return response.data
-    } catch (ex) {
-      throw Error(ex.message)
-    }
-  }
+	static async getCustomer(id) {
+		try {
+			const response = await Axios.get(apiUrl + id.toString(), apiHeader)
+			return response.data
+		} catch (ex) {
+			throw Error(ex.message)
+		}
+	}
 
-  static async createCustomer(customer) {
-    try {
-      const response = await Axios.post(apiUrl, customer, apiHeader)
-      return response.data
-    } catch (ex) {
-      throw Error(ex.message)
-    }
-  }
+	static async updateCustomer(id, customer) {
+		try {
+			const response = await Axios.patch(apiUrl + id.toString(), customer, apiHeader)
+			return response.data
+		} catch (ex) {
+			throw Error(ex.message)
+		}
+	}
+
+	static async createCustomer(customer) {
+		try {
+			const response = await Axios.post(apiUrl, customer, apiHeader)
+			return response.data
+		} catch (ex) {
+			throw Error(ex.message)
+		}
+	}
 
 	static async deleteCustomer(id) {
 		try {
 			const response = await Axios.delete(apiUrl + id.toString(), apiHeader)
+			return response
+		} catch (ex) {
+			throw Error(ex.message)
+		}
+	}
+
+	static async searchCustomer(param) {
+		try {
+			const response = await Axios.get(apiUrl + 'search?search=' + param, apiHeader)
 			return response
 		} catch (ex) {
 			throw Error(ex.message)

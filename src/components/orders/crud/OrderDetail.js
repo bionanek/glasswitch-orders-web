@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Container, Row, Col } from 'react-bootstrap/'
 import DetailElement from '../../common/DetailElement'
 import OrdersApiService from '../../../utils/api/ordersApiService'
-import './OrderDetail.scss'
 import LoadingView from '../../common/LoadingView'
+import './OrderDetail.scss'
 
 export default function OrderDetail(props) {
 	const [isLoaded, setIsLoaded] = useState(false)

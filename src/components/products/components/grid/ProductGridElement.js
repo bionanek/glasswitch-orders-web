@@ -1,20 +1,12 @@
 import React, { useState } from 'react'
 import { withRouter } from 'react-router-dom'
+import { Card, ListGroup, ListGroupItem, Button, ButtonGroup } from 'react-bootstrap/'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrashAlt, faEdit } from '@fortawesome/free-solid-svg-icons'
-import { Button, ButtonGroup, Card, ListGroup, ListGroupItem } from 'react-bootstrap/'
+import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import ConfirmationModal from '../../../common/modals/confirmationModal/ConfirmationModal'
 
 const ProductGridElement = props => {
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-
-	const openDetailsPage = () => {
-		props.history.push(`/products/${props.id}/`)
-	}
-
-	const openEditPage = () => {
-		props.history.push(`/products/${props.id}/edit`)
-	}
 
 	const closeDeleteModal = () => {
 		setIsDeleteModalOpen(false)
@@ -35,32 +27,45 @@ const ProductGridElement = props => {
 
 	return (
 		<>
-			<Card style={{ width: '18rem', margin: '15px' }}>
+			<Card
+				style={{
+					width: '12rem',
+					margin: '5px',
+					padding: '1px',
+				}}
+			>
 				<Card.Img
 					variant="top"
 					style={{ cursor: 'pointer' }}
 					src={props.imageUrl}
-					onClick={openDetailsPage}
+					onClick={() =>
+						props.onClick ? props.onClick(props.element) : props.element.clickHandler(props.id)
+					}
 				/>
 				<Card.Body>
-					<Card.Title>
-						{props.productCode}
-						<ButtonGroup className="float-right">
-							<Button variant="secondary" onClick={openEditPage}>
-								<FontAwesomeIcon icon={faEdit} />
-							</Button>
-
-							<Button variant="danger" onClick={onDeleteButtonClick}>
-								<FontAwesomeIcon icon={faTrashAlt} />
-							</Button>
-						</ButtonGroup>
-					</Card.Title>
+					<Card.Title>{props.productCode}</Card.Title>
 					<Card.Text>{props.productName}</Card.Text>
 				</Card.Body>
-				<ListGroup className="list-group-currencies">
-					<ListGroupItem>{'PLN ' + props.pricePLN}</ListGroupItem>
-					<ListGroupItem>{'EUR ' + props.priceEUR}</ListGroupItem>
-					<ListGroupItem>{'USD ' + props.priceUSD}</ListGroupItem>
+				<ListGroup style={{ padding: '3px' }}>
+					<ListGroupItem>{`PLN ${props.pricePLN}`}</ListGroupItem>
+					<ListGroupItem>{`EUR ${props.priceEUR}`}</ListGroupItem>
+					<ListGroupItem>{`USD ${props.priceUSD}`}</ListGroupItem>
+
+					{props.children ? (
+						<ListGroupItem>{props.children}</ListGroupItem>
+					) : (
+						<ListGroupItem>
+							<ButtonGroup style={{ width: '100%' }}>
+								<Button onClick={props.element.editHandler} variant="secondary">
+									<FontAwesomeIcon icon={faEdit} />
+								</Button>
+
+								<Button onClick={onDeleteButtonClick} variant="danger">
+									<FontAwesomeIcon icon={faTrashAlt} />
+								</Button>
+							</ButtonGroup>
+						</ListGroupItem>
+					)}
 				</ListGroup>
 			</Card>
 

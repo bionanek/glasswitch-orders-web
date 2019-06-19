@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Form, Modal, Col, Button, InputGroup } from 'react-bootstrap/'
+import { Form, Modal, Col, Button, InputGroup, Container } from 'react-bootstrap/'
 import ProductsApiService from '../../../../utils/api/productsApiService'
 import buildProductData from '../../ProductsUtils'
 import './ModalCreateProduct.scss'
@@ -57,7 +57,7 @@ export default function ProductCreateModal(props) {
 		setIsValidated(false)
 	}
 
-	const handleSubmit = async event => {
+	const handleSubmit = event => {
 		const form = event.currentTarget
 		event.preventDefault()
 
@@ -70,7 +70,7 @@ export default function ProductCreateModal(props) {
 
 	const productCreateForm = () => {
 		return (
-			<div className="product-create">
+			<Container className="product-create">
 				<Form onSubmit={handleSubmit} validated={isValidated}>
 					<Form.Group controlId="productName">
 						<Form.Label>Name</Form.Label>
@@ -220,18 +220,18 @@ export default function ProductCreateModal(props) {
 						</Button>
 					</Form.Row>
 				</Form>
-			</div>
+			</Container>
 		)
 	}
 
 	return (
-		<div>
+		<Container>
 			<Modal show={props.isOpen} onHide={() => handleModalClose()}>
 				<Modal.Header closeButton>
 					<Modal.Title>{title}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>{productCreateForm()}</Modal.Body>
 			</Modal>
-		</div>
+		</Container>
 	)
 }

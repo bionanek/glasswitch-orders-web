@@ -51,4 +51,13 @@ export default class ProductsApiService {
 			throw Error(ex.message)
 		}
 	}
+
+	static async searchProduct(param) {
+		try {
+			const response = await Axios.get(apiUrl + 'search?search=' + param, apiHeader)
+			return response
+		} catch (ex) {
+			throw Error(ex.message)
+		}
+	}
 }

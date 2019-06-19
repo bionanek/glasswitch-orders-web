@@ -7,7 +7,6 @@ import ConfirmationModal from '../modals/confirmationModal/ConfirmationModal'
 
 const SimpleListElement = props => {
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-	const isDeletable = props.isDeletable === undefined ? true : props.isDeletable
 
 	const openDeleteModal = () => {
 		setIsDeleteModalOpen(true)
@@ -25,6 +24,8 @@ const SimpleListElement = props => {
 	const onDeleteConfirm = () => {
 		if (props.element.deleteHandler) {
 			props.element.deleteHandler(props.element.id)
+		} else if (props.onDelete) {
+			props.onDelete(props.element)
 		} else {
 			props.defaultOnDeleteClick(props.element, props.index)
 		}
@@ -37,21 +38,30 @@ const SimpleListElement = props => {
 					className={`list-element ${
 						props.isClickable && props.element.clickHandler ? 'clickable' : ''
 					}`}
-					onClick={props.element.clickHandler}
+					onClick={
+						props.onClick
+							? () => {
+									props.onClick(props.element)
+							  }
+							: props.element.clickHandler
+					}
 				>
+					<span className="children">{props.children}</span>
+
 					<span className="title">{props.title}</span>
 					<span className="sub-title">{props.subtitle}</span>
+
 					<span className="buttons-wrapper">
-						{props.isEditable && (
+						{props.isEditable ? (
 							<span className="edit-icon" onClick={props.element.editHandler} role="button">
 								<FontAwesomeIcon icon={faEdit} />
 							</span>
-						)}
-						{isDeletable && (
+						) : null}
+						{props.isDeletable ? (
 							<span className="delete-icon" onClick={onDeleteButtonClick} role="button">
 								<FontAwesomeIcon icon={faTrashAlt} />
 							</span>
-						)}
+						) : null}
 					</span>
 				</li>
 				<ConfirmationModal

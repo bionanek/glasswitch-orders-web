@@ -97,7 +97,6 @@ function ProductsList(props) {
 						/>
 					) : (
 						<ProductGrid
-							className="product-grid"
 							productsList={products}
 							imageSource="imageUrl"
 							name="name"

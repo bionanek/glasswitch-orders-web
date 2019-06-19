@@ -11,6 +11,7 @@ import Products from './components/products/Products'
 import ProductDetail from './components/products/crud/ProductDetail'
 import ProductEdit from './components/products/crud/ProductEdit'
 import Orders from './components/orders/Orders'
+import OrderCreate from './components/orders/crud/OrderCreate'
 import OrderDetail from './components/orders/crud/OrderDetail'
 import About from './components/about/About'
 import ScrollToTop from './components/common/navigation/ScrollToTop'
@@ -35,6 +36,7 @@ class App extends Component {
 									<Route path="/products/:id" component={ProductDetail} exact />
 									<Route path="/products/:id/edit" component={ProductEdit} exact />
 									<Route path="/orders" component={Orders} exact />
+									<Route path="/orders/create" component={OrderCreate} exact />
 									<Route path="/orders/:id" component={OrderDetail} exact />
 									<Route path="/about" component={About} />
 									<Route component={RouteError} />

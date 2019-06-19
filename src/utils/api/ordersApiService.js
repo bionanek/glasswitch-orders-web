@@ -7,6 +7,15 @@ const apiHeader = {
 }
 
 export default class OrdersApiService {
+	static async postOrder(order) {
+		try {
+			const response = await Axios.post(apiUrl, order, apiHeader)
+			return response
+		} catch (ex) {
+			throw Error(ex.message)
+		}
+	}
+
 	static async getAllOrders() {
 		try {
 			const response = await Axios.get(apiUrl, apiHeader)
