@@ -3,6 +3,7 @@ import { Container, Row, Col } from 'react-bootstrap/'
 import DetailElement from '../../common/DetailElement'
 import OrdersApiService from '../../../utils/api/ordersApiService'
 import LoadingView from '../../common/LoadingView'
+import SimpleList from '../../common/simpleList/SimpleList'
 import './OrderDetail.scss'
 
 export default function OrderDetail(props) {
@@ -25,24 +26,8 @@ export default function OrderDetail(props) {
 		fetchData()
 	}, [])
 
-	const getProductsListElements = () => {
-		return productsList.map(product => {
-			return (
-				<Row key={product.id}>
-					<Col sm>
-						<DetailElement header="Product Name:" value={product.name} />
-					</Col>
-
-					<Col sm>
-						<DetailElement header="Product Code:" value={product.code} />
-					</Col>
-
-					<Col sm>
-						<DetailElement header="Quantity:" value={product.products_orders.quantity} />
-					</Col>
-				</Row>
-			)
-		})
+	const quantityLabel = (productId, product) => {
+		return <> Quantity: {product.products_orders.quantity} </>
 	}
 
 	const orderDetailsView = () => {
@@ -51,64 +36,64 @@ export default function OrderDetail(props) {
 				{order && customer ? (
 					<>
 						<Row>
-							<Col>
+							<Col sm>
 								<DetailElement header="Shipping Cost:" value={order.shippingCost} />
 							</Col>
-							<Col>
+							<Col sm>
 								<DetailElement header="Shipping Company:" value={order.shippingCompany} />
 							</Col>
-							<Col>
+							<Col sm>
 								<DetailElement header="Deadline:" value={order.deadline} />
 							</Col>
 						</Row>
 
 						<Row>
-							<Col>
+							<Col sm>
 								<DetailElement header="Email:" value={order.email} />
 							</Col>
-							<Col>
+							<Col sm>
 								<DetailElement header="Currency:" value={order.currency.toUpperCase()} />
 							</Col>
-							<Col>
+							<Col sm>
 								<DetailElement header="Notes:" value={order.notes} />
 							</Col>
 						</Row>
 
 						<Row>
-							<Col>
+							<Col sm>
 								<DetailElement header="Customer Name:" value={customer.name} />
 							</Col>
-							<Col>
+							<Col sm>
 								<DetailElement header="Customer Email:" value={customer.email} />
 							</Col>
-							<Col>
+							<Col sm>
 								<DetailElement header="VAT Identification Number:" value={customer.vatNumber} />
 							</Col>
 						</Row>
 
 						<Row>
-							<Col>
+							<Col sm>
 								{order.confirmationSent ? (
 									<DetailElement header="Confirmation Sent?:" value="Sent!" />
 								) : (
 									<DetailElement header="Confirmation Sent?:" value="Not sent!" />
 								)}
 							</Col>
-							<Col>
+							<Col sm>
 								{order.proformaSent ? (
 									<DetailElement header="Proforma Sent?:" value="Sent!" />
 								) : (
 									<DetailElement header="Proforma Sent?:" value="Not sent!" />
 								)}
 							</Col>
-							<Col>
+							<Col sm>
 								{order.invoiceSent ? (
 									<DetailElement header="Invoice Sent?:" value="Sent!" />
 								) : (
 									<DetailElement header="Invoice Sent?:" value="Not sent!" />
 								)}
 							</Col>
-							<Col>
+							<Col sm>
 								{order.settledPayment ? (
 									<DetailElement header="Settled Payment?:" value="Sent!" />
 								) : (
@@ -117,13 +102,25 @@ export default function OrderDetail(props) {
 							</Col>
 						</Row>
 
-						{getProductsListElements()}
-
-						<DetailElement header="Total Products Count:" value={order.productsCount} />
-						<DetailElement
-							header="Total Price"
-							value={order.productsTotalPrice + ' ' + order.currency.toUpperCase()}
+						<SimpleList
+							elementsList={productsList}
+							titleFieldName="name"
+							subtitleFieldName="code"
+							dynamicElement={quantityLabel}
 						/>
+
+						<Row>
+							<Col sm>
+								<DetailElement header="Total Products Count:" value={order.productsCount} />
+							</Col>
+
+							<Col sm>
+								<DetailElement
+									header="Total Price"
+									value={`${order.productsTotalPrice} ${order.currency.toUpperCase()}`}
+								/>
+							</Col>
+						</Row>
 					</>
 				) : (
 					<span>Order with given ID does not exist!</span>
