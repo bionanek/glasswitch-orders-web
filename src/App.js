@@ -13,6 +13,7 @@ import ProductEdit from './components/products/crud/ProductEdit'
 import Orders from './components/orders/Orders'
 import OrderCreate from './components/orders/crud/OrderCreate'
 import OrderDetail from './components/orders/crud/OrderDetail'
+import OrderEdit from './components/orders/crud/OrderEdit'
 import About from './components/about/About'
 import ScrollToTop from './components/common/navigation/ScrollToTop'
 import RouteError from './components/common/RouteError'
@@ -38,6 +39,7 @@ class App extends Component {
 									<Route path="/orders" component={Orders} exact />
 									<Route path="/orders/create" component={OrderCreate} exact />
 									<Route path="/orders/:id" component={OrderDetail} exact />
+									<Route path="/orders/:id/edit" component={OrderEdit} exact />
 									<Route path="/about" component={About} />
 									<Route component={RouteError} />
 								</Switch>

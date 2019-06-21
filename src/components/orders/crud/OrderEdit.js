@@ -1,45 +1,44 @@
+/* eslint-disable no-restricted-syntax */
 import React, { useState, useEffect } from 'react'
 import { withRouter } from 'react-router-dom'
 import {
 	Container,
+	Form,
 	Row,
 	Col,
-	Form,
-	Dropdown,
-	DropdownButton,
 	Button,
 	ButtonGroup,
+	InputGroup,
+	Dropdown,
+	DropdownButton,
 } from 'react-bootstrap'
 import DatePicker from 'react-date-picker'
-import CustomersApiService from '../../../utils/api/customersApiService'
-import ProductGrid from '../../products/components/grid/ProductGrid'
-import ProductsApiService from '../../../utils/api/productsApiService'
-import SimpleList from '../../common/simpleList/SimpleList'
-import DetailElement from '../../common/DetailElement'
-import OrdersApiService from '../../../utils/api/ordersApiService'
 import LoadingView from '../../common/LoadingView'
-import './OrderCreate.scss'
+import OrdersApiService from '../../../utils/api/ordersApiService'
+import SimpleList from '../../common/simpleList/SimpleList'
+import ProductsApiService from '../../../utils/api/productsApiService'
+import ProductGrid from '../../products/components/grid/ProductGrid'
+import './OrderEdit.scss'
 
-function OrderCreate(props) {
+function OrderEdit(props) {
 	const [isLoaded, setIsLoaded] = useState(false)
 
-	const [order, setOrder] = useState({ wantedProducts: [] })
-	const [selectedCustomer, setSelectedCustomer] = useState({})
+	const [order, setOrder] = useState({})
 
-	const [customers, setAvailableCustomers] = useState([])
-	const [availableProducts, setAvailableProducts] = useState([])
 	const [selectedProducts, setSelectedProducts] = useState([])
+	const [availableProducts, setAvailableProducts] = useState([])
 
 	const [date, setDate] = useState(new Date())
 
 	const [selectedCurrency, setSelectedCurrency] = useState('')
+
 	const [isValidated, setIsValidated] = useState(false)
 	const [isConfirmationSent, setIsConfirmationSent] = useState(false)
 	const [isProformaSent, setIsProformaSent] = useState(false)
 	const [isInvoiceSent, setIsInvoiceSent] = useState(false)
 	const [isPaymentSettled, setIsPaymentSettled] = useState(false)
 
-	function getCurrentProduct(id) {
+	const getCurrentProduct = id => {
 		return [...availableProducts].find(product => product.id === id)
 	}
 
@@ -65,6 +64,154 @@ function OrderCreate(props) {
 		setSelectedProducts(selectedProds)
 	}
 
+	const handleAvailableProductSelection = product => {
+		const allSelected = [...selectedProducts]
+		const allAvailable = [...availableProducts]
+		const selectedProduct = allAvailable.find(el => el.id === product.id)
+
+		allAvailable.splice(allAvailable.indexOf(selectedProduct), 1)
+		setAvailableProducts(allAvailable)
+
+		const currentOrder = { ...order }
+		currentOrder.products.push({
+			id: selectedProduct.id,
+			quantity: selectedProduct.quantity,
+		})
+
+		allSelected.push(selectedProduct)
+		setSelectedProducts(allSelected)
+
+		setOrder(currentOrder)
+	}
+
+	const onAvailableProductClick = product => {
+		if (selectedProducts[product]) {
+			return
+		}
+		handleAvailableProductSelection(product)
+	}
+
+	const initializeQuantityInProducts = productsList => {
+		return productsList.map(productElement => {
+			const product = productElement
+
+			if (product.products_orders === undefined) {
+				product.quantity = 0
+			} else {
+				product.quantity = product.products_orders.quantity
+			}
+
+			return productElement
+		})
+	}
+
+	const onSelectedProductDelete = async product => {
+		const indexOfProduct = selectedProducts.indexOf(product)
+
+		if (indexOfProduct >= 0) {
+			const selectedProds = [...selectedProducts]
+			const availables = [...availableProducts]
+			const currentOrder = { ...order }
+			const prod = { ...product }
+			prod.quantity = 0
+
+			selectedProds.splice(indexOfProduct, 1)
+			currentOrder.products.splice(indexOfProduct, 1)
+			setSelectedProducts(selectedProds)
+
+			const fetchedProduct = await ProductsApiService.getProductById(prod.id)
+			availables.push(fetchedProduct.data)
+
+			setAvailableProducts(availables)
+		}
+	}
+
+	const handleFormChange = event => {
+		const currentOrder = order
+		const { id, name, value } = event.target
+
+		switch (id) {
+			default:
+				currentOrder[name] = value
+				break
+		}
+
+		setOrder(currentOrder)
+	}
+
+	const handleDataConfirm = async () => {
+		const currentOrder = order
+		setIsValidated(true)
+
+		currentOrder.currency = selectedCurrency
+		currentOrder.confirmationSent = isConfirmationSent
+		currentOrder.proformaSent = isProformaSent
+		currentOrder.invoiceSent = isInvoiceSent
+		currentOrder.settledPayment = isPaymentSettled
+		currentOrder.deadline = date.toLocaleDateString()
+		currentOrder.currency = selectedCurrency
+		currentOrder.products = selectedProducts.map(prod => {
+			return {
+				id: prod.id,
+				quantity: prod.quantity,
+			}
+		})
+		// console.log("TCL: handleDataConfirm -> currentOrder", currentOrder)
+
+		await OrdersApiService.updateProduct(props.match.params.id)
+		props.history.push('/orders')
+	}
+
+	const handleSubmit = async event => {
+		const form = event.currentTarget
+		event.preventDefault()
+
+		if (form.checkValidity() === false) {
+			event.stopPropagation()
+		}
+		handleDataConfirm()
+	}
+
+	const removeSelectedProductsFromAvailable = (productsInOrder, remainingProducts) => {
+		const allSelected = [...productsInOrder]
+		let allAvailable = [...remainingProducts]
+
+		for (const product of allSelected) {
+			allAvailable = allAvailable.filter(prod => {
+				return prod.id !== product.id
+			})
+		}
+
+		setAvailableProducts(allAvailable)
+	}
+
+	useEffect(() => {
+		const fetchData = async () => {
+			const fetchedOrder = await OrdersApiService.getOrderById(props.match.params.id)
+			
+			setOrder(fetchedOrder.data)
+			setSelectedProducts(initializeQuantityInProducts(fetchedOrder.data.products))
+			setSelectedCurrency(fetchedOrder.data.currency)
+			setIsConfirmationSent(fetchedOrder.data.confirmationSent)
+			setIsPaymentSettled(fetchedOrder.data.settledPayment)
+			setIsInvoiceSent(fetchedOrder.data.invoiceSent)
+			setIsProformaSent(fetchedOrder.data.proformaSent)
+			
+			const deadline = fetchedOrder.data.deadline.split('/')
+			setDate(new Date(deadline[2], deadline[1] - 1, deadline[0]))
+
+			const fetchedAvailableProducts = await ProductsApiService.getAllProducts()
+
+			await removeSelectedProductsFromAvailable(
+				fetchedOrder.data.products,
+				fetchedAvailableProducts.data,
+			)
+
+			setIsLoaded(true)
+		}
+		fetchData()
+	}, [])
+
 	const quantityInput = (productId, _product = null) => {
 		let product = _product
 		if (product === null) {
@@ -85,161 +232,11 @@ function OrderCreate(props) {
 		)
 	}
 
-	const initializeQuantityInProducts = productsList => {
-		return productsList.map(productElement => {
-			const product = productElement
-			product.quantity = 0
-			return productElement
-		})
-	}
-
-	const handleProductSearch = async event => {
-		const product = event.target.value
-
-		if (product === '') {
-			const fetchedProducts = await ProductsApiService.getAllProducts()
-			setAvailableProducts(initializeQuantityInProducts(fetchedProducts.data))
-			return
-		}
-
-		const foundProduct = await ProductsApiService.searchProduct(product)
-		setAvailableProducts(initializeQuantityInProducts(foundProduct.data))
-	}
-
-	const handleCustomerSearch = async event => {
-		const customerSearch = event.target.value
-
-		if (customerSearch === '') {
-			setAvailableCustomers([])
-			return
-		}
-
-		const foundCustomer = await CustomersApiService.searchCustomer(customerSearch)
-		setAvailableCustomers(foundCustomer.data)
-	}
-
-	function handleAvailableProductSelection(product) {
-		const allSelected = [...selectedProducts]
-		const allAvailable = [...availableProducts]
-		const selectedProduct = allAvailable.find(el => el.id === product.id)
-
-		allAvailable.splice(allAvailable.indexOf(selectedProduct), 1)
-		setAvailableProducts(allAvailable)
-
-		const currentOrder = { ...order }
-		currentOrder.wantedProducts.push({
-			id: selectedProduct.id,
-			quantity: selectedProduct.quantity,
-		})
-
-		allSelected.push(selectedProduct)
-		setSelectedProducts(allSelected)
-
-		setOrder(currentOrder)
-	}
-
-	const onAvailableCustomerClick = customer => {
-		setAvailableCustomers([])
-		setSelectedCustomer(customer)
-	}
-
-	const onAvailableProductClick = product => {
-		if (selectedProducts[product]) {
-			return
-		}
-
-		handleAvailableProductSelection(product)
-	}
-
-	const onSelectedProductDelete = product => {
-		const indexOfProduct = selectedProducts.indexOf(product)
-
-		if (indexOfProduct >= 0) {
-			const selectedProds = [...selectedProducts]
-			const availables = [...availableProducts]
-			const currentOrder = { ...order }
-			const prod = { ...product }
-			prod.quantity = 0
-
-			selectedProds.splice(indexOfProduct, 1)
-			currentOrder.wantedProducts.splice(indexOfProduct, 1)
-			setSelectedProducts(selectedProds)
-			availables.push(prod)
-			setAvailableProducts(availables)
-		}
-	}
-
-	const handleDataConfirm = async () => {
-		const currentOrder = order
-		setIsValidated(true)
-
-		currentOrder.currency = selectedCurrency
-		currentOrder.confirmationSent = isConfirmationSent
-		currentOrder.proformaSent = isProformaSent
-		currentOrder.invoiceSent = isInvoiceSent
-		currentOrder.settledPayment = isPaymentSettled
-		currentOrder.customerId = selectedCustomer.id
-		currentOrder.deadline = date.toLocaleDateString()
-		currentOrder.wantedProducts = selectedProducts.map(prod => {
-			return {
-				id: prod.id,
-				quantity: prod.quantity,
-			}
-		})
-
-		await OrdersApiService.postOrder(currentOrder)
-		props.history.push('/orders')
-	}
-
-	const handleSubmit = async event => {
-		const form = event.currentTarget
-		event.preventDefault()
-
-		if (form.checkValidity() === false) {
-			event.stopPropagation()
-		}
-		handleDataConfirm()
-	}
-
-	const handleFormChange = event => {
-		const currentOrder = order
-		const { id, name, value } = event.target
-
-		switch (id) {
-			default:
-				currentOrder[name] = value
-				break
-		}
-
-		setOrder(currentOrder)
-	}
-
-	useEffect(() => {
-		const fetchData = async () => {
-			const fetchedProducts = await ProductsApiService.getAllProducts()
-			setAvailableProducts(initializeQuantityInProducts(fetchedProducts.data))
-			setIsLoaded(true)
-		}
-		fetchData()
-	}, [])
-
-	const orderCreateView = () => {
+	const orderEditView = () => {
 		return (
-			<Container className="order-create">
+			<Container className="order-edit">
 				<Form onSubmit={handleSubmit} validated={isValidated}>
 					<Row>
-						<Col sm>
-							<Form.Label>Currency</Form.Label>
-							<DropdownButton
-								title={selectedCurrency.toUpperCase() || 'Currency Picker'}
-								variant="primary"
-							>
-								<Dropdown.Item onClick={() => setSelectedCurrency('pln')}>PLN</Dropdown.Item>
-								<Dropdown.Item onClick={() => setSelectedCurrency('eur')}>EUR</Dropdown.Item>
-								<Dropdown.Item onClick={() => setSelectedCurrency('usd')}>USD</Dropdown.Item>
-							</DropdownButton>
-						</Col>
-
 						<Col sm>
 							<Form.Group>
 								<Form.Label>Confirmation Sent?</Form.Label>
@@ -288,7 +285,7 @@ function OrderCreate(props) {
 
 						<Col sm>
 							<Form.Group>
-								<Form.Label>Invoice Sent??</Form.Label>
+								<Form.Label>Invoice Sent?</Form.Label>
 								<ButtonGroup style={{ width: '100%' }}>
 									<Button
 										onClick={() => setIsInvoiceSent(true)}
@@ -339,7 +336,7 @@ function OrderCreate(props) {
 									onChange={date => setDate(date)}
 									className="date-picker"
 									name="deadline"
-									format="dd-MM-y"
+									format="dd-M-y"
 									minDate={new Date()}
 									value={date}
 								/>
@@ -355,7 +352,7 @@ function OrderCreate(props) {
 									onChange={handleFormChange}
 									type="text"
 									name="shippingCompany"
-									placeholder="Shipping Company"
+									defaultValue={order.shippingCompany}
 									required
 								/>
 							</Form.Group>
@@ -368,28 +365,12 @@ function OrderCreate(props) {
 									onChange={handleFormChange}
 									type="text"
 									name="shippingCost"
-									placeholder="Shipping Cost"
-									pattern="[0-9]+([,\.][0-9]+)?"
+									defaultValue={order.shippingCost}
 									required
 								/>
 							</Form.Group>
 						</Col>
 
-						<Col sm>
-							<Form.Group controlId="email">
-								<Form.Label>Email</Form.Label>
-								<Form.Control
-									onChange={handleFormChange}
-									type="text"
-									name="email"
-									placeholder="Email"
-									required
-								/>
-							</Form.Group>
-						</Col>
-					</Row>
-
-					<Row>
 						<Col sm>
 							<Form.Group controlId="notes">
 								<Form.Label>Notes</Form.Label>
@@ -397,7 +378,20 @@ function OrderCreate(props) {
 									onChange={handleFormChange}
 									type="text"
 									name="notes"
-									placeholder="Notes"
+									defaultValue={order.notes}
+									required
+								/>
+							</Form.Group>
+						</Col>
+
+						<Col sm>
+							<Form.Group controlId="orderEmail">
+								<Form.Label>Order Email</Form.Label>
+								<Form.Control
+									onChange={handleFormChange}
+									type="text"
+									name="orderEmail"
+									defaultValue={order.email}
 									required
 								/>
 							</Form.Group>
@@ -406,60 +400,92 @@ function OrderCreate(props) {
 
 					<Row>
 						<Col sm>
-							<Form.Group controlId="customer">
-								<Form.Label>Customer Search</Form.Label>
+							<Form.Group controlId="customerName">
+								<Form.Label>Customer Name</Form.Label>
 								<Form.Control
-									onChange={handleCustomerSearch}
+									onChange={handleFormChange}
 									type="text"
-									name="customerSearch"
-									placeholder="John Doe"
+									name="customerName"
+									defaultValue={order.customer.name}
+									disabled
+								/>
+							</Form.Group>
+						</Col>
+
+						<Col sm>
+							<Form.Group controlId="customerEmail">
+								<Form.Label>Customer Email</Form.Label>
+								<Form.Control
+									onChange={handleFormChange}
+									type="text"
+									name="customerEmail"
+									defaultValue={order.customer.email}
+									disabled
+								/>
+							</Form.Group>
+						</Col>
+
+						<Col sm>
+							<Form.Group controlId="customerVat">
+								<Form.Label>Customer VAT Number</Form.Label>
+								<Form.Control
+									onChange={handleFormChange}
+									type="text"
+									name="customerVat"
+									defaultValue={order.customer.vatNumber}
+									disabled
 								/>
 							</Form.Group>
 						</Col>
 					</Row>
-
-					{selectedCustomer.name ? (
-						<Row style={{ color: 'white', fontSize: '21px' }}>
-							<DetailElement header="Customer Name:" value={selectedCustomer.name} />
-							<DetailElement header="Customer Email:" value={selectedCustomer.email} />
-							<DetailElement header="Vat Number:" value={selectedCustomer.vatNumber} />
-						</Row>
-					) : null}
-
-					{customers.length !== 0 && (
-						<SimpleList
-							elementsList={customers}
-							titleFieldName="name"
-							subtitleFieldName="email"
-							onClick={onAvailableCustomerClick}
-							clickable
-						/>
-					)}
 
 					<Row>
 						<Col sm>
-							<Form.Group controlId="product">
-								<Form.Label>Product Search</Form.Label>
+							<Form.Group controlId="productsTotalPrice">
+								<Form.Label>Total Price</Form.Label>
+								<InputGroup>
+									<DropdownButton
+										as={InputGroup.Prepend}
+										title={selectedCurrency.toUpperCase() || order.currency.toUpperCase()}
+										variant="primary"
+									>
+										<Dropdown.Item onClick={() => setSelectedCurrency('pln')}>PLN</Dropdown.Item>
+										<Dropdown.Item onClick={() => setSelectedCurrency('eur')}>EUR</Dropdown.Item>
+										<Dropdown.Item onClick={() => setSelectedCurrency('usd')}>USD</Dropdown.Item>
+									</DropdownButton>
+									<Form.Control
+										onChange={handleFormChange}
+										type="text"
+										name="productsTotalPrice"
+										defaultValue={order.productsTotalPrice}
+										disabled
+									/>
+								</InputGroup>
+							</Form.Group>
+						</Col>
+
+						<Col sm>
+							<Form.Group controlId="productsCount">
+								<Form.Label>Products Count</Form.Label>
 								<Form.Control
-									onChange={handleProductSearch}
-									type="text"
-									name="productSearch"
-									placeholder="GW-997"
+									onChange={handleFormChange}
+									type="number"
+									name="productsCount"
+									defaultValue={order.productsCount}
+									disabled
 								/>
 							</Form.Group>
 						</Col>
 					</Row>
 
-					{selectedProducts.length !== 0 && (
-						<SimpleList
-							elementsList={selectedProducts}
-							titleFieldName="code"
-							subtitleFieldName="name"
-							dynamicElement={quantityInput}
-							onDelete={onSelectedProductDelete}
-							deletable
-						/>
-					)}
+					<SimpleList
+						elementsList={selectedProducts}
+						titleFieldName="name"
+						subtitleFieldName="code"
+						dynamicElement={quantityInput}
+						onDelete={onSelectedProductDelete}
+						deletable
+					/>
 
 					<ProductGrid
 						productsList={availableProducts}
@@ -470,8 +496,8 @@ function OrderCreate(props) {
 						eur="eur"
 						usd="usd"
 						dynamicElement={quantityInput}
-						clickable
 						onClick={onAvailableProductClick}
+						clickable
 					/>
 
 					<Row>
@@ -499,7 +525,7 @@ function OrderCreate(props) {
 		)
 	}
 
-	return <> {isLoaded ? orderCreateView() : LoadingView()} </>
+	return <> {isLoaded ? orderEditView() : LoadingView()} </>
 }
 
-export default withRouter(OrderCreate)
+export default withRouter(OrderEdit)

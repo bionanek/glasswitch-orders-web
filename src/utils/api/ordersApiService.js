@@ -34,6 +34,15 @@ export default class OrdersApiService {
 		}
 	}
 
+	static async updateOrder(id, order) {
+		try {
+			const response = await Axios.patch(apiUrl + id.toString(), order, apiHeader)
+			return response
+		} catch (ex) {
+			throw Error(ex.message)
+		}
+	}
+
 	static async deleteOrder(id) {
 		try {
 			const response = await Axios.delete(apiUrl + id.toString(), apiHeader)
