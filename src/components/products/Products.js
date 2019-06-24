@@ -5,10 +5,8 @@ import './Products.scss'
 
 const Products = () => {
 	return (
-		<Container fluid>
-			<div className="products">
-				<ProductsList className="products-list" />
-			</div>
+		<Container className="products" fluid>
+			<ProductsList className="products-list" />
 		</Container>
 	)
 }

@@ -1,19 +1,19 @@
 .customer-detail {
-  color: #61dafb;
-  
-  h2, span {
-    color: white;
-  }
+	color: #61dafb;
+}
 
-  .edit-icon, .delete-icon {
-    display: inline-block;
-    vertical-align: middle;
-    float: none;
-    padding: 8px;
-    cursor: pointer;
-  }
+.customer-detail h2,
+.customer-detail span {
+	color: white;
+}
 
-  .return-button {
-    margin-top: 15px;
-  }
+.return-icon-detail,
+.edit-icon-detail,
+.delete-icon-detail {
+	margin: 4px;
+	display: inline-block;
+	vertical-align: middle;
+	float: none;
+	padding: 12px;
+	cursor: pointer;
 }
