@@ -11,6 +11,7 @@ import Products from './components/products/Products'
 import ProductDetail from './components/products/crud/ProductDetail'
 import ProductEdit from './components/products/crud/ProductEdit'
 import Orders from './components/orders/Orders'
+import OrderCRUD from './components/orders/crud/OrderCRUD'
 import OrderCreate from './components/orders/crud/OrderCreate'
 import OrderDetail from './components/orders/crud/OrderDetail'
 import OrderEdit from './components/orders/crud/OrderEdit'
@@ -40,6 +41,9 @@ class App extends Component {
 									<Route path="/orders/create" component={OrderCreate} exact />
 									<Route path="/orders/:id" component={OrderDetail} exact />
 									<Route path="/orders/:id/edit" component={OrderEdit} exact />
+									<Route path="/orders/test/create" component={OrderCRUD} exact />
+									<Route path="/orders/test/:id" component={OrderCRUD} exact />
+									<Route path="/orders/test/:id/edit" component={OrderCRUD} exact />
 									<Route path="/about" component={About} />
 									<Route component={RouteError} />
 								</Switch>
