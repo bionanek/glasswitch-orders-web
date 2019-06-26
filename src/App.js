@@ -42,7 +42,7 @@ class App extends Component {
 									<Route path="/orders/:id" component={OrderDetail} exact />
 									<Route path="/orders/:id/edit" component={OrderEdit} exact />
 									<Route path="/orders/test/create" component={OrderCRUD} exact />
-									<Route path="/orders/test/:id" component={OrderCRUD} exact />
+									<Route path="/orders/test/:id/details" component={OrderCRUD} exact />
 									<Route path="/orders/test/:id/edit" component={OrderCRUD} exact />
 									<Route path="/about" component={About} />
 									<Route component={RouteError} />

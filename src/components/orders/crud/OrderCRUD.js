@@ -18,30 +18,35 @@ import ProductGrid from '../../products/components/grid/ProductGrid'
 import OrdersApiService from '../../../utils/api/ordersApiService'
 import CustomersApiService from '../../../utils/api/customersApiService'
 import ProductsApiService from '../../../utils/api/productsApiService'
+import ConfirmationModal from '../../common/modals/confirmationModal/ConfirmationModal'
 import { OrderReducers, InitialOrderState } from './OrderReducers'
 
 const OrderCRUD = props => {
 	const [orderStates, orderDispatch] = useReducer(OrderReducers, InitialOrderState)
 
-	const {
-		isLoaded,
-		isConfirmationSent,
-		isProformaSent,
-		isInvoiceSent,
-		isPaymentSettled,
-		isValidated,
-		isDetailsViewRequested,
-		order,
-		date,
-		selectedCurrency,
-		availableProducts,
-		availableCustomers,
-		selectedProducts,
-		selectedCustomer,
-	} = orderStates
+	const handleCustomerSearch = async event => {
+		const customerSearch = event.target.value
 
-	const handleCustomerSearch = event => {
-		orderDispatch({ type: 'CUSTOMER_SEARCH', event })
+		if (customerSearch === '') {
+			orderDispatch({ type: 'CUSTOMER_SEARCH_EMPTY' })
+			return
+		}
+
+		const foundCustomers = await CustomersApiService.searchCustomer(customerSearch)
+		orderDispatch({ type: 'CUSTOMER_SEARCH_RESULTS', foundCustomers: foundCustomers.data })
+	}
+
+	const handleProductSearch = async event => {
+		const productSearch = event.target.value
+
+		if (productSearch === '') {
+			const fetchedProducts = await ProductsApiService.getAllProducts()
+			orderDispatch({ type: 'PRODUCT_SEARCH_EMPTY', availableProducts: fetchedProducts.data })
+			return
+		}
+
+		const foundProducts = await ProductsApiService.searchProduct(productSearch)
+		orderDispatch({ type: 'PRODUCTS_SEARCH_RESULTS', foundProducts: foundProducts.data })
 	}
 
 	const handleFormChange = () => {}
@@ -51,12 +56,10 @@ const OrderCRUD = props => {
 	useEffect(() => {
 		const renderRequestedPage = async () => {
 			if (props.match.params.id === undefined) {
-				const fetchedAvailableCustomers = await CustomersApiService.getAllCustomers()
 				const fetchedAvailableProducts = await ProductsApiService.getAllProducts()
 
 				orderDispatch({
-					type: 'ORDER_CREATE_INITIAL',
-					customers: fetchedAvailableCustomers.data,
+					type: 'ORDER_CREATE_INIT',
 					products: fetchedAvailableProducts.data,
 				})
 				return
@@ -64,21 +67,21 @@ const OrderCRUD = props => {
 
 			if (props.match.path.split(':id/')[1] === 'details') {
 				const fetchedOrder = await OrdersApiService.getOrderById(props.match.params.id)
-
-				orderDispatch({
-					type: 'ORDER_DATA_INIT',
-					order: fetchedOrder.data,
-					isDetailsViewRequested: true,
-				})
-			} else {
-				const fetchedOrder = await OrdersApiService.getOrderById(props.match.params.id)
-				const fetchedAvailableCustomers = await CustomersApiService.getAllCustomers()
 				const fetchedAvailableProducts = await ProductsApiService.getAllProducts()
 
 				orderDispatch({
 					type: 'ORDER_DATA_INIT',
 					order: fetchedOrder.data,
-					customers: fetchedAvailableCustomers.data,
+					products: fetchedAvailableProducts.data,
+					isDetailsViewRequested: true,
+				})
+			} else {
+				const fetchedOrder = await OrdersApiService.getOrderById(props.match.params.id)
+				const fetchedAvailableProducts = await ProductsApiService.getAllProducts()
+
+				orderDispatch({
+					type: 'ORDER_DATA_INIT',
+					order: fetchedOrder.data,
 					products: fetchedAvailableProducts.data,
 					isDetailsViewRequested: false,
 				})
@@ -87,29 +90,69 @@ const OrderCRUD = props => {
 		renderRequestedPage()
 	}, [])
 
+	const getCurrentProduct = id => {
+		return [...orderStates.availableProducts].find(product => product.id === id)
+	}
+
+	const quantityInput = (productId, _product = null) => {
+		let product = _product
+		if (product === null) {
+			product = getCurrentProduct(productId)
+		}
+
+		return (
+			<input
+				// onBlur={quantitySetter}
+				onFocus={event => event.target.select()}
+				style={{ width: '100%' }}
+				type="number"
+				name="quantity"
+				id={productId}
+				placeholder="Quantity"
+				defaultValue={product.quantity === 0 ? null : product.quantity}
+			/>
+		)
+	}
+
 	const orderCRUDForm = () => {
 		return (
 			<Container className="order-edit">
-				<Form onSubmit={handleSubmit} validated={isValidated}>
+				<Form onSubmit={handleSubmit} validated={orderStates.isValidated}>
+					<Row>
+						<Col sm>
+							<Button
+								style={{ width: '100%', border: '2px solid' }}
+								variant="warning"
+								onClick={() => console.log('TCL: orderStates', orderStates)}
+							>
+								CONSOLE.LOG -- orderStates -- CONSOLE.LOG
+							</Button>
+						</Col>
+					</Row>
+
 					<Row>
 						<Col sm>
 							<Form.Group>
 								<Form.Label>Confirmation Sent?</Form.Label>
 								<ButtonGroup style={{ width: '100%' }}>
 									<Button
-										onClick={() => orderDispatch({ type: 'CONFIRMATION_SENT' })}
-										style={{ border: isConfirmationSent ? '4px solid' : null }}
-										variant={isConfirmationSent ? 'success' : 'secondary'}
-										disabled={isDetailsViewRequested}
+										onClick={() =>
+											orderDispatch({ type: 'CONFIRMATION_SENT_STATUS', status: true })
+										}
+										style={{ border: orderStates.isConfirmationSent ? '4px solid' : null }}
+										variant={orderStates.isConfirmationSent ? 'success' : 'secondary'}
+										disabled={orderStates.isDetailsViewRequested}
 									>
 										Yes
 									</Button>
 
 									<Button
-										onClick={() => orderDispatch({ type: 'CONFIRMATION_NOT_SENT' })}
-										style={{ border: isConfirmationSent ? null : '4px solid' }}
-										variant={isConfirmationSent ? 'secondary' : 'success'}
-										disabled={isDetailsViewRequested}
+										onClick={() =>
+											orderDispatch({ type: 'CONFIRMATION_SENT_STATUS', status: false })
+										}
+										style={{ border: orderStates.isConfirmationSent ? null : '4px solid' }}
+										variant={orderStates.isConfirmationSent ? 'secondary' : 'success'}
+										disabled={orderStates.isDetailsViewRequested}
 									>
 										No
 									</Button>
@@ -122,19 +165,19 @@ const OrderCRUD = props => {
 								<Form.Label>Proforma Sent?</Form.Label>
 								<ButtonGroup style={{ width: '100%' }}>
 									<Button
-										onClick={() => orderDispatch({ type: 'PROFORMA_SENT' })}
-										style={{ border: isProformaSent ? '4px solid' : null }}
-										variant={isProformaSent ? 'success' : 'secondary'}
-										disabled={isDetailsViewRequested}
+										onClick={() => orderDispatch({ type: 'PROFORMA_SENT_STATUS', status: true })}
+										style={{ border: orderStates.isProformaSent ? '4px solid' : null }}
+										variant={orderStates.isProformaSent ? 'success' : 'secondary'}
+										disabled={orderStates.isDetailsViewRequested}
 									>
 										Yes
 									</Button>
 
 									<Button
-										onClick={() => orderDispatch({ type: 'PROFORMA_NOT_SENT' })}
-										style={{ border: isProformaSent ? null : '4px solid' }}
-										variant={isProformaSent ? 'secondary' : 'success'}
-										disabled={isDetailsViewRequested}
+										onClick={() => orderDispatch({ type: 'PROFORMA_SENT_STATUS', status: false })}
+										style={{ border: orderStates.isProformaSent ? null : '4px solid' }}
+										variant={orderStates.isProformaSent ? 'secondary' : 'success'}
+										disabled={orderStates.isDetailsViewRequested}
 									>
 										No
 									</Button>
@@ -147,19 +190,19 @@ const OrderCRUD = props => {
 								<Form.Label>Invoice Sent?</Form.Label>
 								<ButtonGroup style={{ width: '100%' }}>
 									<Button
-										onClick={() => orderDispatch({ type: 'INVOICE_SENT' })}
-										style={{ border: isInvoiceSent ? '4px solid' : null }}
-										variant={isInvoiceSent ? 'success' : 'secondary'}
-										disabled={isDetailsViewRequested}
+										onClick={() => orderDispatch({ type: 'INVOICE_SENT_STATUS', status: true })}
+										style={{ border: orderStates.isInvoiceSent ? '4px solid' : null }}
+										variant={orderStates.isInvoiceSent ? 'success' : 'secondary'}
+										disabled={orderStates.isDetailsViewRequested}
 									>
 										Yes
 									</Button>
 
 									<Button
-										onClick={() => orderDispatch({ type: 'INVOICE_NOT_SENT' })}
-										style={{ border: isInvoiceSent ? null : '4px solid' }}
-										variant={isInvoiceSent ? 'secondary' : 'success'}
-										disabled={isDetailsViewRequested}
+										onClick={() => orderDispatch({ type: 'INVOICE_SENT_STATUS', status: false })}
+										style={{ border: orderStates.isInvoiceSent ? null : '4px solid' }}
+										variant={orderStates.isInvoiceSent ? 'secondary' : 'success'}
+										disabled={orderStates.isDetailsViewRequested}
 									>
 										No
 									</Button>
@@ -172,19 +215,19 @@ const OrderCRUD = props => {
 								<Form.Label>Settled Payment?</Form.Label>
 								<ButtonGroup style={{ width: '100%' }}>
 									<Button
-										onClick={() => orderDispatch({ type: 'PAYMENT_SETTLED' })}
-										style={{ border: isPaymentSettled ? '4px solid' : null }}
-										variant={isPaymentSettled ? 'success' : 'secondary'}
-										disabled={isDetailsViewRequested}
+										onClick={() => orderDispatch({ type: 'SETTLED_PAYMENT_STATUS', status: true })}
+										style={{ border: orderStates.isPaymentSettled ? '4px solid' : null }}
+										variant={orderStates.isPaymentSettled ? 'success' : 'secondary'}
+										disabled={orderStates.isDetailsViewRequested}
 									>
 										Yes
 									</Button>
 
 									<Button
-										onClick={() => orderDispatch({ type: 'PAYMENT_NOT_SETTLED' })}
-										style={{ border: isPaymentSettled ? null : '4px solid' }}
-										variant={isPaymentSettled ? 'secondary' : 'success'}
-										disabled={isDetailsViewRequested}
+										onClick={() => orderDispatch({ type: 'SETTLED_PAYMENT_STATUS', status: false })}
+										style={{ border: orderStates.isPaymentSettled ? null : '4px solid' }}
+										variant={orderStates.isPaymentSettled ? 'secondary' : 'success'}
+										disabled={orderStates.isDetailsViewRequested}
 									>
 										No
 									</Button>
@@ -201,8 +244,8 @@ const OrderCRUD = props => {
 									name="deadline"
 									format="dd-M-y"
 									minDate={new Date()}
-									value={date}
-									disabled={isDetailsViewRequested}
+									value={orderStates.date}
+									disabled={orderStates.isDetailsViewRequested}
 								/>
 							</Form.Group>
 						</Col>
@@ -218,8 +261,10 @@ const OrderCRUD = props => {
 									type="text"
 									name="shippingCompany"
 									placeholder="Shipping Company"
-									// defaultValue={order.shippingCompany && 'Shipping Company'}
-									disabled={isDetailsViewRequested}
+									defaultValue={
+										orderStates.order === null ? null : orderStates.order.shippingCompany
+									}
+									disabled={orderStates.isDetailsViewRequested}
 									required
 								/>
 							</Form.Group>
@@ -234,8 +279,8 @@ const OrderCRUD = props => {
 									type="text"
 									name="shippingCost"
 									placeholder="Shipping Cost"
-									// defaultValue={order.shippingCost}
-									disabled={isDetailsViewRequested}
+									defaultValue={orderStates.order === null ? null : orderStates.order.shippingCost}
+									disabled={orderStates.isDetailsViewRequested}
 									required
 								/>
 							</Form.Group>
@@ -250,8 +295,8 @@ const OrderCRUD = props => {
 									type="text"
 									name="notes"
 									placeholder="Notes"
-									// defaultValue={order.notes}
-									disabled={isDetailsViewRequested}
+									defaultValue={orderStates.order === null ? null : orderStates.order.notes}
+									disabled={orderStates.isDetailsViewRequested}
 									required
 								/>
 							</Form.Group>
@@ -266,8 +311,8 @@ const OrderCRUD = props => {
 									type="text"
 									name="orderEmail"
 									placeholder="Order Email"
-									// defaultValue={order.email}
-									disabled={isDetailsViewRequested}
+									defaultValue={orderStates.order === null ? null : orderStates.order.notes}
+									disabled={orderStates.isDetailsViewRequested}
 									required
 								/>
 							</Form.Group>
@@ -283,7 +328,9 @@ const OrderCRUD = props => {
 									type="text"
 									name="customerName"
 									placeholder="Customer Name"
-									defaultValue={selectedCustomer.name}
+									defaultValue={
+										orderStates.selectedCustomer === null ? null : orderStates.selectedCustomer.name
+									}
 									disabled
 								/>
 							</Form.Group>
@@ -297,7 +344,11 @@ const OrderCRUD = props => {
 									type="text"
 									name="customerEmail"
 									placeholder="Customer Email"
-									defaultValue={selectedCustomer.email}
+									defaultValue={
+										orderStates.selectedCustomer === null
+											? null
+											: orderStates.selectedCustomer.email
+									}
 									disabled
 								/>
 							</Form.Group>
@@ -311,17 +362,21 @@ const OrderCRUD = props => {
 									type="text"
 									name="customerVat"
 									placeholder="Customer VAT Number"
-									defaultValue={selectedCustomer.vatNumber}
+									defaultValue={
+										orderStates.selectedCustomer === null
+											? null
+											: orderStates.selectedCustomer.vatNumber
+									}
 									disabled
 								/>
 							</Form.Group>
 						</Col>
 					</Row>
 
-					{isDetailsViewRequested ? null : (
+					{orderStates.isDetailsViewRequested ? null : (
 						<Row>
 							<Col sm>
-								<Form.Group controlId="customer">
+								<Form.Group controlId="customerSearch">
 									<Form.Label>Customer Search</Form.Label>
 									<Form.Control
 										onChange={handleCustomerSearch}
@@ -335,14 +390,14 @@ const OrderCRUD = props => {
 						</Row>
 					)}
 
-					{isDetailsViewRequested
+					{orderStates.isDetailsViewRequested
 						? null
-						: availableCustomers.length !== 0 && (
+						: orderStates.availableCustomers.length !== 0 && (
 								<SimpleList
-									elementsList={availableCustomers}
+									elementsList={orderStates.availableCustomers}
 									titleFieldName="name"
 									subtitleFieldName="email"
-									// onClick={onAvailableCustomerClick}
+									onClick={customer => orderDispatch({ type: 'CUSTOMER_SET', customer })}
 									clickable
 								/>
 						  )}
@@ -354,16 +409,26 @@ const OrderCRUD = props => {
 								<InputGroup>
 									<DropdownButton
 										as={InputGroup.Prepend}
-										title={selectedCurrency.toUpperCase() || order.currency.toUpperCase()}
+										title={
+											orderStates.selectedCurrency.toUpperCase() ||
+											orderStates.order.currency.toUpperCase()
+										}
 										variant="primary"
+										disabled={orderStates.isDetailsViewRequested}
 									>
-										<Dropdown.Item onClick={() => orderDispatch({ type: 'pln' })}>
+										<Dropdown.Item
+											onClick={() => orderDispatch({ type: 'CURRENCY_PICKER', currency: 'pln' })}
+										>
 											PLN
 										</Dropdown.Item>
-										<Dropdown.Item onClick={() => orderDispatch({ type: 'eur' })}>
+										<Dropdown.Item
+											onClick={() => orderDispatch({ type: 'CURRENCY_PICKER', currency: 'eur' })}
+										>
 											EUR
 										</Dropdown.Item>
-										<Dropdown.Item onClick={() => orderDispatch({ type: 'usd' })}>
+										<Dropdown.Item
+											onClick={() => orderDispatch({ type: 'CURRENCY_PICKER', currency: 'usd' })}
+										>
 											USD
 										</Dropdown.Item>
 									</DropdownButton>
@@ -372,7 +437,9 @@ const OrderCRUD = props => {
 										type="text"
 										name="productsTotalPrice"
 										placeholder="Products Total Price"
-										// defaultValue={order.productsTotalPrice}
+										defaultValue={
+											orderStates.order === null ? null : orderStates.order.productsTotalPrice
+										}
 										disabled
 									/>
 								</InputGroup>
@@ -387,62 +454,127 @@ const OrderCRUD = props => {
 									type="number"
 									name="productsCount"
 									placeholder="Products Count"
-									// defaultValue={order.productsCount}
+									defaultValue={orderStates.order === null ? null : orderStates.order.productsCount}
 									disabled
 								/>
 							</Form.Group>
 						</Col>
 					</Row>
 
-					<SimpleList
-						elementsList={selectedProducts}
-						titleFieldName="name"
-						subtitleFieldName="code"
-						// dynamicElement={quantityInput}
-						// onDelete={onSelectedProductDelete}
-						// deletable
-					/>
+					{orderStates.selectedProducts.length === 0 ? null : (
+						<SimpleList
+							elementsList={orderStates.selectedProducts}
+							titleFieldName="name"
+							subtitleFieldName="code"
+							dynamicElement={quantityInput}
+							// onDelete={onSelectedProductDelete}
+							// deletable
+						/>
+					)}
 
-					{isDetailsViewRequested ? null : (
+					{orderStates.isDetailsViewRequested ? null : (
+						<Row>
+							<Col sm>
+								<Form.Group controlId="product">
+									<Form.Label>Product Search</Form.Label>
+									<Form.Control
+										onChange={handleProductSearch}
+										type="text"
+										name="productSearch"
+										placeholder="GW-997"
+									/>
+								</Form.Group>
+							</Col>
+						</Row>
+					)}
+
+					{orderStates.isDetailsViewRequested ? null : (
 						<ProductGrid
-							productsList={availableProducts}
+							productsList={orderStates.availableProducts}
 							imageSource="imageUrl"
 							name="name"
 							code="code"
 							pln="pln"
 							eur="eur"
 							usd="usd"
-							// dynamicElement={quantityInput}
-							// onClick={onAvailableProductClick}
+							dynamicElement={quantityInput}
+							onClick={product => orderDispatch({ type: 'ADD_PRODUCT', product })}
 							clickable
 						/>
 					)}
 
-					<Row>
-						<Col sm>
-							<Button
-								style={{ width: '100%', border: '2px solid' }}
-								type="submit"
-								variant="success"
-							>
-								Submit
-							</Button>
-						</Col>
-						<Col sm>
-							<Button
-								style={{ width: '100%', border: '2px solid' }}
-								variant="danger"
-								onClick={() => props.history.push('/orders/')}
-							>
-								Cancel
-							</Button>
-						</Col>
-					</Row>
+					{orderStates.isDetailsViewRequested ? (
+						<Row>
+							<Col sm>
+								<Button
+									style={{ width: '100%', border: '2px solid' }}
+									variant="secondary"
+									onClick={() => props.history.push('/orders/')}
+								>
+									Return
+								</Button>
+							</Col>
+
+							<Col sm>
+								<Button
+									style={{ width: '100%', border: '2px solid' }}
+									variant="danger"
+									onClick={() => orderDispatch({ type: 'OPEN_DELETE_MODAL' })}
+								>
+									Delete
+								</Button>
+							</Col>
+
+							<Col sm>
+								<Button
+									style={{ width: '100%', border: '2px solid' }}
+									type="submit"
+									variant="success"
+								>
+									Submit
+								</Button>
+							</Col>
+						</Row>
+					) : (
+						<Row>
+							<Col sm>
+								<Button
+									style={{ width: '100%', border: '2px solid' }}
+									variant="danger"
+									onClick={() => props.history.push(`/orders/`)}
+								>
+									Cancel
+								</Button>
+							</Col>
+
+							<Col sm>
+								<Button
+									style={{ width: '100%', border: '2px solid' }}
+									type="submit"
+									variant="success"
+								>
+									Submit
+								</Button>
+							</Col>
+						</Row>
+					)}
+
+					<ConfirmationModal
+						isOpen={orderStates.isDeleteModalOpen}
+						onModalClose={() => orderDispatch({ type: 'CLOSE_DELETE_MODAL' })}
+						onConfirm={() =>
+							orderDispatch({
+								type: 'HANDLE_ORDER_DELETE',
+								url: props.history,
+								id: props.match.params.id,
+							})
+						}
+					/>
 				</Form>
 			</Container>
 		)
 	}
-	return <> {isLoaded ? orderCRUDForm() : LoadingView()} </>
+	return <> {orderStates.isLoaded ? orderCRUDForm() : LoadingView()} </>
 }
 
 export default withRouter(OrderCRUD)
