@@ -1,54 +1,39 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect } from 'react'
 import CustomersApiService from '../../../utils/api/customersApiService'
 import CustomerForm from './CustomerForm'
 import LoadingView from '../../common/LoadingView'
+import IdNotFound from '../../common/IdNotFound'
 
-class CustomerEdit extends Component {
-	constructor(props) {
-		super(props)
+function CustomerEdit(props) {
+	const [isLoaded, setIsLoaded] = useState(false)
+	const [customer, setCustomer] = useState(null)
 
-		this.state = {
-			customer: null,
-			isLoaded: false,
+	const handleSubmit = async (cust) => {
+		await CustomersApiService.updateCustomer(props.match.params.id, cust)
+		props.history.push(`/customers`)
+	}
+
+	useEffect(() => {
+		const fetchData = async () => {
+			const fetchedCustomer = await CustomersApiService.getCustomerById(props.match.params.id)
+			setCustomer(fetchedCustomer)
+			setIsLoaded(true)
 		}
-	}
+		fetchData()
+	}, [])
 
-	async componentDidMount() {
-		const customerId = parseInt(this.props.match.params.id)
-
-		this.setState({ customer: await CustomersApiService.getCustomer(customerId), isLoaded: true })
-	}
-
-	onCancel() {
-		this.props.history.push(`/customers/${parseInt(this.props.match.params.id)}`)
-	}
-
-	async handleSubmit(event, customer) {
-		event.preventDefault()
-		event.stopPropagation()
-
-		const customerId = parseInt(this.props.match.params.id)
-		await CustomersApiService.updateCustomer(customerId, customer)
-
-		this.props.history.push(`/customers/${customerId}`)
-	}
-
-	render() {
+	const customerEditView = () => {
 		return (
-			<div>
-				{this.state.isLoaded ? (
-					<CustomerForm
-						customer={this.state.customer}
-						onSubmit={(e, cust) => this.handleSubmit(e, cust)}
-						onCancel={() => this.onCancel()}
-						submitText="Edit Customer"
-					/>
-				) : (
-					LoadingView()
-				)}
-			</div>
+			<CustomerForm
+				customer={customer}
+				onSubmit={handleSubmit}
+				onCancel={() => props.history.push(`/customers/${parseInt(props.match.params.id)}`)}
+				submitText="Edit Customer"
+			/>
 		)
 	}
+
+	return <> {isLoaded ? (customer ? customerEditView() : IdNotFound()) : LoadingView()} </>
 }
 
 export default CustomerEdit

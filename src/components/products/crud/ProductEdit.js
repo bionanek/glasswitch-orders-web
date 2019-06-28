@@ -6,24 +6,14 @@ import ProductsApiService from '../../../utils/api/productsApiService'
 import ConfirmationModal from '../../common/modals/confirmationModal/ConfirmationModal'
 import buildProductData from '../ProductsUtils'
 import LoadingView from '../../common/LoadingView'
+import IdNotFound from '../../common/IdNotFound'
 import './ProductEdit.scss'
 
 function ProductEdit(props) {
 	const [isLoaded, setIsLoaded] = useState(false)
-
 	const [product, setProduct] = useState(null)
 	const [isValidated, setIsValidated] = useState(false)
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-
-	useEffect(() => {
-		const fetchData = async () => {
-			const requestedProduct = await ProductsApiService.getProductById(props.match.params.id)
-			setProduct(requestedProduct.data)
-
-			setIsLoaded(true)
-		}
-		fetchData()
-	}, [])
 
 	const handleFormChange = event => {
 		const currentProduct = product
@@ -37,7 +27,7 @@ function ProductEdit(props) {
 				currentProduct.image = files[0]
 				break
 			case 'productCode':
-				currentProduct.code = 'GW-' + value
+				currentProduct.code = `GW-${value}`
 				break
 			default:
 				currentProduct[name] = value
@@ -64,10 +54,6 @@ function ProductEdit(props) {
 		handleEditDataConfirm()
 	}
 
-	const closeDeleteModal = () => {
-		setIsDeleteModalOpen(false)
-	}
-
 	const handleDelete = event => {
 		event.stopPropagation()
 		setIsDeleteModalOpen(true)
@@ -78,237 +64,239 @@ function ProductEdit(props) {
 		props.history.push('/products')
 	}
 
-	const handleGoBack = () => {
-		props.history.push('/products')
-	}
+	useEffect(() => {
+		const fetchData = async () => {
+			const requestedProduct = await ProductsApiService.getProductById(props.match.params.id)
+			setProduct(requestedProduct.data)
+			setIsLoaded(true)
+		}
+		fetchData()
+	}, [])
 
 	const productEditView = () => {
 		return (
 			<Container className="product-edit-form">
-				{product ? (
-					<>
-						<Form onSubmit={handleSubmit} validated={isValidated}>
+				<Form onSubmit={handleSubmit} validated={isValidated}>
+					<Row>
+						<Col sm>
+							<Form.Group controlId="productName">
+								<Form.Label>Product Name</Form.Label>
+								<Form.Control
+									onChange={handleFormChange}
+									type="text"
+									name="name"
+									defaultValue={product.name}
+									required
+								/>
+							</Form.Group>
+						</Col>
+
+						<Col sm>
+							<Form.Group controlId="productCode">
+								<Form.Label>Product Code</Form.Label>
+								<InputGroup>
+									<InputGroup.Prepend>
+										<InputGroup.Text style={{ color: 'black' }}>GW-</InputGroup.Text>
+									</InputGroup.Prepend>
+									<Form.Control
+										onChange={handleFormChange}
+										type="text"
+										name="code"
+										defaultValue={product.code.split('GW-')[1]}
+										pattern="[^'/\x22:?<>|*\\]+"
+										required
+									/>
+								</InputGroup>
+							</Form.Group>
+						</Col>
+					</Row>
+
+					<Row>
+						<Col sm>
+							<Form.Group controlId="productImage">
+								<ImageElement
+									source={`http://localhost:3001/${product.imageUrl}`}
+									errorTxt="imageError"
+								/>
+							</Form.Group>
+						</Col>
+
+						<Col>
 							<Row>
-								<Col>
-									<Form.Group controlId="productName">
-										<Form.Label>Product Name</Form.Label>
+								<Col sm>
+									<Form.Group controlId="productImageUpload">
+										<Form.Label>Image</Form.Label>
+										<Form.Control
+											onChange={handleFormChange}
+											style={{ color: 'white' }}
+											type="file"
+											name="image"
+										/>
+									</Form.Group>
+
+									<Form.Group controlId="productDescription">
+										<Form.Label>Description</Form.Label>
 										<Form.Control
 											onChange={handleFormChange}
 											type="text"
-											name="name"
-											defaultValue={product.name}
-											required
-										/>
-									</Form.Group>
-								</Col>
-
-								<Col>
-									<Form.Group controlId="productCode">
-										<Form.Label>Product Code</Form.Label>
-										<InputGroup>
-											<InputGroup.Prepend>
-												<InputGroup.Text style={{ color: 'black' }}>GW-</InputGroup.Text>
-											</InputGroup.Prepend>
-											<Form.Control
-												onChange={handleFormChange}
-												type="text"
-												name="code"
-												defaultValue={product.code.split('GW-')[1]}
-												pattern="[^'/\x22:?<>|*\\]+"
-												required
-											/>
-										</InputGroup>
-									</Form.Group>
-								</Col>
-							</Row>
-
-							<Row>
-								<Col>
-									<Form.Group controlId="productImage">
-										<ImageElement
-											source={'http://localhost:3001/' + product.imageUrl}
-											errorTxt="imageError"
-										/>
-									</Form.Group>
-								</Col>
-
-								<Col>
-									<Row>
-										<Col>
-											<Form.Group controlId="productImageUpload">
-												<Form.Label>Image</Form.Label>
-												<Form.Control
-													onChange={handleFormChange}
-													style={{ color: 'white' }}
-													type="file"
-													name="image"
-												/>
-											</Form.Group>
-
-											<Form.Group controlId="productDescription">
-												<Form.Label>Description</Form.Label>
-												<Form.Control
-													onChange={handleFormChange}
-													type="text"
-													name="description"
-													as="textarea"
-													defaultValue={product.description}
-													rows="12"
-													required
-												/>
-											</Form.Group>
-										</Col>
-									</Row>
-								</Col>
-							</Row>
-
-							<Row>
-								<Col>
-									<Form.Group controlId="productType">
-										<Form.Label>Type</Form.Label>
-										<Form.Control
-											onChange={handleFormChange}
-											type="text"
-											name="type"
-											defaultValue={product.type}
-											required
-										/>
-									</Form.Group>
-								</Col>
-
-								<Col>
-									<Form.Group controlId="productCategory">
-										<Form.Label>Category</Form.Label>
-										<Form.Control
-											onChange={handleFormChange}
-											type="text"
-											name="category"
-											defaultValue={product.category}
+											name="description"
+											as="textarea"
+											defaultValue={product.description}
+											rows="12"
 											required
 										/>
 									</Form.Group>
 								</Col>
 							</Row>
+						</Col>
+					</Row>
 
-							<Row>
-								<Col>
-									<Form.Group controlId="productWidth">
-										<Form.Label>Width</Form.Label>
-										<Form.Control
-											onChange={handleFormChange}
-											type="text"
-											name="width"
-											defaultValue={product.width}
-											required
-										/>
-									</Form.Group>
-								</Col>
+					<Row>
+						<Col sm>
+							<Form.Group controlId="productType">
+								<Form.Label>Type</Form.Label>
+								<Form.Control
+									onChange={handleFormChange}
+									type="text"
+									name="type"
+									defaultValue={product.type}
+									required
+								/>
+							</Form.Group>
+						</Col>
 
-								<Col>
-									<Form.Group controlId="productHeight">
-										<Form.Label>Height</Form.Label>
-										<Form.Control
-											onChange={handleFormChange}
-											type="text"
-											name="height"
-											defaultValue={product.height}
-											required
-										/>
-									</Form.Group>
-								</Col>
+						<Col sm>
+							<Form.Group controlId="productCategory">
+								<Form.Label>Category</Form.Label>
+								<Form.Control
+									onChange={handleFormChange}
+									type="text"
+									name="category"
+									defaultValue={product.category}
+									required
+								/>
+							</Form.Group>
+						</Col>
+					</Row>
 
-								<Col>
-									<Form.Group controlId="productDepth">
-										<Form.Label>Depth</Form.Label>
-										<Form.Control
-											onChange={handleFormChange}
-											type="text"
-											name="depth"
-											defaultValue={product.depth}
-											required
-										/>
-									</Form.Group>
-								</Col>
-							</Row>
+					<Row>
+						<Col sm>
+							<Form.Group controlId="productWidth">
+								<Form.Label>Width</Form.Label>
+								<Form.Control
+									onChange={handleFormChange}
+									type="text"
+									name="width"
+									defaultValue={product.width}
+									required
+								/>
+							</Form.Group>
+						</Col>
 
-							<Row>
-								<Col>
-									<Form.Group controlId="productPrice">
-										<Form.Label>PLN</Form.Label>
-										<Form.Control
-											onChange={handleFormChange}
-											type="text"
-											name="pln"
-											defaultValue={product.price.pln}
-											required
-										/>
-									</Form.Group>
-								</Col>
+						<Col sm>
+							<Form.Group controlId="productHeight">
+								<Form.Label>Height</Form.Label>
+								<Form.Control
+									onChange={handleFormChange}
+									type="text"
+									name="height"
+									defaultValue={product.height}
+									required
+								/>
+							</Form.Group>
+						</Col>
 
-								<Col>
-									<Form.Group controlId="productPrice">
-										<Form.Label>EUR</Form.Label>
-										<Form.Control
-											onChange={handleFormChange}
-											type="text"
-											name="eur"
-											defaultValue={product.price.eur}
-											required
-										/>
-									</Form.Group>
-								</Col>
+						<Col sm>
+							<Form.Group controlId="productDepth">
+								<Form.Label>Depth</Form.Label>
+								<Form.Control
+									onChange={handleFormChange}
+									type="text"
+									name="depth"
+									defaultValue={product.depth}
+									required
+								/>
+							</Form.Group>
+						</Col>
+					</Row>
 
-								<Col>
-									<Form.Group controlId="productPrice">
-										<Form.Label>USD</Form.Label>
-										<Form.Control
-											onChange={handleFormChange}
-											type="text"
-											name="usd"
-											defaultValue={product.price.usd}
-											required
-										/>
-									</Form.Group>
-								</Col>
-							</Row>
+					<Row>
+						<Col sm>
+							<Form.Group controlId="productPrice">
+								<Form.Label>PLN</Form.Label>
+								<Form.Control
+									onChange={handleFormChange}
+									type="text"
+									name="pln"
+									defaultValue={product.price.pln}
+									required
+								/>
+							</Form.Group>
+						</Col>
 
-							<Row>
-								<Col>
-									<Button onClick={handleGoBack} variant="secondary" size="lg" block>
-										Return To The List
-									</Button>
-								</Col>
+						<Col sm>
+							<Form.Group controlId="productPrice">
+								<Form.Label>EUR</Form.Label>
+								<Form.Control
+									onChange={handleFormChange}
+									type="text"
+									name="eur"
+									defaultValue={product.price.eur}
+									required
+								/>
+							</Form.Group>
+						</Col>
 
-								<Col>
-									<Button onClick={handleDelete} variant="danger" size="lg" block>
-										Delete Product
-									</Button>
-								</Col>
+						<Col sm>
+							<Form.Group controlId="productPrice">
+								<Form.Label>USD</Form.Label>
+								<Form.Control
+									onChange={handleFormChange}
+									type="text"
+									name="usd"
+									defaultValue={product.price.usd}
+									required
+								/>
+							</Form.Group>
+						</Col>
+					</Row>
 
-								<Col>
-									<Button type="submit" variant="success" size="lg" block>
-										Submit Changes
-									</Button>
-								</Col>
-							</Row>
-						</Form>
-						<ConfirmationModal
-							isOpen={isDeleteModalOpen}
-							onModalClose={closeDeleteModal}
-							onConfirm={onDeleteConfirm}
-						/>
-					</>
-				) : (
-					<span>
-						Product with ID:
-						{props.match.params.id} does not exists!
-					</span>
-				)}
+					<Row>
+						<Col sm>
+							<Button
+								onClick={() => props.history.push(`/products`)}
+								variant="secondary"
+								size="lg"
+								block
+							>
+								Return To The List
+							</Button>
+						</Col>
+
+						<Col sm>
+							<Button onClick={handleDelete} variant="danger" size="lg" block>
+								Delete Product
+							</Button>
+						</Col>
+
+						<Col sm>
+							<Button type="submit" variant="success" size="lg" block>
+								Submit Changes
+							</Button>
+						</Col>
+					</Row>
+				</Form>
+
+				<ConfirmationModal
+					isOpen={isDeleteModalOpen}
+					onModalClose={() => setIsDeleteModalOpen(false)}
+					onConfirm={onDeleteConfirm}
+				/>
 			</Container>
 		)
 	}
 
-	return <> {isLoaded ? productEditView() : LoadingView()} </>
+	return <> {isLoaded ? (product ? productEditView() : IdNotFound()) : LoadingView()} </>
 }
 
 export default withRouter(ProductEdit)

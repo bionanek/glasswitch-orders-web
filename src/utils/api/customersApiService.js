@@ -16,7 +16,7 @@ export default class CustomersApiService {
 		}
 	}
 
-	static async getCustomer(id) {
+	static async getCustomerById(id) {
 		try {
 			const response = await Axios.get(apiUrl + id.toString(), apiHeader)
 			return response.data
