@@ -1,17 +1,12 @@
 import React, { useState } from 'react'
 import { Form, Modal, Col, Button, InputGroup, Container } from 'react-bootstrap/'
-import ProductsApiService from '../../../../utils/api/productsApiService'
-import buildProductData from '../../ProductsUtils'
+import ProductsApiService from '../../../utils/api/productsApiService'
+import buildProductData from '../ProductsUtils'
 import './ModalCreateProduct.scss'
 
 export default function ProductCreateModal(props) {
 	const [product, setProduct] = useState({})
 	const [isValidated, setIsValidated] = useState(false)
-	const title = props.title ? props.title : 'Create Product'
-
-	const handleModalClose = () => {
-		props.onModalClose()
-	}
 
 	const addProductPrice = (currentProduct, currency, value) => {
 		const editableProduct = { ...currentProduct }
@@ -64,13 +59,12 @@ export default function ProductCreateModal(props) {
 		if (form.checkValidity() === false) {
 			event.stopPropagation()
 		}
-
 		handleDataConfirm()
 	}
 
 	const productCreateForm = () => {
 		return (
-			<Container className="product-create">
+			<Container className="product-create" fluid>
 				<Form onSubmit={handleSubmit} validated={isValidated}>
 					<Form.Group controlId="productName">
 						<Form.Label>Name</Form.Label>
@@ -226,9 +220,9 @@ export default function ProductCreateModal(props) {
 
 	return (
 		<Container>
-			<Modal show={props.isOpen} onHide={() => handleModalClose()}>
+			<Modal show={props.isOpen} onHide={() => props.onModalClose()}>
 				<Modal.Header closeButton>
-					<Modal.Title>{title}</Modal.Title>
+					<Modal.Title>Create Product</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>{productCreateForm()}</Modal.Body>
 			</Modal>

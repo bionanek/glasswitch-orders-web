@@ -5,7 +5,7 @@ import './Customers.scss'
 
 const Customers = () => {
 	return (
-		<Container fluid="true" className="customers">
+		<Container className="customers" fluid>
 			<CustomersList className="customers-list" />
 		</Container>
 	)

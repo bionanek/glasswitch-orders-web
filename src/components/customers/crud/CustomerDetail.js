@@ -1,148 +1,113 @@
-import React, { Component } from 'react'
-import Container from 'react-bootstrap/Container'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import Button from 'react-bootstrap/Button'
+import React, { useState, useEffect } from 'react'
+import { withRouter } from 'react-router-dom'
+import { Container, Row, Col, Button } from 'react-bootstrap/'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrashAlt, faEdit } from '@fortawesome/free-solid-svg-icons'
+import { faTrashAlt, faEdit, faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import DetailElement from '../../common/DetailElement'
 import CustomersApiService from '../../../utils/api/customersApiService'
-import './CustomerDetail.scss'
 import ConfirmationModal from '../../common/modals/confirmationModal/ConfirmationModal'
 import LoadingView from '../../common/LoadingView'
+import IdNotFound from '../../common/IdNotFound'
+import './CustomerDetail.scss'
 
-class CustomerDetail extends Component {
-	constructor(props) {
-		super(props)
+function CustomerDetail(props) {
+	const [isLoaded, setIsLoaded] = useState(false)
+	const [customer, setCustomer] = useState(null)
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
-		this.state = {
-			customer: null,
-			isDeleteModalOpen: false,
-			isLoaded: false,
+	const onDeleteConfirmed = async () => {
+		await CustomersApiService.deleteProduct(props.match.params.id)
+		props.history.push('/customers')
+	}
+
+	useEffect(() => {
+		const fetchData = async () => {
+			const fetchedCustomer = await CustomersApiService.getCustomerById(props.match.params.id)
+			setCustomer(fetchedCustomer)
+			setIsLoaded(true)
 		}
-	}
+		fetchData()
+	}, [])
 
-	async componentDidMount() {
-		const customerId = parseInt(this.props.match.params.id)
-
-		this.setState({ customer: await CustomersApiService.getCustomer(customerId), isLoaded: true })
-	}
-
-	// TODO: Move these handlers to components so that they can be reused
-	onEditClicked() {
-		const editUrl = `/customers/${parseInt(this.props.match.params.id)}/edit`
-		this.props.history.push(editUrl)
-	}
-
-	onDeleteClicked(e) {
-		e.stopPropagation()
-		this.openDeleteModal()
-	}
-
-	async onDeleteConfirmed() {
-		await CustomersApiService.deleteCustomer(parseInt(this.props.match.params.id))
-		this.props.history.push('/customers')
-	}
-
-	getReturnButton() {
+	const customerDetailsView = () => {
 		return (
-			<Button className="return-button" variant="secondary" onClick={() => this.backToList()}>
-				Back to Customers List
-			</Button>
-		)
-	}
+			<Container className="customer-detail">
+				<Row>
+					<Col sm>
+						<h1>{customer.name}</h1>
+					</Col>
 
-	closeDeleteModal() {
-		this.setState({ isDeleteModalOpen: false })
-	}
+					<Col sm>
+						<Button
+							onClick={() => props.history.push(`/customers`)}
+							className="return-icon-detail"
+							variant="outline-secondary"
+						>
+							<FontAwesomeIcon icon={faArrowLeft} size="2x" />
+						</Button>
 
-	openDeleteModal() {
-		this.setState({ isDeleteModalOpen: true })
-	}
+						<Button
+							onClick={() =>
+								props.history.push(`/customers/${parseInt(props.match.params.id)}/edit`)
+							}
+							className="edit-icon-detail"
+							variant="outline-primary"
+						>
+							<FontAwesomeIcon icon={faEdit} size="2x" />
+						</Button>
 
-	backToList() {
-		this.props.history.push('/customers')
-	}
+						<Button
+							onClick={() => setIsDeleteModalOpen(true)}
+							className="delete-icon-detail"
+							variant="outline-danger"
+						>
+							<FontAwesomeIcon icon={faTrashAlt} size="2x" />
+						</Button>
+					</Col>
+				</Row>
 
-	customerDetailsView() {
-		const { customer } = this.state
-		return (
-			<div className="customer-detail">
-				{customer ? (
-					<Container>
-						<Row>
-							<Col sm>
-								<h1>{customer.name}</h1>
-							</Col>
-							<Col sm>
-								<span className="edit-icon" onClick={() => this.onEditClicked()} role="button">
-									<FontAwesomeIcon icon={faEdit} size="2x" />
-								</span>
-								<span className="delete-icon" onClick={() => this.openDeleteModal()} role="button">
-									<FontAwesomeIcon icon={faTrashAlt} size="2x" />
-								</span>
-							</Col>
-						</Row>
-						<Row>
-							<DetailElement header="Email address:" value={customer.email} />
-							<DetailElement header="Phone number:" value={customer.phone} />
-							<DetailElement header="VAT identification number:" value={customer.vatNumber} />
-						</Row>
-						<Row>
-							<Col>
-								<h2>Delivery address</h2>
-							</Col>
-						</Row>
-						<Row>
-							<DetailElement header="Street:" value={customer.delivery_street} />
-							<DetailElement header="City:" value={customer.delivery_city} />
-							<DetailElement header="Country:" value={customer.delivery_country} />
-							<DetailElement header="Postcode:" value={customer.delivery_postCode} />
-						</Row>
-						<Row>
-							<Col>
-								<h2>Billing address</h2>
-							</Col>
-						</Row>
-						<Row>
-							<DetailElement header="Street:" value={customer.billing_street} />
-							<DetailElement header="City:" value={customer.billing_city} />
-							<DetailElement header="Country:" value={customer.billing_country} />
-							<DetailElement header="Postcode:" value={customer.billing_postCode} />
-						</Row>
-						<Row>
-							<Col>{this.getReturnButton()}</Col>
-						</Row>
-					</Container>
-				) : (
-					<Container>
-						<Row>
-							<Col>
-								<span>
-									Customer with ID:
-									{this.props.match.params.id} does not exist!
-								</span>
-							</Col>
-						</Row>
-						<Row>
-							<Col>{this.getReturnButton()}</Col>
-						</Row>
-					</Container>
-				)}
+				<Row>
+					<DetailElement header="Email address:" value={customer.email} />
+					<DetailElement header="Phone number:" value={customer.phone} />
+					<DetailElement header="VAT identification number:" value={customer.vatNumber} />
+				</Row>
+
+				<Row>
+					<Col>
+						<h2>Delivery address</h2>
+					</Col>
+				</Row>
+
+				<Row>
+					<DetailElement header="Street:" value={customer.delivery_street} />
+					<DetailElement header="City:" value={customer.delivery_city} />
+					<DetailElement header="Country:" value={customer.delivery_country} />
+					<DetailElement header="Postcode:" value={customer.delivery_postCode} />
+				</Row>
+
+				<Row>
+					<Col>
+						<h2>Billing address</h2>
+					</Col>
+				</Row>
+
+				<Row>
+					<DetailElement header="Street:" value={customer.billing_street} />
+					<DetailElement header="City:" value={customer.billing_city} />
+					<DetailElement header="Country:" value={customer.billing_country} />
+					<DetailElement header="Postcode:" value={customer.billing_postCode} />
+				</Row>
+
 				<ConfirmationModal
-					isOpen={this.state.isDeleteModalOpen}
-					onModalClose={() => this.closeDeleteModal()}
-					onConfirm={() => this.onDeleteConfirmed()}
+					isOpen={isDeleteModalOpen}
+					onModalClose={() => isDeleteModalOpen(false)}
+					onConfirm={onDeleteConfirmed}
 				/>
-			</div>
+			</Container>
 		)
 	}
 
-	render() {
-		const { isLoaded } = this.state
-
-		return <div>{isLoaded ? this.customerDetailsView() : LoadingView()}</div>
-	}
+	return <> {isLoaded ? (customer ? customerDetailsView() : IdNotFound()) : LoadingView()} </>
 }
 
-export default CustomerDetail
+export default withRouter(CustomerDetail)

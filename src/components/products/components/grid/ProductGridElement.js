@@ -8,10 +8,6 @@ import ConfirmationModal from '../../../common/modals/confirmationModal/Confirma
 const ProductGridElement = props => {
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
-	const closeDeleteModal = () => {
-		setIsDeleteModalOpen(false)
-	}
-
 	const onDeleteButtonClick = event => {
 		event.stopPropagation()
 		setIsDeleteModalOpen(true)
@@ -71,7 +67,7 @@ const ProductGridElement = props => {
 
 			<ConfirmationModal
 				isOpen={isDeleteModalOpen}
-				onModalClose={closeDeleteModal}
+				onModalClose={() => setIsDeleteModalOpen(false)}
 				onConfirm={onDeleteConfirm}
 			/>
 		</>

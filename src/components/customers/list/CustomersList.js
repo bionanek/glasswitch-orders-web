@@ -1,101 +1,87 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect } from 'react'
 import { withRouter } from 'react-router-dom'
-import Button from 'react-bootstrap/Button'
+import { Button, Container, Row, Col } from 'react-bootstrap/'
 import SimpleList from '../../common/simpleList/SimpleList'
 import CustomersApiService from '../../../utils/api/customersApiService'
-import './CustomersList.scss'
 import ModalCreateCustomer from '../crud/ModalCreateCustomer'
 import LoadingView from '../../common/LoadingView'
+import './CustomersList.scss'
 
-class CustomersList extends Component {
-	constructor(props) {
-		super(props)
+function CustomersList(props) {
+	const [isLoaded, setIsLoaded] = useState(false)
+	const [customers, setCustomers] = useState([])
+	const [isCustomerCreateModalOpen, setIsCustomerCreateModalOpen] = useState(false)
 
-		this.state = {
-			customers: [],
-			isCustomerCreateModalOpen: false,
-			isLoaded: false,
-		}
-	}
-
-	async componentDidMount() {
-		this.setState({ customers: await this.getAllCustomers(), isLoaded: true })
-	}
-
-	async getAllCustomers() {
-		const response = await CustomersApiService.getAllCustomers()
-		return this.getCustomersReactiveObjectsList(response.data)
-	}
-
-	getCustomersReactiveObjectsList(customersList) {
+	const customersReactiveObjects = customersList => {
 		return customersList.map(customer => {
 			const customerRO = { ...customer }
 
-			customerRO.editHandler = e => {
-				e.stopPropagation()
-				const editUrl = `customers/${customer.id}/edit`
-				this.props.history.push(editUrl)
+			customerRO.clickHandler = () => {
+				props.history.push(`customers/${customer.id}`)
 			}
 
-			customerRO.clickHandler = () => {
-				this.props.history.push(`customers/${customer.id}`)
+			customerRO.editHandler = event => {
+				event.stopPropagation()
+				const editUrl = `customers/${customer.id}/edit`
+				props.history.push(editUrl)
 			}
 
 			customerRO.deleteHandler = async customerId => {
 				const deleteResult = await CustomersApiService.deleteCustomer(customerId)
 
 				if (deleteResult !== undefined && deleteResult.status === 200) {
-					this.refreshList()
+					const fetchedCustomers = await CustomersApiService.getAllCustomers()
+					setCustomers(customersReactiveObjects(fetchedCustomers.data))
 				}
 			}
 
 			return customerRO
-		}, this)
+		})
 	}
 
-	openCloseCreateModal() {
-		const isOpen = this.state.isCustomerCreateModalOpen
-		this.setState({ isCustomerCreateModalOpen: !isOpen })
+	const fetchData = async () => {
+		const fetchedCustomers = await CustomersApiService.getAllCustomers()
+		setCustomers(customersReactiveObjects(fetchedCustomers.data))
+		setIsLoaded(true)
 	}
 
-	async refreshList() {
-		const customers = await this.getAllCustomers()
+	useEffect(() => {
+		fetchData()
+	}, [])
 
-		this.setState({ customers })
-	}
-
-	render() {
+	const customersListView = () => {
 		return (
-			<>
-				{this.state.isLoaded ? (
-					<div className="customers-list-wrapper">
+			<Container className="customers-list-wrapper" fluid>
+				<Row>
+					<Col>
 						<Button
 							variant="primary"
-							className="new-customer-button"
-							onClick={() => this.openCloseCreateModal()}
+							className="create-customer-button"
+							onClick={() => setIsCustomerCreateModalOpen(true)}
 						>
 							New Customer
 						</Button>
-						<SimpleList
-							elementsList={this.state.customers}
-							titleFieldName="name"
-							subtitleFieldName="delivery_country"
-							deletable
-							editable
-							clickable
-						/>
-						<ModalCreateCustomer
-							isOpen={this.state.isCustomerCreateModalOpen}
-							onModalClose={() => this.openCloseCreateModal()}
-							refreshList={() => this.refreshList()}
-						/>
-					</div>
-				) : (
-					LoadingView()
-				)}
-			</>
+					</Col>
+				</Row>
+
+				<SimpleList
+					elementsList={customers}
+					titleFieldName="name"
+					subtitleFieldName="delivery_country"
+					deletable
+					editable
+					clickable
+				/>
+				<ModalCreateCustomer
+					isOpen={isCustomerCreateModalOpen}
+					onModalClose={() => setIsCustomerCreateModalOpen(false)}
+					refreshList={fetchData}
+				/>
+			</Container>
 		)
 	}
+
+	return <> {isLoaded ? customersListView() : LoadingView()} </>
 }
 
 export default withRouter(CustomersList)
