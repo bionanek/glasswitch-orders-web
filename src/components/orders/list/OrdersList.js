@@ -16,12 +16,12 @@ function OrdersList(props) {
 
 			orderRO.editHandler = event => {
 				event.stopPropagation()
-				const editUrl = `/orders/test/${order.id}/edit`
+				const editUrl = `/orders/${order.id}/edit`
 				props.history.push(editUrl)
 			}
 
 			orderRO.clickHandler = () => {
-				props.history.push(`/orders/test/${order.id}/details`)
+				props.history.push(`/orders/${order.id}`)
 			}
 
 			orderRO.deleteHandler = async orderId => {
@@ -50,7 +50,7 @@ function OrdersList(props) {
 		<Container className="orders-list-wrapper" fluid>
 			{isLoaded ? (
 				<>
-					<Button onClick={() => props.history.push(`/orders/test/create`)} className="new-order-button">
+					<Button onClick={() => props.history.push(`/orders/create`)} className="new-order-button">
 						Place an Order
 					</Button>
 

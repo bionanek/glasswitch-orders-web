@@ -20,6 +20,7 @@ import CustomersApiService from '../../../utils/api/customersApiService'
 import ProductsApiService from '../../../utils/api/productsApiService'
 import ConfirmationModal from '../../common/modals/confirmationModal/ConfirmationModal'
 import { OrderReducers, InitialOrderState } from './OrderReducers'
+import './OrderCRUD.scss'
 
 const OrderCRUD = props => {
 	const [orderStates, orderDispatch] = useReducer(OrderReducers, InitialOrderState)
@@ -55,7 +56,7 @@ const OrderCRUD = props => {
 		orderDispatch({ type: 'SELECTED_PRODS_SETTER', selectedProds })
 	}
 
-	const handleAvailableProductSelection = (product, event) => {
+	const handleAvailableProductSelection = product => {
 		const allSelected = [...orderStates.selectedProducts]
 		const allAvailable = [...orderStates.availableProducts]
 		const selectedProduct = allAvailable.find(el => el.id === product.id)
@@ -102,6 +103,7 @@ const OrderCRUD = props => {
 			prod.quantity = 0
 
 			selectedProds.splice(indexOfProduct, 1)
+			availables.push(prod)
 
 			if (orderStates.isCreateViewRequested) currentOrder.wantedProducts.splice(indexOfProduct, 1)
 			else currentOrder.products.splice(indexOfProduct, 1)
@@ -154,7 +156,12 @@ const OrderCRUD = props => {
 		const currentOrder = orderStates.order
 		setIsValidated(true)
 
-		currentOrder.customerId = orderStates.selectedCustomer.id
+		if (!orderStates.isCreateViewRequested) {
+			delete currentOrder.customerId
+			delete currentOrder.productsTotalPrice
+			delete currentOrder.productsCount
+		}
+
 		currentOrder.confirmationSent = orderStates.isConfirmationSent
 		currentOrder.proformaSent = orderStates.isProformaSent
 		currentOrder.invoiceSent = orderStates.isInvoiceSent
@@ -170,7 +177,7 @@ const OrderCRUD = props => {
 				}
 			})
 		} else {
-			currentOrder.products = orderStates.selectedProducts.map(prod => {
+			currentOrder.updatedProducts = orderStates.selectedProducts.map(prod => {
 				return {
 					id: prod.id,
 					quantity: prod.quantity,
@@ -179,6 +186,14 @@ const OrderCRUD = props => {
 		}
 
 		orderDispatch({ type: 'FORM_DATA', currentOrder })
+
+		if (orderStates.isCreateViewRequested) {
+			await OrdersApiService.postOrder(currentOrder)
+		} else {
+			await OrdersApiService.updateOrder(props.match.params.id, currentOrder)
+		}
+
+		props.history.push(`/orders/`)
 	}
 
 	const handleSubmit = async event => {
@@ -244,7 +259,7 @@ const OrderCRUD = props => {
 			<input
 				onBlur={quantitySetter}
 				onFocus={event => event.target.select()}
-				style={{ width: '100%' }}
+				className="full-width"
 				type="number"
 				name="quantity"
 				id={productId}
@@ -257,15 +272,11 @@ const OrderCRUD = props => {
 
 	const orderCRUDForm = () => {
 		return (
-			<Container className="order-edit">
+			<Container className="order-crud">
 				<Form onSubmit={handleSubmit} validated={isValidated}>
 					<Row>
 						<Col sm>
-							<Button
-								style={{ width: '100%', border: '2px solid' }}
-								variant="warning"
-								onClick={() => console.log('TCL: orderStates', orderStates)}
-							>
+							<Button variant="warning" block>
 								CONSOLE.LOG -- orderStates -- CONSOLE.LOG
 							</Button>
 						</Col>
@@ -275,7 +286,7 @@ const OrderCRUD = props => {
 						<Col sm>
 							<Form.Group>
 								<Form.Label>Confirmation Sent?</Form.Label>
-								<ButtonGroup style={{ width: '100%' }}>
+								<ButtonGroup className="full-width">
 									<Button
 										onClick={() =>
 											orderDispatch({ type: 'CONFIRMATION_SENT_STATUS', status: true })
@@ -304,7 +315,7 @@ const OrderCRUD = props => {
 						<Col sm>
 							<Form.Group>
 								<Form.Label>Proforma Sent?</Form.Label>
-								<ButtonGroup style={{ width: '100%' }}>
+								<ButtonGroup className="full-width">
 									<Button
 										onClick={() => orderDispatch({ type: 'PROFORMA_SENT_STATUS', status: true })}
 										style={{ border: orderStates.isProformaSent ? '4px solid' : null }}
@@ -329,7 +340,7 @@ const OrderCRUD = props => {
 						<Col sm>
 							<Form.Group>
 								<Form.Label>Invoice Sent?</Form.Label>
-								<ButtonGroup style={{ width: '100%' }}>
+								<ButtonGroup className="full-width">
 									<Button
 										onClick={() => orderDispatch({ type: 'INVOICE_SENT_STATUS', status: true })}
 										style={{ border: orderStates.isInvoiceSent ? '4px solid' : null }}
@@ -354,7 +365,7 @@ const OrderCRUD = props => {
 						<Col sm>
 							<Form.Group>
 								<Form.Label>Settled Payment?</Form.Label>
-								<ButtonGroup style={{ width: '100%' }}>
+								<ButtonGroup className="full-width">
 									<Button
 										onClick={() => orderDispatch({ type: 'SETTLED_PAYMENT_STATUS', status: true })}
 										style={{ border: orderStates.isPaymentSettled ? '4px solid' : null }}
@@ -462,10 +473,11 @@ const OrderCRUD = props => {
 
 					<Row>
 						<Col sm>
-							<Form.Group controlId="customerName">
+							<Form.Group controlId="customerName" >
 								<Form.Label>Customer Name</Form.Label>
 								<Form.Control
 									onChange={handleFormChange}
+									className='customer-inputs'
 									type="text"
 									name="customerName"
 									placeholder="Customer Name"
@@ -482,6 +494,7 @@ const OrderCRUD = props => {
 								<Form.Label>Customer Email</Form.Label>
 								<Form.Control
 									onChange={handleFormChange}
+									className='customer-inputs'
 									type="text"
 									name="customerEmail"
 									placeholder="Customer Email"
@@ -500,6 +513,7 @@ const OrderCRUD = props => {
 								<Form.Label>Customer VAT Number</Form.Label>
 								<Form.Control
 									onChange={handleFormChange}
+									className='customer-inputs'
 									type="text"
 									name="customerVat"
 									placeholder="Customer VAT Number"
@@ -514,7 +528,7 @@ const OrderCRUD = props => {
 						</Col>
 					</Row>
 
-					{orderStates.isDetailsViewRequested ? null : (
+					{orderStates.isCreateViewRequested ? (
 						<Row>
 							<Col sm>
 								<Form.Group controlId="customerSearch">
@@ -529,7 +543,7 @@ const OrderCRUD = props => {
 								</Form.Group>
 							</Col>
 						</Row>
-					)}
+					) : null}
 
 					{orderStates.isDetailsViewRequested
 						? null
@@ -545,7 +559,7 @@ const OrderCRUD = props => {
 
 					<Row>
 						<Col sm>
-							<Form.Group controlId="productsTotalPrice">
+							<Form.Group controlId="currencyAndProductsTotalPrice">
 								<Form.Label>Total Price</Form.Label>
 								<InputGroup>
 									<DropdownButton
@@ -573,13 +587,14 @@ const OrderCRUD = props => {
 											USD
 										</Dropdown.Item>
 									</DropdownButton>
+
 									<Form.Control
 										onChange={handleFormChange}
 										type="text"
 										name="productsTotalPrice"
 										placeholder="Products Total Price"
 										defaultValue={
-											orderStates.order === null ? null : orderStates.order.productsTotalPrice
+											orderStates.order.productsTotalPrice === undefined ? null : orderStates.order.productsTotalPrice.toFixed(2)
 										}
 										disabled
 									/>
@@ -595,14 +610,14 @@ const OrderCRUD = props => {
 									type="number"
 									name="productsCount"
 									placeholder="Products Count"
-									defaultValue={orderStates.order === null ? null : orderStates.order.productsCount}
+									defaultValue={orderStates.order.productsCount === undefined ? null : orderStates.order.productsCount}
 									disabled
 								/>
 							</Form.Group>
 						</Col>
 					</Row>
 
-					{orderStates.selectedProducts.length === 0 ? null : (
+					{orderStates.selectedProducts.length !== 0 ? (
 						<SimpleList
 							elementsList={orderStates.selectedProducts}
 							titleFieldName="name"
@@ -611,7 +626,7 @@ const OrderCRUD = props => {
 							onDelete={orderStates.isDetailsViewRequested ? null : onSelectedProductDelete}
 							deletable={!orderStates.isDetailsViewRequested}
 						/>
-					)}
+					) : null}
 
 					{orderStates.isDetailsViewRequested ? null : (
 						<Row>
@@ -647,53 +662,33 @@ const OrderCRUD = props => {
 					{orderStates.isDetailsViewRequested ? (
 						<Row>
 							<Col sm>
-								<Button
-									style={{ width: '100%', border: '2px solid' }}
-									variant="secondary"
-									onClick={() => props.history.push(`/orders/`)}
-								>
+								<Button onClick={() => props.history.push(`/orders/`)} variant="secondary" block>
 									Return
 								</Button>
 							</Col>
 
 							<Col sm>
-								<Button
-									style={{ width: '100%', border: '2px solid' }}
-									variant="danger"
-									onClick={() => setIsDeleteModalOpen(true)}
-								>
+								<Button onClick={() => setIsDeleteModalOpen(true)} variant="danger" block>
 									Delete
 								</Button>
 							</Col>
 
 							<Col sm>
-								<Button
-									onClick={() => renderEditView()}
-									style={{ width: '100%', border: '2px solid' }}
-									variant="primary"
-								>
-									Customize this Order
+								<Button onClick={() => renderEditView()} variant="primary" block>
+									Customize Order
 								</Button>
 							</Col>
 						</Row>
 					) : (
 						<Row>
 							<Col sm>
-								<Button
-									style={{ width: '100%', border: '2px solid' }}
-									variant="danger"
-									onClick={() => props.history.push(`/orders/`)}
-								>
+								<Button onClick={() => props.history.push(`/orders/`)} variant="danger" block>
 									Cancel
 								</Button>
 							</Col>
 
 							<Col sm>
-								<Button
-									style={{ width: '100%', border: '2px solid' }}
-									type="submit"
-									variant="success"
-								>
+								<Button variant="success" type="submit" block>
 									Submit
 								</Button>
 							</Col>

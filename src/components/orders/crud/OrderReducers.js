@@ -1,5 +1,4 @@
 import OrdersApiService from '../../../utils/api/ordersApiService'
-import ProductsApiService from '../../../utils/api/productsApiService'
 
 const initializeQuantityInProducts = productsList => {
 	return productsList.map(productElement => {
@@ -139,8 +138,8 @@ export const OrderReducers = (state, action) => {
 			return {
 				...state,
 				order: action.order,
-				selectedProducts: action.allSelected,
-				availableProducts: action.allAvailable,
+				selectedProducts: action.selectedProducts,
+				availableProducts: action.availableProducts,
 			}
 
 		case 'DELETE_PRODUCT_FROM_ORDER':
