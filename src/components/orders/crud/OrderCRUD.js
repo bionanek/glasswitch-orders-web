@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from 'react'
+import React, { useState, useEffect, useReducer } from 'react'
 import { withRouter } from 'react-router-dom'
 import {
 	Container,
@@ -23,6 +23,96 @@ import { OrderReducers, InitialOrderState } from './OrderReducers'
 
 const OrderCRUD = props => {
 	const [orderStates, orderDispatch] = useReducer(OrderReducers, InitialOrderState)
+	const [isValidated, setIsValidated] = useState(false)
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+
+	const getCurrentProduct = id => {
+		return [...orderStates.availableProducts].find(product => product.id === id)
+	}
+
+	const quantitySetter = event => {
+		let targetProduct = [...orderStates.selectedProducts].find(
+			product => product.id === +event.target.id,
+		)
+		let isAvailable = false
+
+		if (!targetProduct) {
+			targetProduct = getCurrentProduct(+event.target.id)
+			isAvailable = true
+		}
+		targetProduct.quantity = +event.target.value
+
+		if (isAvailable) {
+			const allProducts = [...orderStates.availableProducts]
+			allProducts[targetProduct] = targetProduct
+			orderDispatch({ type: 'AVAILABLE_PRODUCTS_SETTER', allProducts })
+			return
+		}
+
+		const selectedProds = [...orderStates.selectedProducts]
+		selectedProds[selectedProds.indexOf(targetProduct)] = targetProduct
+
+		orderDispatch({ type: 'SELECTED_PRODS_SETTER', selectedProds })
+	}
+
+	const handleAvailableProductSelection = (product, event) => {
+		const allSelected = [...orderStates.selectedProducts]
+		const allAvailable = [...orderStates.availableProducts]
+		const selectedProduct = allAvailable.find(el => el.id === product.id)
+		const currentOrder = { ...orderStates.order }
+
+		if (orderStates.isCreateViewRequested) {
+			currentOrder.wantedProducts.push({
+				id: selectedProduct.id,
+				quantity: selectedProduct.quantity,
+			})
+		} else {
+			currentOrder.products.push({
+				id: selectedProduct.id,
+				quantity: selectedProduct.quantity,
+			})
+		}
+
+		allAvailable.splice(allAvailable.indexOf(selectedProduct), 1)
+		allSelected.push(selectedProduct)
+
+		orderDispatch({
+			type: 'ADD_PRODUCT_TO_ORDER',
+			order: currentOrder,
+			selectedProducts: allSelected,
+			availableProducts: allAvailable,
+		})
+	}
+
+	const onAvailableProductClick = product => {
+		if (orderStates.selectedProducts[product]) {
+			return
+		}
+		handleAvailableProductSelection(product)
+	}
+
+	const onSelectedProductDelete = async product => {
+		const indexOfProduct = orderStates.selectedProducts.indexOf(product)
+
+		if (indexOfProduct >= 0) {
+			const selectedProds = [...orderStates.selectedProducts]
+			const availables = [...orderStates.availableProducts]
+			const currentOrder = { ...orderStates.order }
+			const prod = { ...product }
+			prod.quantity = 0
+
+			selectedProds.splice(indexOfProduct, 1)
+
+			if (orderStates.isCreateViewRequested) currentOrder.wantedProducts.splice(indexOfProduct, 1)
+			else currentOrder.products.splice(indexOfProduct, 1)
+
+			orderDispatch({
+				type: 'DELETE_PRODUCT_FROM_ORDER',
+				selectedProducts: selectedProds,
+				availableProducts: availables,
+			})
+		}
+	}
 
 	const handleCustomerSearch = async event => {
 		const customerSearch = event.target.value
@@ -49,50 +139,100 @@ const OrderCRUD = props => {
 		orderDispatch({ type: 'PRODUCTS_SEARCH_RESULTS', foundProducts: foundProducts.data })
 	}
 
-	const handleFormChange = () => {}
+	const handleFormChange = event => {
+		const currentOrder = orderStates.order
+		const { id, name, value } = event.target
+		switch (id) {
+			default:
+				currentOrder[name] = value
+				break
+		}
+		orderDispatch({ type: 'HANDLE_FORM_CHANGE', currentOrder })
+	}
 
-	const handleSubmit = () => {}
+	const handleDataConfirm = async () => {
+		const currentOrder = orderStates.order
+		setIsValidated(true)
+
+		currentOrder.customerId = orderStates.selectedCustomer.id
+		currentOrder.confirmationSent = orderStates.isConfirmationSent
+		currentOrder.proformaSent = orderStates.isProformaSent
+		currentOrder.invoiceSent = orderStates.isInvoiceSent
+		currentOrder.settledPayment = orderStates.isPaymentSettled
+		currentOrder.deadline = orderStates.date.toLocaleDateString()
+		currentOrder.currency = orderStates.selectedCurrency
+
+		if (orderStates.isCreateViewRequested) {
+			currentOrder.wantedProducts = orderStates.selectedProducts.map(prod => {
+				return {
+					id: prod.id,
+					quantity: prod.quantity,
+				}
+			})
+		} else {
+			currentOrder.products = orderStates.selectedProducts.map(prod => {
+				return {
+					id: prod.id,
+					quantity: prod.quantity,
+				}
+			})
+		}
+
+		orderDispatch({ type: 'FORM_DATA', currentOrder })
+	}
+
+	const handleSubmit = async event => {
+		const form = event.currentTarget
+		event.preventDefault()
+		if (form.checkValidity() === false) event.stopPropagation()
+		handleDataConfirm()
+	}
+
+	const renderCreateView = async () => {
+		const fetchedAvailableProducts = await ProductsApiService.getAllProducts()
+		orderDispatch({
+			type: 'ORDER_CREATE_INIT',
+			products: fetchedAvailableProducts.data,
+		})
+	}
+
+	const renderDetailsView = async () => {
+		const fetchedOrder = await OrdersApiService.getOrderById(props.match.params.id)
+		const fetchedAvailableProducts = await ProductsApiService.getAllProducts()
+
+		orderDispatch({
+			type: 'ORDER_DATA_INIT',
+			order: fetchedOrder.data,
+			products: fetchedAvailableProducts.data,
+			isDetailsViewRequested: true,
+		})
+	}
+
+	const renderEditView = async () => {
+		const fetchedOrder = await OrdersApiService.getOrderById(props.match.params.id)
+		const fetchedAvailableProducts = await ProductsApiService.getAllProducts()
+
+		orderDispatch({
+			type: 'ORDER_DATA_INIT',
+			order: fetchedOrder.data,
+			products: fetchedAvailableProducts.data,
+			isDetailsViewRequested: false,
+		})
+
+		orderDispatch({
+			type: 'REMOVE_SELECTED_PRODUCTS_FROM_AVAILABLE',
+		})
+	}
 
 	useEffect(() => {
-		const renderRequestedPage = async () => {
-			if (props.match.params.id === undefined) {
-				const fetchedAvailableProducts = await ProductsApiService.getAllProducts()
-
-				orderDispatch({
-					type: 'ORDER_CREATE_INIT',
-					products: fetchedAvailableProducts.data,
-				})
-				return
-			}
-
-			if (props.match.path.split(':id/')[1] === 'details') {
-				const fetchedOrder = await OrdersApiService.getOrderById(props.match.params.id)
-				const fetchedAvailableProducts = await ProductsApiService.getAllProducts()
-
-				orderDispatch({
-					type: 'ORDER_DATA_INIT',
-					order: fetchedOrder.data,
-					products: fetchedAvailableProducts.data,
-					isDetailsViewRequested: true,
-				})
-			} else {
-				const fetchedOrder = await OrdersApiService.getOrderById(props.match.params.id)
-				const fetchedAvailableProducts = await ProductsApiService.getAllProducts()
-
-				orderDispatch({
-					type: 'ORDER_DATA_INIT',
-					order: fetchedOrder.data,
-					products: fetchedAvailableProducts.data,
-					isDetailsViewRequested: false,
-				})
-			}
+		if (props.match.params.id === undefined) {
+			renderCreateView()
+			return
 		}
-		renderRequestedPage()
-	}, [])
 
-	const getCurrentProduct = id => {
-		return [...orderStates.availableProducts].find(product => product.id === id)
-	}
+		if (props.match.path.split(':id/')[1] === 'details') renderDetailsView()
+		else renderEditView()
+	}, [])
 
 	const quantityInput = (productId, _product = null) => {
 		let product = _product
@@ -102,7 +242,7 @@ const OrderCRUD = props => {
 
 		return (
 			<input
-				// onBlur={quantitySetter}
+				onBlur={quantitySetter}
 				onFocus={event => event.target.select()}
 				style={{ width: '100%' }}
 				type="number"
@@ -110,6 +250,7 @@ const OrderCRUD = props => {
 				id={productId}
 				placeholder="Quantity"
 				defaultValue={product.quantity === 0 ? null : product.quantity}
+				disabled={orderStates.isDetailsViewRequested}
 			/>
 		)
 	}
@@ -117,7 +258,7 @@ const OrderCRUD = props => {
 	const orderCRUDForm = () => {
 		return (
 			<Container className="order-edit">
-				<Form onSubmit={handleSubmit} validated={orderStates.isValidated}>
+				<Form onSubmit={handleSubmit} validated={isValidated}>
 					<Row>
 						<Col sm>
 							<Button
@@ -309,9 +450,9 @@ const OrderCRUD = props => {
 									onChange={handleFormChange}
 									onFocus={event => event.target.select()}
 									type="text"
-									name="orderEmail"
+									name="email"
 									placeholder="Order Email"
-									defaultValue={orderStates.order === null ? null : orderStates.order.notes}
+									defaultValue={orderStates.order === null ? null : orderStates.order.email}
 									disabled={orderStates.isDetailsViewRequested}
 									required
 								/>
@@ -467,8 +608,8 @@ const OrderCRUD = props => {
 							titleFieldName="name"
 							subtitleFieldName="code"
 							dynamicElement={quantityInput}
-							// onDelete={onSelectedProductDelete}
-							// deletable
+							onDelete={orderStates.isDetailsViewRequested ? null : onSelectedProductDelete}
+							deletable={!orderStates.isDetailsViewRequested}
 						/>
 					)}
 
@@ -498,7 +639,7 @@ const OrderCRUD = props => {
 							eur="eur"
 							usd="usd"
 							dynamicElement={quantityInput}
-							onClick={product => orderDispatch({ type: 'ADD_PRODUCT', product })}
+							onClick={product => onAvailableProductClick(product)}
 							clickable
 						/>
 					)}
@@ -509,7 +650,7 @@ const OrderCRUD = props => {
 								<Button
 									style={{ width: '100%', border: '2px solid' }}
 									variant="secondary"
-									onClick={() => props.history.push('/orders/')}
+									onClick={() => props.history.push(`/orders/`)}
 								>
 									Return
 								</Button>
@@ -519,7 +660,7 @@ const OrderCRUD = props => {
 								<Button
 									style={{ width: '100%', border: '2px solid' }}
 									variant="danger"
-									onClick={() => orderDispatch({ type: 'OPEN_DELETE_MODAL' })}
+									onClick={() => setIsDeleteModalOpen(true)}
 								>
 									Delete
 								</Button>
@@ -527,11 +668,11 @@ const OrderCRUD = props => {
 
 							<Col sm>
 								<Button
+									onClick={() => renderEditView()}
 									style={{ width: '100%', border: '2px solid' }}
-									type="submit"
-									variant="success"
+									variant="primary"
 								>
-									Submit
+									Customize this Order
 								</Button>
 							</Col>
 						</Row>
@@ -560,8 +701,8 @@ const OrderCRUD = props => {
 					)}
 
 					<ConfirmationModal
-						isOpen={orderStates.isDeleteModalOpen}
-						onModalClose={() => orderDispatch({ type: 'CLOSE_DELETE_MODAL' })}
+						isOpen={isDeleteModalOpen}
+						onModalClose={() => setIsDeleteModalOpen(false)}
 						onConfirm={() =>
 							orderDispatch({
 								type: 'HANDLE_ORDER_DELETE',
