@@ -27,6 +27,41 @@ const OrderCRUD = props => {
 	const [isValidated, setIsValidated] = useState(false)
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
+	const onAvailableProductClick = product => {
+		if (orderStates.selectedProducts[product]) {
+			return
+		}
+		orderDispatch({ type: 'ADD_PRODUCT_TO_ORDER', product })
+	}
+
+	const onSelectedProductDelete = async product => {
+		const indexOfProduct = orderStates.selectedProducts.indexOf(product)
+	
+		if (indexOfProduct >= 0) {
+			const selectedProds = [...orderStates.selectedProducts]
+			const availables = [...orderStates.availableProducts]
+			const currentOrder = { ...orderStates.order }
+	
+			selectedProds.splice(indexOfProduct, 1)
+	
+			if (orderStates.isCreateViewRequested) {
+				currentOrder.wantedProducts.splice(indexOfProduct, 1)
+			} else {
+				// TODO: CALL API FOR DELETING PRODUCT FROM AN ORDER
+				// currentOrder.products = [
+				// 	{
+				// 		"id": 1
+				// 	}
+				// ]
+			}
+	
+			const fetchedProduct = await ProductsApiService.getProductById(product.id)
+			availables.push(fetchedProduct.data)
+
+			orderDispatch({ type: 'DELETE_PRODUCT_FROM_ORDER', currentOrder, selectedProds, availables })
+		}
+	}
+
 	const quantitySetter = event => {
 		let targetProduct = [...orderStates.selectedProducts].find(
 			product => product.id === +event.target.id,
@@ -50,69 +85,6 @@ const OrderCRUD = props => {
 		selectedProds[selectedProds.indexOf(targetProduct)] = targetProduct
 
 		orderDispatch({ type: 'SELECTED_PRODS_SETTER', selectedProds })
-	}
-
-	const handleAvailableProductSelection = product => {
-		const allSelected = [...orderStates.selectedProducts]
-		const allAvailable = [...orderStates.availableProducts]
-		const selectedProduct = allAvailable.find(el => el.id === product.id)
-		const currentOrder = { ...orderStates.order }
-
-		if (orderStates.isCreateViewRequested) {
-			currentOrder.wantedProducts.push({
-				id: selectedProduct.id,
-				quantity: selectedProduct.quantity,
-			})
-		} else {
-			currentOrder.products.push({
-				id: selectedProduct.id,
-				quantity: selectedProduct.quantity,
-			})
-		}
-
-		allAvailable.splice(allAvailable.indexOf(selectedProduct), 1)
-		allSelected.push(selectedProduct)
-
-		orderDispatch({
-			type: 'ADD_PRODUCT_TO_ORDER',
-			order: currentOrder,
-			selectedProducts: allSelected,
-			availableProducts: allAvailable,
-		})
-	}
-
-	const onAvailableProductClick = product => {
-		if (orderStates.selectedProducts[product]) {
-			return
-		}
-		handleAvailableProductSelection(product)
-	}
-
-	const onSelectedProductDelete = async product => {
-		const indexOfProduct = orderStates.selectedProducts.indexOf(product)
-
-		if (indexOfProduct >= 0) {
-			const selectedProds = [...orderStates.selectedProducts]
-			const availables = [...orderStates.availableProducts]
-			const currentOrder = { ...orderStates.order }
-
-			selectedProds.splice(indexOfProduct, 1)
-
-			if (orderStates.isCreateViewRequested) {
-				currentOrder.wantedProducts.splice(indexOfProduct, 1)
-			} else {
-				currentOrder.products.splice(indexOfProduct, 1)
-			}
-
-			const fetchedProduct = await ProductsApiService.getProductById(product.id)
-			availables.push(fetchedProduct.data)
-
-			orderDispatch({
-				type: 'DELETE_PRODUCT_FROM_ORDER',
-				selectedProducts: selectedProds,
-				availableProducts: availables,
-			})
-		}
 	}
 
 	const handleCustomerSearch = async event => {
@@ -628,7 +600,7 @@ const OrderCRUD = props => {
 							titleFieldName="name"
 							subtitleFieldName="code"
 							dynamicElement={quantityInput}
-							onDelete={orderStates.isDetailsViewRequested ? null : onSelectedProductDelete}
+							onDelete={orderStates.isDetailsViewRequested ? null : product => onSelectedProductDelete(product)}
 							deletable={!orderStates.isDetailsViewRequested}
 						/>
 					) : null}

@@ -14,6 +14,37 @@ const initializeQuantityInProducts = productsList => {
 	})
 }
 
+const handleAvailableProductSelection = (product, state) => {
+	const allSelected = [...state.selectedProducts]
+	const allAvailable = [...state.availableProducts]
+	const selectedProduct = allAvailable.find(el => el.id === product.id)
+	const currentOrder = { ...state.order }
+
+	if (state.isCreateViewRequested) {
+		currentOrder.wantedProducts.push({
+			id: selectedProduct.id,
+			quantity: selectedProduct.quantity,
+		})
+	} else {
+		currentOrder.updatedProducts = []
+
+		currentOrder.updatedProducts.push({
+			id: selectedProduct.id,
+			quantity: selectedProduct.quantity,
+		})
+	}
+
+	allAvailable.splice(allAvailable.indexOf(selectedProduct), 1)
+	allSelected.push(selectedProduct)
+
+	return {
+		...state,
+		order: currentOrder,
+		selectedProducts: allSelected,
+		availableProducts: allAvailable,
+	}
+}
+
 export const getCurrentProduct = (id, state) => {
 	return [...state.availableProducts].find(product => product.id === id)
 }
@@ -139,18 +170,14 @@ export const OrderReducers = (state, action) => {
 			}
 
 		case 'ADD_PRODUCT_TO_ORDER':
-			return {
-				...state,
-				order: action.order,
-				selectedProducts: action.selectedProducts,
-				availableProducts: action.availableProducts,
-			}
+			return handleAvailableProductSelection(action.product, state)
 
 		case 'DELETE_PRODUCT_FROM_ORDER':
 			return {
 				...state,
-				selectedProducts: action.selectedProducts,
-				availableProducts: action.availableProducts,
+				order: action.currentOrder,
+				selectedProducts: action.selectedProds,
+				availableProducts: action.availables,
 			}
 
 		case 'AVAILABLE_PRODUCTS_SETTER':
