@@ -14,6 +14,10 @@ const initializeQuantityInProducts = productsList => {
 	})
 }
 
+export const getCurrentProduct = (id, state) => {
+	return [...state.availableProducts].find(product => product.id === id)
+}
+
 const removeSelectedProductsFromAvailable = (productsInOrder, remainingProducts, state) => {
 	const allSelected = [...productsInOrder]
 	let allAvailable = [...remainingProducts]
@@ -30,7 +34,7 @@ const removeSelectedProductsFromAvailable = (productsInOrder, remainingProducts,
 	}
 }
 
-const onDeleteConfirm = async (url, id) => {
+export const onDeleteConfirm = async (url, id) => {
 	await OrdersApiService.deleteOrder(id)
 	url.push(`/orders/`)
 }
@@ -172,9 +176,6 @@ export const OrderReducers = (state, action) => {
 				...state,
 				order: action.currentOrder,
 			}
-
-		case 'HANDLE_ORDER_DELETE':
-			return onDeleteConfirm(action.url, action.id)
 
 		default:
 			return state

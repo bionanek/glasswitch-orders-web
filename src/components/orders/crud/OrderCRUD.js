@@ -19,17 +19,13 @@ import OrdersApiService from '../../../utils/api/ordersApiService'
 import CustomersApiService from '../../../utils/api/customersApiService'
 import ProductsApiService from '../../../utils/api/productsApiService'
 import ConfirmationModal from '../../common/modals/confirmationModal/ConfirmationModal'
-import { OrderReducers, InitialOrderState } from './OrderReducers'
+import { OrderReducers, InitialOrderState, getCurrentProduct, onDeleteConfirm } from './OrderReducers'
 import './OrderCRUD.scss'
 
 const OrderCRUD = props => {
 	const [orderStates, orderDispatch] = useReducer(OrderReducers, InitialOrderState)
 	const [isValidated, setIsValidated] = useState(false)
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-
-	const getCurrentProduct = id => {
-		return [...orderStates.availableProducts].find(product => product.id === id)
-	}
 
 	const quantitySetter = event => {
 		let targetProduct = [...orderStates.selectedProducts].find(
@@ -38,7 +34,7 @@ const OrderCRUD = props => {
 		let isAvailable = false
 
 		if (!targetProduct) {
-			targetProduct = getCurrentProduct(+event.target.id)
+			targetProduct = getCurrentProduct(+event.target.id, orderStates)
 			isAvailable = true
 		}
 		targetProduct.quantity = +event.target.value
@@ -99,14 +95,17 @@ const OrderCRUD = props => {
 			const selectedProds = [...orderStates.selectedProducts]
 			const availables = [...orderStates.availableProducts]
 			const currentOrder = { ...orderStates.order }
-			const prod = { ...product }
-			prod.quantity = 0
 
 			selectedProds.splice(indexOfProduct, 1)
-			availables.push(prod)
 
-			if (orderStates.isCreateViewRequested) currentOrder.wantedProducts.splice(indexOfProduct, 1)
-			else currentOrder.products.splice(indexOfProduct, 1)
+			if (orderStates.isCreateViewRequested) {
+				currentOrder.wantedProducts.splice(indexOfProduct, 1)
+			} else {
+				currentOrder.products.splice(indexOfProduct, 1)
+			}
+
+			const fetchedProduct = await ProductsApiService.getProductById(product.id)
+			availables.push(fetchedProduct.data)
 
 			orderDispatch({
 				type: 'DELETE_PRODUCT_FROM_ORDER',
@@ -245,14 +244,14 @@ const OrderCRUD = props => {
 			return
 		}
 
-		if (props.match.path.split(':id/')[1] === 'details') renderDetailsView()
-		else renderEditView()
+		if (props.match.path.split(':id/')[1] === 'edit') renderEditView()
+		else renderDetailsView()
 	}, [])
 
 	const quantityInput = (productId, _product = null) => {
 		let product = _product
 		if (product === null) {
-			product = getCurrentProduct(productId)
+			product = getCurrentProduct(productId, orderStates)
 		}
 
 		return (
@@ -276,7 +275,7 @@ const OrderCRUD = props => {
 				<Form onSubmit={handleSubmit} validated={isValidated}>
 					<Row>
 						<Col sm>
-							<Button variant="warning" block>
+							<Button onClick={() => console.log("TCL: orderStates", orderStates)} variant="warning" block>
 								CONSOLE.LOG -- orderStates -- CONSOLE.LOG
 							</Button>
 						</Col>
@@ -473,11 +472,11 @@ const OrderCRUD = props => {
 
 					<Row>
 						<Col sm>
-							<Form.Group controlId="customerName" >
+							<Form.Group controlId="customerName">
 								<Form.Label>Customer Name</Form.Label>
 								<Form.Control
 									onChange={handleFormChange}
-									className='customer-inputs'
+									className="customer-inputs"
 									type="text"
 									name="customerName"
 									placeholder="Customer Name"
@@ -494,7 +493,7 @@ const OrderCRUD = props => {
 								<Form.Label>Customer Email</Form.Label>
 								<Form.Control
 									onChange={handleFormChange}
-									className='customer-inputs'
+									className="customer-inputs"
 									type="text"
 									name="customerEmail"
 									placeholder="Customer Email"
@@ -513,7 +512,7 @@ const OrderCRUD = props => {
 								<Form.Label>Customer VAT Number</Form.Label>
 								<Form.Control
 									onChange={handleFormChange}
-									className='customer-inputs'
+									className="customer-inputs"
 									type="text"
 									name="customerVat"
 									placeholder="Customer VAT Number"
@@ -594,7 +593,9 @@ const OrderCRUD = props => {
 										name="productsTotalPrice"
 										placeholder="Products Total Price"
 										defaultValue={
-											orderStates.order.productsTotalPrice === undefined ? null : orderStates.order.productsTotalPrice.toFixed(2)
+											orderStates.order.productsTotalPrice === undefined
+												? null
+												: orderStates.order.productsTotalPrice.toFixed(2)
 										}
 										disabled
 									/>
@@ -610,7 +611,11 @@ const OrderCRUD = props => {
 									type="number"
 									name="productsCount"
 									placeholder="Products Count"
-									defaultValue={orderStates.order.productsCount === undefined ? null : orderStates.order.productsCount}
+									defaultValue={
+										orderStates.order.productsCount === undefined
+											? null
+											: orderStates.order.productsCount
+									}
 									disabled
 								/>
 							</Form.Group>
@@ -699,11 +704,7 @@ const OrderCRUD = props => {
 						isOpen={isDeleteModalOpen}
 						onModalClose={() => setIsDeleteModalOpen(false)}
 						onConfirm={() =>
-							orderDispatch({
-								type: 'HANDLE_ORDER_DELETE',
-								url: props.history,
-								id: props.match.params.id,
-							})
+							onDeleteConfirm(props.history, props.match.params.id)
 						}
 					/>
 				</Form>
