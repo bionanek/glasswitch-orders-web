@@ -51,4 +51,16 @@ export default class OrdersApiService {
 			throw Error(ex.message)
 		}
 	}
+
+	static async deleteProductsFromOrder(id, productsToDelete) {
+		try {
+			const response = await Axios.patch(
+				`${apiUrl + id.toString()}/delete-product`,
+				productsToDelete,
+			)
+			return response
+		} catch (ex) {
+			throw Error(ex.message)
+		}
+	}
 }

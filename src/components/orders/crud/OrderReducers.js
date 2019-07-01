@@ -14,41 +14,6 @@ const initializeQuantityInProducts = productsList => {
 	})
 }
 
-const handleAvailableProductSelection = (product, state) => {
-	const allSelected = [...state.selectedProducts]
-	const allAvailable = [...state.availableProducts]
-	const selectedProduct = allAvailable.find(el => el.id === product.id)
-	const currentOrder = { ...state.order }
-
-	if (state.isCreateViewRequested) {
-		currentOrder.wantedProducts.push({
-			id: selectedProduct.id,
-			quantity: selectedProduct.quantity,
-		})
-	} else {
-		currentOrder.updatedProducts = []
-
-		currentOrder.updatedProducts.push({
-			id: selectedProduct.id,
-			quantity: selectedProduct.quantity,
-		})
-	}
-
-	allAvailable.splice(allAvailable.indexOf(selectedProduct), 1)
-	allSelected.push(selectedProduct)
-
-	return {
-		...state,
-		order: currentOrder,
-		selectedProducts: allSelected,
-		availableProducts: allAvailable,
-	}
-}
-
-export const getCurrentProduct = (id, state) => {
-	return [...state.availableProducts].find(product => product.id === id)
-}
-
 const removeSelectedProductsFromAvailable = (productsInOrder, remainingProducts, state) => {
 	const allSelected = [...productsInOrder]
 	let allAvailable = [...remainingProducts]
@@ -63,11 +28,6 @@ const removeSelectedProductsFromAvailable = (productsInOrder, remainingProducts,
 		...state,
 		availableProducts: allAvailable,
 	}
-}
-
-export const onDeleteConfirm = async (url, id) => {
-	await OrdersApiService.deleteOrder(id)
-	url.push(`/orders/`)
 }
 
 export const OrderReducers = (state, action) => {
@@ -170,14 +130,11 @@ export const OrderReducers = (state, action) => {
 			}
 
 		case 'ADD_PRODUCT_TO_ORDER':
-			return handleAvailableProductSelection(action.product, state)
-
-		case 'DELETE_PRODUCT_FROM_ORDER':
 			return {
 				...state,
 				order: action.currentOrder,
-				selectedProducts: action.selectedProds,
-				availableProducts: action.availables,
+				selectedProducts: action.allSelected,
+				availableProducts: action.allAvailable,
 			}
 
 		case 'AVAILABLE_PRODUCTS_SETTER':
@@ -186,19 +143,13 @@ export const OrderReducers = (state, action) => {
 				availableProducts: action.allProducts,
 			}
 
-		case 'SELECTED_PRODS_SETTER':
+		case 'SELECTED_PRODUCTS_SETTER':
 			return {
 				...state,
 				selectedProducts: action.selectedProds,
 			}
 
 		case 'HANDLE_FORM_CHANGE':
-			return {
-				...state,
-				order: action.currentOrder,
-			}
-
-		case 'FORM_DATA':
 			return {
 				...state,
 				order: action.currentOrder,
@@ -225,4 +176,13 @@ export const InitialOrderState = {
 	availableCustomers: [],
 	selectedProducts: [],
 	selectedCustomer: {},
+}
+
+export const getCurrentProduct = (id, state) => {
+	return [...state.availableProducts].find(product => product.id === id)
+}
+
+export const onDeleteConfirm = async (url, id) => {
+	await OrdersApiService.deleteOrder(id)
+	url.push(`/orders/`)
 }

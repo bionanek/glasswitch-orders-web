@@ -27,11 +27,73 @@ const OrderCRUD = props => {
 	const [isValidated, setIsValidated] = useState(false)
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
+	const renderCreateView = async () => {
+		const fetchedAvailableProducts = await ProductsApiService.getAllProducts()
+		orderDispatch({
+			type: 'ORDER_CREATE_INIT',
+			products: fetchedAvailableProducts.data,
+		})
+	}
+
+	const renderDetailsView = async () => {
+		const fetchedOrder = await OrdersApiService.getOrderById(props.match.params.id)
+		const fetchedAvailableProducts = await ProductsApiService.getAllProducts()
+
+		orderDispatch({
+			type: 'ORDER_DATA_INIT',
+			order: fetchedOrder.data,
+			products: fetchedAvailableProducts.data,
+			isDetailsViewRequested: true,
+		})
+	}
+
+	const renderEditView = async () => {
+		const fetchedOrder = await OrdersApiService.getOrderById(props.match.params.id)
+		const fetchedAvailableProducts = await ProductsApiService.getAllProducts()
+
+		orderDispatch({
+			type: 'ORDER_DATA_INIT',
+			order: fetchedOrder.data,
+			products: fetchedAvailableProducts.data,
+			isDetailsViewRequested: false,
+		})
+
+		orderDispatch({
+			type: 'REMOVE_SELECTED_PRODUCTS_FROM_AVAILABLE',
+		})
+	}
+
+	const handleAvailableProductSelection = product => {
+		const allSelected = [...orderStates.selectedProducts]
+		const allAvailable = [...orderStates.availableProducts]
+		const selectedProduct = allAvailable.find(el => el.id === product.id)
+		const currentOrder = { ...orderStates.order }
+	
+		if (orderStates.isCreateViewRequested) {
+			currentOrder.wantedProducts.push({
+				id: selectedProduct.id,
+				quantity: selectedProduct.quantity,
+			})
+		} else {
+			currentOrder.updatedProducts = []
+	
+			currentOrder.updatedProducts.push({
+				id: selectedProduct.id,
+				quantity: selectedProduct.quantity,
+			})
+		}
+		
+		allAvailable.splice(allAvailable.indexOf(selectedProduct), 1)
+		allSelected.push(selectedProduct)
+	
+		orderDispatch({ type: 'ADD_PRODUCT_TO_ORDER', currentOrder, allSelected, allAvailable})
+	}
+
 	const onAvailableProductClick = product => {
 		if (orderStates.selectedProducts[product]) {
 			return
 		}
-		orderDispatch({ type: 'ADD_PRODUCT_TO_ORDER', product })
+		handleAvailableProductSelection(product)
 	}
 
 	const onSelectedProductDelete = async product => {
@@ -39,7 +101,6 @@ const OrderCRUD = props => {
 	
 		if (indexOfProduct >= 0) {
 			const selectedProds = [...orderStates.selectedProducts]
-			const availables = [...orderStates.availableProducts]
 			const currentOrder = { ...orderStates.order }
 	
 			selectedProds.splice(indexOfProduct, 1)
@@ -47,18 +108,14 @@ const OrderCRUD = props => {
 			if (orderStates.isCreateViewRequested) {
 				currentOrder.wantedProducts.splice(indexOfProduct, 1)
 			} else {
-				// TODO: CALL API FOR DELETING PRODUCT FROM AN ORDER
-				// currentOrder.products = [
-				// 	{
-				// 		"id": 1
-				// 	}
-				// ]
+				const deleteProductsBody = {}
+				deleteProductsBody.productsToDelete = [{
+					id: product.id
+				}]
+				await OrdersApiService.deleteProductsFromOrder(currentOrder.id, deleteProductsBody)
 			}
 	
-			const fetchedProduct = await ProductsApiService.getProductById(product.id)
-			availables.push(fetchedProduct.data)
-
-			orderDispatch({ type: 'DELETE_PRODUCT_FROM_ORDER', currentOrder, selectedProds, availables })
+			renderEditView()
 		}
 	}
 
@@ -84,7 +141,7 @@ const OrderCRUD = props => {
 		const selectedProds = [...orderStates.selectedProducts]
 		selectedProds[selectedProds.indexOf(targetProduct)] = targetProduct
 
-		orderDispatch({ type: 'SELECTED_PRODS_SETTER', selectedProds })
+		orderDispatch({ type: 'SELECTED_PRODUCTS_SETTER', selectedProds })
 	}
 
 	const handleCustomerSearch = async event => {
@@ -127,6 +184,8 @@ const OrderCRUD = props => {
 		const currentOrder = orderStates.order
 		setIsValidated(true)
 
+		currentOrder.customerId = orderStates.selectedCustomer.id
+
 		if (!orderStates.isCreateViewRequested) {
 			delete currentOrder.customerId
 			delete currentOrder.productsTotalPrice
@@ -156,8 +215,6 @@ const OrderCRUD = props => {
 			})
 		}
 
-		orderDispatch({ type: 'FORM_DATA', currentOrder })
-
 		if (orderStates.isCreateViewRequested) {
 			await OrdersApiService.postOrder(currentOrder)
 		} else {
@@ -172,42 +229,6 @@ const OrderCRUD = props => {
 		event.preventDefault()
 		if (form.checkValidity() === false) event.stopPropagation()
 		handleDataConfirm()
-	}
-
-	const renderCreateView = async () => {
-		const fetchedAvailableProducts = await ProductsApiService.getAllProducts()
-		orderDispatch({
-			type: 'ORDER_CREATE_INIT',
-			products: fetchedAvailableProducts.data,
-		})
-	}
-
-	const renderDetailsView = async () => {
-		const fetchedOrder = await OrdersApiService.getOrderById(props.match.params.id)
-		const fetchedAvailableProducts = await ProductsApiService.getAllProducts()
-
-		orderDispatch({
-			type: 'ORDER_DATA_INIT',
-			order: fetchedOrder.data,
-			products: fetchedAvailableProducts.data,
-			isDetailsViewRequested: true,
-		})
-	}
-
-	const renderEditView = async () => {
-		const fetchedOrder = await OrdersApiService.getOrderById(props.match.params.id)
-		const fetchedAvailableProducts = await ProductsApiService.getAllProducts()
-
-		orderDispatch({
-			type: 'ORDER_DATA_INIT',
-			order: fetchedOrder.data,
-			products: fetchedAvailableProducts.data,
-			isDetailsViewRequested: false,
-		})
-
-		orderDispatch({
-			type: 'REMOVE_SELECTED_PRODUCTS_FROM_AVAILABLE',
-		})
 	}
 
 	useEffect(() => {
@@ -245,14 +266,6 @@ const OrderCRUD = props => {
 		return (
 			<Container className="order-crud">
 				<Form onSubmit={handleSubmit} validated={isValidated}>
-					<Row>
-						<Col sm>
-							<Button onClick={() => console.log("TCL: orderStates", orderStates)} variant="warning" block>
-								CONSOLE.LOG -- orderStates -- CONSOLE.LOG
-							</Button>
-						</Col>
-					</Row>
-
 					<Row>
 						<Col sm>
 							<Form.Group>
