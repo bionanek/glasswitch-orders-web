@@ -19,7 +19,12 @@ import OrdersApiService from '../../../utils/api/ordersApiService'
 import CustomersApiService from '../../../utils/api/customersApiService'
 import ProductsApiService from '../../../utils/api/productsApiService'
 import ConfirmationModal from '../../common/modals/confirmationModal/ConfirmationModal'
-import { OrderReducers, InitialOrderState, getCurrentProduct, onDeleteConfirm } from './OrderReducers'
+import {
+	OrderReducers,
+	InitialOrderState,
+	getCurrentProduct,
+	onDeleteConfirm,
+} from './OrderReducers'
 import './OrderCRUD.scss'
 
 const OrderCRUD = props => {
@@ -68,7 +73,7 @@ const OrderCRUD = props => {
 		const allAvailable = [...orderStates.availableProducts]
 		const selectedProduct = allAvailable.find(el => el.id === product.id)
 		const currentOrder = { ...orderStates.order }
-	
+
 		if (orderStates.isCreateViewRequested) {
 			currentOrder.wantedProducts.push({
 				id: selectedProduct.id,
@@ -76,45 +81,45 @@ const OrderCRUD = props => {
 			})
 		} else {
 			currentOrder.updatedProducts = []
-	
+
 			currentOrder.updatedProducts.push({
 				id: selectedProduct.id,
 				quantity: selectedProduct.quantity,
 			})
 		}
-		
+
 		allAvailable.splice(allAvailable.indexOf(selectedProduct), 1)
 		allSelected.push(selectedProduct)
-	
-		orderDispatch({ type: 'ADD_PRODUCT_TO_ORDER', currentOrder, allSelected, allAvailable})
+
+		orderDispatch({ type: 'ADD_PRODUCT_TO_ORDER', currentOrder, allSelected, allAvailable })
 	}
 
 	const onAvailableProductClick = product => {
-		if (orderStates.selectedProducts[product]) {
-			return
-		}
+		if (orderStates.selectedProducts[product]) return
 		handleAvailableProductSelection(product)
 	}
 
 	const onSelectedProductDelete = async product => {
 		const indexOfProduct = orderStates.selectedProducts.indexOf(product)
-	
+
 		if (indexOfProduct >= 0) {
 			const selectedProds = [...orderStates.selectedProducts]
 			const currentOrder = { ...orderStates.order }
-	
+
 			selectedProds.splice(indexOfProduct, 1)
-	
+
 			if (orderStates.isCreateViewRequested) {
 				currentOrder.wantedProducts.splice(indexOfProduct, 1)
 			} else {
-				const deleteProductsBody = {}
-				deleteProductsBody.productsToDelete = [{
-					id: product.id
-				}]
-				await OrdersApiService.deleteProductsFromOrder(currentOrder.id, deleteProductsBody)
+				let productsToDelete = []
+				productsToDelete = [
+					{
+						id: product.id,
+					},
+				]
+				await OrdersApiService.deleteProductsFromOrder(currentOrder.id, productsToDelete)
 			}
-	
+
 			renderEditView()
 		}
 	}
@@ -464,9 +469,10 @@ const OrderCRUD = props => {
 									className="customer-inputs"
 									type="text"
 									name="customerName"
-									placeholder="Customer Name"
-									defaultValue={
-										orderStates.selectedCustomer === null ? null : orderStates.selectedCustomer.name
+									placeholder={
+										orderStates.selectedCustomer === null
+											? 'Customer Name'
+											: orderStates.selectedCustomer.name
 									}
 									disabled
 								/>
@@ -481,10 +487,9 @@ const OrderCRUD = props => {
 									className="customer-inputs"
 									type="text"
 									name="customerEmail"
-									placeholder="Customer Email"
-									defaultValue={
+									placeholder={
 										orderStates.selectedCustomer === null
-											? null
+											? 'Customer Email'
 											: orderStates.selectedCustomer.email
 									}
 									disabled
@@ -500,10 +505,9 @@ const OrderCRUD = props => {
 									className="customer-inputs"
 									type="text"
 									name="customerVat"
-									placeholder="Customer VAT Number"
-									defaultValue={
+									placeholder={
 										orderStates.selectedCustomer === null
-											? null
+											? 'Customer VAT Number'
 											: orderStates.selectedCustomer.vatNumber
 									}
 									disabled
@@ -576,10 +580,9 @@ const OrderCRUD = props => {
 										onChange={handleFormChange}
 										type="text"
 										name="productsTotalPrice"
-										placeholder="Products Total Price"
-										defaultValue={
+										placeholder={
 											orderStates.order.productsTotalPrice === undefined
-												? null
+												? 'Products Total Price'
 												: orderStates.order.productsTotalPrice.toFixed(2)
 										}
 										disabled
@@ -595,10 +598,9 @@ const OrderCRUD = props => {
 									onChange={handleFormChange}
 									type="number"
 									name="productsCount"
-									placeholder="Products Count"
-									defaultValue={
+									placeholder={
 										orderStates.order.productsCount === undefined
-											? null
+											? 'Products Count'
 											: orderStates.order.productsCount
 									}
 									disabled
@@ -613,7 +615,11 @@ const OrderCRUD = props => {
 							titleFieldName="name"
 							subtitleFieldName="code"
 							dynamicElement={quantityInput}
-							onDelete={orderStates.isDetailsViewRequested ? null : product => onSelectedProductDelete(product)}
+							onDelete={
+								orderStates.isDetailsViewRequested
+									? null
+									: product => onSelectedProductDelete(product)
+							}
 							deletable={!orderStates.isDetailsViewRequested}
 						/>
 					) : null}
@@ -688,9 +694,7 @@ const OrderCRUD = props => {
 					<ConfirmationModal
 						isOpen={isDeleteModalOpen}
 						onModalClose={() => setIsDeleteModalOpen(false)}
-						onConfirm={() =>
-							onDeleteConfirm(props.history, props.match.params.id)
-						}
+						onConfirm={() => onDeleteConfirm(props.history, props.match.params.id)}
 					/>
 				</Form>
 			</Container>
