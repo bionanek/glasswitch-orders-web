@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import { withRouter } from 'react-router-dom'
-import { Container, Col, Row, Button, ButtonGroup } from 'react-bootstrap'
+import { Container, Col, Row, Button, ButtonGroup, Form } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faList, faTh } from '@fortawesome/free-solid-svg-icons'
 import SimpleList from '../simpleList/SimpleList'
 import LoadingView from '../LoadingView'
-import './ListView.scss'
 import CreateRecordModal from '../modals/createRecord/CreateRecordModal'
 import ProductGrid from '../../products/components/grid/ProductGrid'
+import './ListView.scss'
 
 const ListView = props => {
 	const [isLoaded, setIsLoaded] = useState(false)
 	const [isRecordCreateModalOpen, setIsRecordCreateModalOpen] = useState(false)
 	const [listView, setListView] = useState(true)
 
-	const [fetchedRecords, setFetchedRecords] = useState([])
+	const [records, setRecords] = useState([])
 
 	const recordsReactiveObjects = recordsList => {
 		return recordsList.map(record => {
@@ -34,16 +34,29 @@ const ListView = props => {
 
 				if (deleteResult !== undefined && deleteResult.status === 200) {
 					const fetchedData = await props.getAllRecords()
-					setFetchedRecords(recordsReactiveObjects(fetchedData.data))
+					setRecords(recordsReactiveObjects(fetchedData.data))
 				}
 			}
 			return recordRO
 		})
 	}
 
+	const handleSearch = async event => {
+		const search = event.target.value
+
+		if (search === '') {
+			const fetchedData = await props.getAllRecords()
+			setRecords(recordsReactiveObjects(fetchedData.data))
+			return
+		}
+
+		const fetchedData = await props.searchRecords(search)
+		setRecords(recordsReactiveObjects(fetchedData.data))
+	}
+
 	const fetchData = async () => {
 		const fetchedData = await props.getAllRecords()
-		setFetchedRecords(recordsReactiveObjects(fetchedData.data))
+		setRecords(recordsReactiveObjects(fetchedData.data))
 		setIsLoaded(true)
 	}
 
@@ -64,28 +77,37 @@ const ListView = props => {
 							}
 							className="create-record-button"
 							variant="primary"
+							block
 						>
 							{`New ${props.createNewRecordLabel}`}
 						</Button>
 					</Col>
 
-					<Col sm>{/* SEARCH BAR */}</Col>
+					<Col sm>
+						<Form.Control
+							onChange={handleSearch}
+							type="text"
+							name="searchBar"
+							placeholder={`Search ${props.page}`}
+							required
+						/>
+					</Col>
 
 					{props.page === 'products' ? (
 						<Col sm>
-							<ButtonGroup className="layout-change-buttons">
+							<ButtonGroup className="layout-change-buttons d-flex" block>
 								<Button
 									onClick={() => setListView(true)}
 									variant={listView ? 'success' : 'secondary'}
 								>
-									<FontAwesomeIcon icon={faList} size="2x" />
+									<FontAwesomeIcon icon={faList} size="1x" />
 								</Button>
 
 								<Button
 									onClick={() => setListView(false)}
 									variant={listView ? 'secondary' : 'success'}
 								>
-									<FontAwesomeIcon icon={faTh} size="2x" />
+									<FontAwesomeIcon icon={faTh} size="1x" />
 								</Button>
 							</ButtonGroup>
 						</Col>
@@ -94,7 +116,7 @@ const ListView = props => {
 
 				{listView ? (
 					<SimpleList
-						elementsList={fetchedRecords}
+						elementsList={records}
 						titleFieldName={props.titleFieldName}
 						subtitleFieldName={props.subtitleFieldName}
 						clickable
@@ -103,7 +125,7 @@ const ListView = props => {
 					/>
 				) : (
 					<ProductGrid
-						productsList={fetchedRecords}
+						productsList={records}
 						imageSource="imageUrl"
 						name="name"
 						code="code"

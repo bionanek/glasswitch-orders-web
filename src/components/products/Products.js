@@ -10,6 +10,7 @@ export default function Products() {
 			page="products"
 			createNewRecordLabel="Product"
 			getAllRecords={() => ProductsApiService.getAllProducts()}
+			searchRecords={param => ProductsApiService.searchProduct(param)}
 			deleteRecord={id => ProductsApiService.deleteProduct(id)}
 			titleFieldName="name"
 			subtitleFieldName="code"

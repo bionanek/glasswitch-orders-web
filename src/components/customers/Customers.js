@@ -10,6 +10,7 @@ export default function Customers() {
 			page="customers"
 			createNewRecordLabel="Customer"
 			getAllRecords={() => CustomersApiService.getAllCustomers()}
+			searchRecords={param => CustomersApiService.searchCustomer(param)}
 			deleteRecord={id => CustomersApiService.deleteCustomer(id)}
 			titleFieldName="name"
 			subtitleFieldName="delivery_country"

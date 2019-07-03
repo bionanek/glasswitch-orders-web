@@ -11,6 +11,7 @@ export default function Orders() {
 			createNewRecordLabel="Order"
 			createButtonLabel="New Customer"
 			getAllRecords={() => OrdersApiService.getAllOrders()}
+			searchRecords={param => OrdersApiService.searchOrder(param)}
 			deleteRecord={id => OrdersApiService.deleteOrder(id)}
 			titleFieldName="email"
 			subtitleFieldName="deadline"
