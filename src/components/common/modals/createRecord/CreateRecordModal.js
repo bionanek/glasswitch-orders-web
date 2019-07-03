@@ -24,13 +24,14 @@ export default function CreateRecordModal(props) {
 	const handleFormChange = event => {
 		let currentRecord = record
 		const { id, name, value, files } = event.target
+		const file = files[0]
 
 		switch (id) {
 			case 'productPrice':
 				currentRecord = addRecordPrice(currentRecord, name, value)
 				break
 			case 'productImageUpload':
-				currentRecord[name] = files[0]
+				currentRecord[name] = file
 				break
 			case 'productCode':
 				currentRecord[name] = `GW-${value}`
@@ -44,7 +45,6 @@ export default function CreateRecordModal(props) {
 
 	const handleDataConfirm = async () => {
 		setIsValidated(true)
-		console.log(record)
 
 		if (props.modalMode === 'products') {
 			const productData = buildProductData(record)
