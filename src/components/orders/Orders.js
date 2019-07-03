@@ -1,11 +1,19 @@
 import React from 'react'
-import OrdersList from './list/OrdersList'
+import ListView from '../common/listView/ListView'
+import OrdersApiService from '../../utils/api/ordersApiService'
 import './Orders.scss'
 
 export default function Orders() {
 	return (
-		<div className="orders">
-			<OrdersList className="orders-list" />
-		</div>
+		<ListView
+			className="orders"
+			page="orders"
+			createNewRecordLabel="Order"
+			createButtonLabel="New Customer"
+			getAllRecords={() => OrdersApiService.getAllOrders()}
+			deleteRecord={id => OrdersApiService.deleteOrder(id)}
+			titleFieldName="email"
+			subtitleFieldName="deadline"
+		/>
 	)
 }

@@ -18,7 +18,7 @@ import ScrollToTop from './components/common/navigation/ScrollToTop'
 import RouteError from './components/common/RouteError'
 import Navigation from './components/common/navigation/Navigation'
 
-function App() {
+export default function App() {
 	return (
 		<div className="App">
 			<BrowserRouter>
@@ -47,5 +47,3 @@ function App() {
 		</div>
 	)
 }
-
-export default App
