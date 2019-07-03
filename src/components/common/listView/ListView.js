@@ -95,7 +95,7 @@ const ListView = props => {
 
 					{props.page === 'products' ? (
 						<Col sm>
-							<ButtonGroup className="layout-change-buttons d-flex" block>
+							<ButtonGroup className="layout-change-buttons d-flex">
 								<Button
 									onClick={() => setListView(true)}
 									variant={listView ? 'success' : 'secondary'}

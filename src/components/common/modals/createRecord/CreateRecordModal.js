@@ -24,13 +24,13 @@ export default function CreateRecordModal(props) {
 	const handleFormChange = event => {
 		let currentRecord = record
 		const { id, name, value, files } = event.target
-		const file = files[0]
 
 		switch (id) {
 			case 'productPrice':
 				currentRecord = addRecordPrice(currentRecord, name, value)
 				break
 			case 'productImageUpload':
+				const file = files[0]
 				currentRecord[name] = file
 				break
 			case 'productCode':
