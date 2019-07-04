@@ -4,13 +4,9 @@ const initializeQuantityInProducts = productsList => {
 	return productsList.map(productElement => {
 		const product = productElement
 
-		if (product.products_orders === undefined) {
-			product.quantity = 0
-		} else {
-			product.quantity = product.products_orders.quantity
-		}
+		product.quantity = product.products_orders === undefined ? 0 : product.products_orders.quantity
 
-		return productElement
+		return product
 	})
 }
 
@@ -18,7 +14,7 @@ const removeSelectedProductsFromAvailable = (productsInOrder, remainingProducts,
 	const allSelected = [...productsInOrder]
 	let allAvailable = [...remainingProducts]
 
-	for (const product of allSelected) {
+	for (const selectedProduct of allSelected) {
 		allAvailable = allAvailable.filter(prod => {
 			return prod.id !== product.id
 		})

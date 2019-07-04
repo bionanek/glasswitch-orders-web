@@ -102,7 +102,7 @@ const OrderCRUD = props => {
 	const onSelectedProductDelete = async product => {
 		const indexOfProduct = orderStates.selectedProducts.indexOf(product)
 
-		if (indexOfProduct >= 0) {
+		if (indexOfProduct < 0) return
 			const selectedProds = [...orderStates.selectedProducts]
 			const currentOrder = { ...orderStates.order }
 
@@ -118,7 +118,7 @@ const OrderCRUD = props => {
 					},
 				]
 				await OrdersApiService.deleteProductsFromOrder(currentOrder.id, productsToDelete)
-			}
+			
 
 			renderEditView()
 		}
