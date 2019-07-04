@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react'
 import { withRouter } from 'react-router-dom'
 import { Container, Col, Row, Button, ButtonGroup, Form } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faList, faTh } from '@fortawesome/free-solid-svg-icons'
+import { faList, faTh, faFilePdf } from '@fortawesome/free-solid-svg-icons'
 import SimpleList from '../simpleList/SimpleList'
 import LoadingView from '../LoadingView'
 import CreateRecordModal from '../modals/createRecord/CreateRecordModal'
 import ProductGrid from '../../products/components/grid/ProductGrid'
+import ProductsApiService from '../../../utils/api/productsApiService'
 import './ListView.scss'
+import { saveAs } from 'file-saver'
 
 const ListView = props => {
 	const [isLoaded, setIsLoaded] = useState(false)
@@ -39,6 +41,14 @@ const ListView = props => {
 			}
 			return recordRO
 		})
+	}
+
+	const generateProductsCatalog = async () => {
+		const fileName = `${new Date().toLocaleDateString()}-Products-Catalog.pdf`
+		const response = await ProductsApiService.generateProductsCatalog(records)
+
+		const blob = new Blob([response.data], { type: 'application/pdf' })
+		saveAs(blob, fileName)
 	}
 
 	const handleSearch = async event => {
@@ -94,23 +104,31 @@ const ListView = props => {
 					</Col>
 
 					{props.page === 'products' ? (
-						<Col sm>
-							<ButtonGroup className="layout-change-buttons d-flex">
-								<Button
-									onClick={() => setListView(true)}
-									variant={listView ? 'success' : 'secondary'}
-								>
-									<FontAwesomeIcon icon={faList} size="1x" />
-								</Button>
+						<>
+							<Col sm>
+								<ButtonGroup className="layout-change-buttons d-flex">
+									<Button
+										onClick={() => setListView(true)}
+										variant={listView ? 'success' : 'secondary'}
+									>
+										<FontAwesomeIcon icon={faList} size="1x" />
+									</Button>
 
-								<Button
-									onClick={() => setListView(false)}
-									variant={listView ? 'secondary' : 'success'}
-								>
-									<FontAwesomeIcon icon={faTh} size="1x" />
+									<Button
+										onClick={() => setListView(false)}
+										variant={listView ? 'secondary' : 'success'}
+									>
+										<FontAwesomeIcon icon={faTh} size="1x" />
+									</Button>
+								</ButtonGroup>
+							</Col>
+
+							<Col sm>
+								<Button onClick={generateProductsCatalog} variant="warning" block>
+									<FontAwesomeIcon icon={faFilePdf} size="1x" />
 								</Button>
-							</ButtonGroup>
-						</Col>
+							</Col>
+						</>
 					) : null}
 				</Row>
 
