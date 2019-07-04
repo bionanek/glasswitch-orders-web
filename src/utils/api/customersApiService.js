@@ -54,7 +54,7 @@ export default class CustomersApiService {
 
 	static async searchCustomer(param) {
 		try {
-			const response = await Axios.get(apiUrl + 'search?search=' + param, apiHeader)
+			const response = await Axios.get(`${apiUrl}search?search=${param}`, apiHeader)
 			return response
 		} catch (ex) {
 			throw Error(ex.message)
