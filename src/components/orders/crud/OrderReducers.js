@@ -16,7 +16,7 @@ const removeSelectedProductsFromAvailable = (productsInOrder, remainingProducts,
 
 	for (const selectedProduct of allSelected) {
 		allAvailable = allAvailable.filter(prod => {
-			return prod.id !== product.id
+			return prod.id !== selectedProduct.id
 		})
 	}
 
