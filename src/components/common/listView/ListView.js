@@ -3,13 +3,13 @@ import { withRouter } from 'react-router-dom'
 import { Container, Col, Row, Button, ButtonGroup, Form } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faList, faTh, faFilePdf } from '@fortawesome/free-solid-svg-icons'
+import { saveAs } from 'file-saver'
 import SimpleList from '../simpleList/SimpleList'
 import LoadingView from '../LoadingView'
 import CreateRecordModal from '../modals/createRecord/CreateRecordModal'
 import ProductGrid from '../../products/components/grid/ProductGrid'
 import ProductsApiService from '../../../utils/api/productsApiService'
 import './ListView.scss'
-import { saveAs } from 'file-saver'
 
 const ListView = props => {
 	const [isLoaded, setIsLoaded] = useState(false)
@@ -93,16 +93,6 @@ const ListView = props => {
 						</Button>
 					</Col>
 
-					<Col sm>
-						<Form.Control
-							onChange={handleSearch}
-							type="text"
-							name="searchBar"
-							placeholder={`Search ${props.page}`}
-							required
-						/>
-					</Col>
-
 					{props.page === 'products' ? (
 						<>
 							<Col sm>
@@ -130,6 +120,16 @@ const ListView = props => {
 							</Col>
 						</>
 					) : null}
+
+					<Col sm>
+						<Form.Control
+							onChange={handleSearch}
+							type="text"
+							name="searchBar"
+							placeholder={`Search ${props.page}`}
+							required
+						/>
+					</Col>
 				</Row>
 
 				{listView ? (
