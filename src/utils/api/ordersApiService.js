@@ -51,4 +51,13 @@ export default class OrdersApiService {
 			throw Error(ex.message)
 		}
 	}
+
+	static async searchOrder(param) {
+		try {
+			const response = await Axios.get(`${apiUrl}search?search=${param}`, apiHeader)
+			return response
+		} catch (ex) {
+			throw Error(ex.message)
+		}
+	}
 }

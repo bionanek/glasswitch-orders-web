@@ -1,14 +1,19 @@
 import React from 'react'
-import Container from 'react-bootstrap/Container'
-import CustomersList from './list/CustomersList'
+import ListView from '../common/listView/ListView'
+import CustomersApiService from '../../utils/api/customersApiService'
 import './Customers.scss'
 
-const Customers = () => {
+export default function Customers() {
 	return (
-		<Container className="customers" fluid>
-			<CustomersList className="customers-list" />
-		</Container>
+		<ListView
+			className="customers"
+			page="customers"
+			createNewRecordLabel="Customer"
+			getAllRecords={() => CustomersApiService.getAllCustomers()}
+			searchRecords={param => CustomersApiService.searchCustomer(param)}
+			deleteRecord={id => CustomersApiService.deleteCustomer(id)}
+			titleFieldName="name"
+			subtitleFieldName="delivery_country"
+		/>
 	)
 }
-
-export default Customers
