@@ -24,7 +24,7 @@ export const CustomerReducers = (state, action) => {
 export const InitialCustomerState = {
 	isLoaded: false,
 	isDetailsViewRequested: false,
-	customer: {},
+	customer: null,
 }
 
 export const onDeleteConfirm = async (url, id) => {

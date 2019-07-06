@@ -4,9 +4,9 @@ import { CustomerReducers, InitialCustomerState, onDeleteConfirm } from './Custo
 import CustomersApiService from '../../../utils/api/customersApiService'
 import LoadingView from '../../common/LoadingView'
 import ConfirmationModal from '../../common/modals/confirmationModal/ConfirmationModal'
-import './CustomerCRUD.scss'
 import SimpleList from '../../common/simpleList/SimpleList'
 import OrdersApiService from '../../../utils/api/ordersApiService';
+import './CustomerCRUD.scss'
 
 export default function CustomersCRUD(props) {
 	const [customerStates, customerDispatch] = useReducer(CustomerReducers, InitialCustomerState)
