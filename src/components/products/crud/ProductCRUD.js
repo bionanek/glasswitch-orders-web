@@ -5,6 +5,7 @@ import ProductsApiService from '../../../utils/api/productsApiService'
 import ConfirmationModal from '../../common/modals/confirmationModal/ConfirmationModal'
 import LoadingView from '../../common/LoadingView'
 import ImageElement from '../../common/ImageElement'
+import buildProductData from '../ProductsUtils'
 import './ProductCRUD.scss'
 
 export default function ProductCRUD(props) {
@@ -45,7 +46,7 @@ export default function ProductCRUD(props) {
 
 	const handleDataConfirm = async () => {
 		setIsValidated(true)
-		const currentProduct = productStates.product
+		const currentProduct = buildProductData(productStates.product)
 		await ProductsApiService.updateProduct(props.match.params.id, currentProduct)
 		props.history.push(`/products/`)
 	}
