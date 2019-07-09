@@ -5,8 +5,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 
 import Home from './components/home/Home'
 import Customers from './components/customers/Customers'
-import CustomerDetail from './components/customers/crud/CustomerDetail'
-import CustomerEdit from './components/customers/crud/CustomerEdit'
+import CustomerCRUD from './components/customers/crud/CustomerCRUD'
 import Products from './components/products/Products'
 import ProductCRUD from './components/products/crud/ProductCRUD'
 import Orders from './components/orders/Orders'
@@ -28,8 +27,8 @@ export default function App() {
 							<Switch>
 								<Route path="/" component={Home} exact />
 								<Route path="/customers" component={Customers} exact />
-								<Route path="/customers/:id" component={CustomerDetail} exact />
-								<Route path="/customers/:id/edit" component={CustomerEdit} />
+								<Route path="/customers/:id" component={CustomerCRUD} exact />
+								<Route path="/customers/:id/edit" component={CustomerCRUD} />
 								<Route path="/products" component={Products} exact />
 								<Route path="/products/:id" component={ProductCRUD} exact />
 								<Route path="/products/:id/edit" component={ProductCRUD} exact />
