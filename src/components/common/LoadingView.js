@@ -7,19 +7,17 @@ export default function LoadingView() {
 	return (
 		<Container>
 			<Row>
-				<Col />
 				<Col sm>
 					<FontAwesomeIcon
 						style={{ margin: '5px', color: 'white' }}
 						className="fa-spin"
 						icon={faSync}
-						size="3x"
+						size="5x"
 					/>
-					<Form.Label style={{ margin: '5px', color: 'white', fontSize: '45px' }}>
+					<Form.Label style={{ margin: '5px', color: 'white', fontSize: '72px' }}>
 						Loading
 					</Form.Label>
 				</Col>
-				<Col />
 			</Row>
 		</Container>
 	)

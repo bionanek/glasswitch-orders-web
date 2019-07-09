@@ -16,7 +16,7 @@ export default class CustomersApiService {
 		}
 	}
 
-	static async getCustomer(id) {
+	static async getCustomerById(id) {
 		try {
 			const response = await Axios.get(apiUrl + id.toString(), apiHeader)
 			return response.data
@@ -54,7 +54,7 @@ export default class CustomersApiService {
 
 	static async searchCustomer(param) {
 		try {
-			const response = await Axios.get(apiUrl + 'search?search=' + param, apiHeader)
+			const response = await Axios.get(`${apiUrl}search?search=${param}`, apiHeader)
 			return response
 		} catch (ex) {
 			throw Error(ex.message)
