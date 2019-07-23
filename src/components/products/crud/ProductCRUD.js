@@ -1,22 +1,30 @@
-import React, { useState, useEffect } from 'react'
-import { withRouter } from 'react-router-dom'
-import { Row, Col, Form, Button, Container, InputGroup } from 'react-bootstrap/'
-import ImageElement from '../../common/ImageElement'
+import React, { useState, useReducer, useEffect } from 'react'
+import { Container, Form, Row, Col, InputGroup, Button } from 'react-bootstrap'
+import { ProductReducers, InitialProductState, onDeleteConfirm } from './ProductReducers'
 import ProductsApiService from '../../../utils/api/productsApiService'
 import ConfirmationModal from '../../common/modals/confirmationModal/ConfirmationModal'
-import buildProductData from '../ProductsUtils'
 import LoadingView from '../../common/LoadingView'
-import IdNotFound from '../../common/IdNotFound'
-import './ProductEdit.scss'
+import ImageElement from '../../common/ImageElement'
+import buildProductData from '../ProductsUtils'
+import './ProductCRUD.scss'
 
-function ProductEdit(props) {
-	const [isLoaded, setIsLoaded] = useState(false)
-	const [product, setProduct] = useState(null)
+export default function ProductCRUD(props) {
+	const [productStates, productDispatch] = useReducer(ProductReducers, InitialProductState)
 	const [isValidated, setIsValidated] = useState(false)
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
+	const renderEditView = async () => {
+		const fetchedProduct = await ProductsApiService.getProductById(props.match.params.id)
+		productDispatch({ type: 'PRODUCT_DATA_INIT', product: fetchedProduct.data })
+	}
+
+	const renderDetailsView = async () => {
+		const fetchedProduct = await ProductsApiService.getProductById(props.match.params.id)
+		productDispatch({ type: 'PRODUCT_DATA_INIT', product: fetchedProduct.data, detailsView: true })
+	}
+
 	const handleFormChange = event => {
-		const currentProduct = product
+		const currentProduct = productStates.product
 		const { id, name, value, files } = event.target
 
 		switch (id) {
@@ -33,49 +41,31 @@ function ProductEdit(props) {
 				currentProduct[name] = value
 				break
 		}
-		setProduct(currentProduct)
+		productDispatch({ type: 'HANDLE_FORM_CHANGE', currentProduct })
 	}
 
-	const handleEditDataConfirm = async () => {
+	const handleDataConfirm = async () => {
 		setIsValidated(true)
-		const productData = buildProductData(product)
-		await ProductsApiService.updateProduct(props.match.params.id, productData)
-
-		props.history.push('/products')
+		const currentProduct = buildProductData(productStates.product)
+		await ProductsApiService.updateProduct(props.match.params.id, currentProduct)
+		props.history.push(`/products/`)
 	}
 
 	const handleSubmit = async event => {
 		const form = event.currentTarget
 		event.preventDefault()
-
-		if (form.checkValidity() === false) {
-			event.stopPropagation()
-		}
-		handleEditDataConfirm()
-	}
-
-	const handleDelete = event => {
-		event.stopPropagation()
-		setIsDeleteModalOpen(true)
-	}
-
-	const onDeleteConfirm = async () => {
-		await ProductsApiService.deleteProduct(props.match.params.id)
-		props.history.push('/products')
+		if (form.checkValidity() === false) event.stopPropagation()
+		handleDataConfirm()
 	}
 
 	useEffect(() => {
-		const fetchData = async () => {
-			const requestedProduct = await ProductsApiService.getProductById(props.match.params.id)
-			setProduct(requestedProduct.data)
-			setIsLoaded(true)
-		}
-		fetchData()
+		if (props.match.path.split(':id/')[1] === 'edit') renderEditView()
+		else renderDetailsView()
 	}, [])
 
-	const productEditView = () => {
+	const productCRUDView = () => {
 		return (
-			<Container className="product-edit-form">
+			<Container className="product-crud">
 				<Form onSubmit={handleSubmit} validated={isValidated}>
 					<Row>
 						<Col sm>
@@ -85,7 +75,8 @@ function ProductEdit(props) {
 									onChange={handleFormChange}
 									type="text"
 									name="name"
-									defaultValue={product.name}
+									defaultValue={productStates.product === null ? null : productStates.product.name}
+									disabled={productStates.isDetailsViewRequested}
 									required
 								/>
 							</Form.Group>
@@ -102,8 +93,13 @@ function ProductEdit(props) {
 										onChange={handleFormChange}
 										type="text"
 										name="code"
-										defaultValue={product.code.split('GW-')[1]}
+										defaultValue={
+											productStates.product === null
+												? null
+												: productStates.product.code.split('GW-')[1]
+										}
 										pattern="[^'/\x22:?<>|*\\]+"
+										disabled={productStates.isDetailsViewRequested}
 										required
 									/>
 								</InputGroup>
@@ -115,7 +111,11 @@ function ProductEdit(props) {
 						<Col sm>
 							<Form.Group controlId="productImage">
 								<ImageElement
-									source={`http://localhost:3001/${product.imageUrl}`}
+									source={
+										productStates.product === null
+											? null
+											: `http://localhost:3001/${productStates.product.imageUrl}`
+									}
 									errorTxt="imageError"
 								/>
 							</Form.Group>
@@ -131,6 +131,7 @@ function ProductEdit(props) {
 											style={{ color: 'white' }}
 											type="file"
 											name="image"
+											disabled={productStates.isDetailsViewRequested}
 										/>
 									</Form.Group>
 
@@ -141,8 +142,11 @@ function ProductEdit(props) {
 											type="text"
 											name="description"
 											as="textarea"
-											defaultValue={product.description}
+											defaultValue={
+												productStates.product === null ? null : productStates.product.description
+											}
 											rows="12"
+											disabled={productStates.isDetailsViewRequested}
 											required
 										/>
 									</Form.Group>
@@ -159,7 +163,8 @@ function ProductEdit(props) {
 									onChange={handleFormChange}
 									type="text"
 									name="type"
-									defaultValue={product.type}
+									defaultValue={productStates.product === null ? null : productStates.product.type}
+									disabled={productStates.isDetailsViewRequested}
 									required
 								/>
 							</Form.Group>
@@ -172,7 +177,10 @@ function ProductEdit(props) {
 									onChange={handleFormChange}
 									type="text"
 									name="category"
-									defaultValue={product.category}
+									defaultValue={
+										productStates.product === null ? null : productStates.product.category
+									}
+									disabled={productStates.isDetailsViewRequested}
 									required
 								/>
 							</Form.Group>
@@ -187,7 +195,8 @@ function ProductEdit(props) {
 									onChange={handleFormChange}
 									type="text"
 									name="width"
-									defaultValue={product.width}
+									defaultValue={productStates.product === null ? null : productStates.product.width}
+									disabled={productStates.isDetailsViewRequested}
 									required
 								/>
 							</Form.Group>
@@ -200,7 +209,10 @@ function ProductEdit(props) {
 									onChange={handleFormChange}
 									type="text"
 									name="height"
-									defaultValue={product.height}
+									defaultValue={
+										productStates.product === null ? null : productStates.product.height
+									}
+									disabled={productStates.isDetailsViewRequested}
 									required
 								/>
 							</Form.Group>
@@ -213,7 +225,8 @@ function ProductEdit(props) {
 									onChange={handleFormChange}
 									type="text"
 									name="depth"
-									defaultValue={product.depth}
+									defaultValue={productStates.product === null ? null : productStates.product.depth}
+									disabled={productStates.isDetailsViewRequested}
 									required
 								/>
 							</Form.Group>
@@ -228,7 +241,10 @@ function ProductEdit(props) {
 									onChange={handleFormChange}
 									type="text"
 									name="pln"
-									defaultValue={product.price.pln}
+									defaultValue={
+										productStates.product === null ? null : productStates.product.price.pln
+									}
+									disabled={productStates.isDetailsViewRequested}
 									required
 								/>
 							</Form.Group>
@@ -241,7 +257,10 @@ function ProductEdit(props) {
 									onChange={handleFormChange}
 									type="text"
 									name="eur"
-									defaultValue={product.price.eur}
+									defaultValue={
+										productStates.product === null ? null : productStates.product.price.eur
+									}
+									disabled={productStates.isDetailsViewRequested}
 									required
 								/>
 							</Form.Group>
@@ -254,49 +273,60 @@ function ProductEdit(props) {
 									onChange={handleFormChange}
 									type="text"
 									name="usd"
-									defaultValue={product.price.usd}
+									defaultValue={
+										productStates.product === null ? null : productStates.product.price.usd
+									}
+									disabled={productStates.isDetailsViewRequested}
 									required
 								/>
 							</Form.Group>
 						</Col>
 					</Row>
 
-					<Row>
-						<Col sm>
-							<Button
-								onClick={() => props.history.push(`/products`)}
-								variant="secondary"
-								size="lg"
-								block
-							>
-								Return To The List
-							</Button>
-						</Col>
+					{productStates.isDetailsViewRequested ? (
+						<Row>
+							<Col sm>
+								<Button onClick={() => props.history.push(`/products/`)} variant="secondary" block>
+									Return
+								</Button>
+							</Col>
 
-						<Col sm>
-							<Button onClick={handleDelete} variant="danger" size="lg" block>
-								Delete Product
-							</Button>
-						</Col>
+							<Col sm>
+								<Button onClick={() => setIsDeleteModalOpen(true)} variant="danger" block>
+									Delete
+								</Button>
+							</Col>
 
-						<Col sm>
-							<Button type="submit" variant="success" size="lg" block>
-								Submit Changes
-							</Button>
-						</Col>
-					</Row>
+							<Col sm>
+								<Button onClick={() => renderEditView()} variant="primary" block>
+									Customize Product
+								</Button>
+							</Col>
+						</Row>
+					) : (
+						<Row>
+							<Col sm>
+								<Button onClick={() => props.history.push(`/products/`)} variant="danger" block>
+									Cancel
+								</Button>
+							</Col>
+
+							<Col sm>
+								<Button variant="success" type="submit" block>
+									Submit
+								</Button>
+							</Col>
+						</Row>
+					)}
+					<ConfirmationModal
+						isOpen={isDeleteModalOpen}
+						onModalClose={() => setIsDeleteModalOpen(false)}
+						onConfirm={() => onDeleteConfirm(props.history, props.match.params.id)}
+					/>
 				</Form>
-
-				<ConfirmationModal
-					isOpen={isDeleteModalOpen}
-					onModalClose={() => setIsDeleteModalOpen(false)}
-					onConfirm={onDeleteConfirm}
-				/>
 			</Container>
 		)
 	}
 
-	return <> {isLoaded ? (product ? productEditView() : IdNotFound()) : LoadingView()} </>
+	return <> {productStates.isLoaded ? productCRUDView() : LoadingView()} </>
 }
-
-export default withRouter(ProductEdit)
