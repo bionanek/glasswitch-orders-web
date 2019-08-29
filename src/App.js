@@ -33,8 +33,8 @@ export default function App() {
 								<Route path="/products/:id/edit" component={ProductCRUD} exact />
 								<Route path="/orders" component={Orders} exact />
 								<Route path="/orders/create" component={OrderCRUD} exact />
-									<Route path="/orders/:id" component={OrderCRUD} exact />
-									<Route path="/orders/:id/edit" component={OrderCRUD} exact />
+								<Route path="/orders/:id" component={OrderCRUD} exact />
+								<Route path="/orders/:id/edit" component={OrderCRUD} exact />
 								<Route path="/about" component={About} />
 								<Route component={RouteError} />
 							</Switch>
