@@ -41,7 +41,9 @@ export default function CustomersCRUD(props) {
 
 	const renderDetailsView = async () => {
 		const fetchedCustomer = await CustomersApiService.getCustomerById(props.match.params.id)
-    setCustomerOrders(ordersReactiveObjects(fetchedCustomer.orders))
+		
+		if (fetchedCustomer.orders !== undefined) 
+    	setCustomerOrders(ordersReactiveObjects(fetchedCustomer.orders))
 
 		customerDispatch({
 			type: 'CUSTOMER_DATA_INIT',
@@ -52,7 +54,9 @@ export default function CustomersCRUD(props) {
 
 	const renderEditView = async () => {
 		const fetchedCustomer = await CustomersApiService.getCustomerById(props.match.params.id)
-    setCustomerOrders(ordersReactiveObjects(fetchedCustomer.orders))
+
+		if (fetchedCustomer.orders !== undefined)
+    	setCustomerOrders(ordersReactiveObjects(fetchedCustomer.orders))
 
 		customerDispatch({
 			type: 'CUSTOMER_DATA_INIT',
@@ -332,7 +336,7 @@ export default function CustomersCRUD(props) {
 						</Col>
 					</Row>
 
-					{customerOrders.length === 0 ? null : (
+					{customerOrders.length === 0  ? null : (
 						<>
 							<Form.Row>
 								<Form.Label

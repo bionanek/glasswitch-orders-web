@@ -60,4 +60,18 @@ export default class ProductsApiService {
 			throw Error(ex.message)
 		}
 	}
+
+	static async generateProductsCatalog(data) {
+		try {
+			const response = await Axios.post(
+				`${apiUrl}generateProductsCatalog`,
+				data,
+				{ responseType: 'blob' },
+				apiHeader,
+			)
+			return response
+		} catch (ex) {
+			throw Error(ex.message)
+		}
+	}
 }

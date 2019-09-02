@@ -305,7 +305,7 @@ export default function CreateRecordModal(props) {
 
 					<Form.Row>
 						<Form.Group as={Col} controlId="deliveryStreet">
-							<Form.Label>VAT Number</Form.Label>
+							<Form.Label>Delivery Street</Form.Label>
 							<Form.Control
 								onChange={handleFormChange}
 								type="text"
@@ -316,7 +316,7 @@ export default function CreateRecordModal(props) {
 						</Form.Group>
 
 						<Form.Group as={Col} controlId="deliveryPostcode">
-							<Form.Label>VAT Number</Form.Label>
+							<Form.Label>Delivery PostCode</Form.Label>
 							<Form.Control
 								onChange={handleFormChange}
 								type="text"
@@ -358,7 +358,7 @@ export default function CreateRecordModal(props) {
 
 					<Form.Row>
 						<Form.Group as={Col} controlId="billingStreet">
-							<Form.Label>VAT Number</Form.Label>
+							<Form.Label>Billing Street</Form.Label>
 							<Form.Control
 								onChange={handleFormChange}
 								type="text"
@@ -369,7 +369,7 @@ export default function CreateRecordModal(props) {
 						</Form.Group>
 
 						<Form.Group as={Col} controlId="billingPostcode">
-							<Form.Label>VAT Number</Form.Label>
+							<Form.Label>Billing PostCode</Form.Label>
 							<Form.Control
 								onChange={handleFormChange}
 								type="text"
