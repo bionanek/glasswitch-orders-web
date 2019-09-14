@@ -6,9 +6,6 @@ const Navigation = () => {
 	return (
 		<ul className="menuHeader">
 			<li>
-				<NavLink to="/">Home</NavLink>
-			</li>
-			<li>
 				<NavLink to="/customers">Customers</NavLink>
 			</li>
 			<li>
@@ -16,9 +13,6 @@ const Navigation = () => {
 			</li>
 			<li>
 				<NavLink to="/orders">Orders</NavLink>
-			</li>
-			<li>
-				<NavLink to="/about">About</NavLink>
 			</li>
 		</ul>
 	)
